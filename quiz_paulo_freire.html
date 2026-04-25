@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Paulo Freire · Instrução</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .init-card h2 { font-size: 1.9rem; margin-bottom: 6px; color: #0f3d2e; }
+        .subhead { color: #2a5e4a; margin-bottom: 28px; font-style: italic; border-left: 5px solid #2a7f5e; padding-left: 16px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #1e4f3e; }
+        select, input {
+            width: 100%;
+            padding: 14px 12px;
+            font-size: 1rem;
+            border: 1.5px solid #cbdcd2;
+            border-radius: 20px;
+            background: white;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-primary:disabled { background: #b0c9bc; cursor: not-allowed; }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen, .congrats-screen { text-align: center; }
+        .result-box, .congrats-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .print-btn, .restart-btn, .send-btn, .close-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .restart-btn { background: #e6f0ea; color: #1a4e3a; border: 1px solid #a2bfb1; }
+        .send-btn { background: #2a7f5e; }
+        .close-btn { background: #a2bfb1; color: #1a4e3a; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- TELA INICIAL -->
+    <div id="startScreen" class="screen active init-card">
+        <h2>📚 Paulo Freire</h2>
+        <div class="subhead">Educador, humanista, patrono da educação brasileira</div>
+        <div class="form-group">
+            <label>📌 Turma</label>
+            <select id="turmaSelect"><option value="">Selecione</option></select>
+        </div>
+        <div class="form-group">
+            <label>👤 Aluno</label>
+            <select id="alunoSelect" disabled><option value="">Primeiro selecione a turma</option></select>
+        </div>
+        <div class="form-group">
+            <label>📖 Disciplina</label>
+            <select id="disciplinaSelect">
+                <option value="Geografia">Geografia</option>
+                <option value="História">História</option>
+                <option value="Sociologia">Sociologia</option>
+                <option value="Filosofia">Filosofia</option>
+                <option value="ARIA">ARIA</option>
+                <option value="EACH">EACH</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>📅 Bimestre</label>
+            <select id="bimestreSelect">
+                <option value="1º">1º bimestre</option><option value="2º">2º bimestre</option>
+                <option value="3º">3º bimestre</option><option value="4º">4º bimestre</option>
+            </select>
+        </div>
+        <button class="btn-primary" id="startBtn" disabled>▶ Iniciar Quiz</button>
+    </div>
+
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="progress" id="progressText">Questão 1 de 30</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>🏆 Resultado</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="send-btn" id="sendResultBtn">📤 Enviar Nota para Planilha</button>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Nova Tentativa</button>
+        <button class="print-btn" id="printResultBtn">🖨️ Imprimir Relatório</button>
+    </div>
+
+    <!-- TELA DE CONFIRMAÇÃO DE ENVIO -->
+    <div id="congratsScreen" class="screen congrats-screen">
+        <h2>🎉 Nota enviada!</h2>
+        <div class="congrats-box">
+            <p>Seu desempenho foi registrado na planilha.</p>
+            <p>Você pode continuar treinando ou fechar a janela.</p>
+        </div>
+        <button class="close-btn" id="closeFinalBtn">🔚 Encerrar</button>
+    </div>
+
+    <!-- TELA FINAL -->
+    <div id="finalScreen" class="screen"><h2 style="text-align:center;">✅ Pode fechar a janela.</h2></div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 1. LISTAS REAIS DE TURMAS E ALUNOS (extraídas dos PDFs)
+    // --------------------------------------------------------------
+    const turmasAlunos = {
+        "1 ADM - SJC": ["AMANDA ALBUQUERQUE DOS SANTOS","ANA MANCCINI RIBEIRO FERNANDES","BRIAN DAMASCENA PESSOA","BRYAN CORRÊA RIBEIRO","DAVI CRISTOVÃO DA SILVA","DAVI SANTOS LIMA","EMILLY POLICARPO FREITAS DE MORAES","EVELIN JULIA DA SILVA","EVELLYN LAVINIA ALVES RIBEIRO BERNARDES","FERNANDO BITTENCOURT SILVÉRIO SANTOS","GABRIEL GUSHI DALMASO","GABRIELA LEMES ROSA","GABRIELLA ASSIS VITAL NUNES","HELENA KITA TAIRA MIKAMI","IRAN ALVES SOARES JUNIOR","ISABELLE DE PALMA CARVALHO","ISABELLE LEAL FERREIRA","JOÃO CARLOS EDUARDO SANTOS ALVES","JULIA HONORIO RIBEIRO BUENO","KAUAN ISAMU HAYASHI REIS HIRATA","LUCAS LANCELLOTTI DI LUCCIO BRAGA","LUIZ GUILHERME SILVA NASCIMENTO","LUIZ HENRIQUE OLIVEIRA RIBEIRO","MANUELLA VICHI DOS SANTOS","MARIA EDUARDA GOMES LISBOA DE ALMEIDA","MARIA EDUARDA LOPES FEITOSA","MARIA VITTORIA BETINI SANTOS","MIGUEL OLIVEIRA DREYFUS MARINHO","NATAN TOLEDO SILVA","NICOLAS SAMUEL LUCENA DOS SANTOS","NICOLAS VINICIUS MALAQUIAS DE SOUZA","PAULO ROBERTO SANTOS MENEZES","PYETRA DA SILVA ALCÂNTARA","SAMUEL GONÇALVES BARBOSA","SANMYA ISID OLIVEIRA DA COSTA","TÁBATA APARECIDA OLIVEIRA DE CARVALHO","THAINÁ VICTORIA VILELA SANTOS","YASMIN DE SOUZA PEREIRA","YASMIN MICHELE DE MORAIS SANT ANA"],
+        "1 DS - SJC": ["ANDRÉ DA PAZ PEREIRA","ANDRÉ RAMON JOSÉ CLARO","ARIEL TRANNIN MARTINS","BENÍCIO NEGRO GONÇALVES","CAIO CORREA DA SILVA","CAUÁ DE LIMA ALMEIDA","EDUARDA LANDIM DA SILVA","EMANUEL SOUZA ARAÚJO DE OLIVEIRA","ENZO PAIVA DE ANDRADE","FELIPE LOURIMER TAKAKI","GABRIEL FERREIRA UCIEL","HADASSA GARCIA DE SOUZA","JOÃO RIBEIRO SILVA","JOÃO VITOR DIAS GUIMARÃES","LETÍCIA LEMOS COSTA E SILVA","LETÍCIA RODRIGUES DA SILVA","LUCCA MARTINEZ MENDES","LUIZ EDUARDO MALATESTA ALVIM FERREIRA","LUIZ EDUARDO SANTOS COSTA","LUIZ MIGUEL DE SIQUEIRA RIBEIRO","MATHEUS CREPALDI","MATHEUS FERREIRA PACHECO","MATHEUS FRAGA SOARES","MATHEUS SBRAGIA GONÇALVES FERREIRA","MIGUEL DOS SANTOS FERREIRA","MIGUEL MIRANDA DE ARAUJO","NICKOLAS MOREIRA DIAS","NICOLAS RIBEIRO INÁCIO","PEDRO HENRIQUE SILVA DE OLIVEIRA","RAFAEL DANTAS DOS SANTOS","RAFAEL SABINO JAKUBOWSKI MOREIRA","REBECA VITORIA SOUZA OLIVEIRA","RUAN THIAGO DOS SANTOS GODOY","SAMUEL ELIAS DA SILVA ALVES","SAMUEL FELIPE ROLIM MEZZOMO","THÉO FERREIRA OLIVEIRA","VINÍCIUS DOS SANTOS ALMEIDA","VINICIUS LEE SANTOS ALVES"],
+        "1 RH - SJC": ["ANA BEATRIZ FRANCO CAMARGO","ANA CAROLINA DA MOTTA CARVALHO","ANA LAURA DE PAIVA ALMENDAGNA","BEATRIZ LOPES REZENDE","EDUARDA VITÓRIA MIONI GODOI DA SILVA","EVELYN KYARA TAGLIAMENTO","GABRIEL LEITE DA SILVA","GIOVANE EDUARDO MENEZES DE OLIVEIRA","GIOVANNA BARROS DOS SANTOS","ISABELA MOREIRA DOS SANTOS MARTINS","ISABELI VITORIA DE SOUZA SANTOS","ISABELLA ROSESTOLATO MACHADO","JENIFER KREFF SOARES VIEIRA","JULIA GABRIELE RIBEIRO FERREIRA","KAMILLY DIOVANNA ROCHA CARMO SANTOS","LARA CRISTINNY RODRIGUES BRITO","LUANY CRISTHINE CARDOSO DOS SANTOS","LUCAS WALLAN SIMÕES LINO","LUCCA SANEFUJI MOURA","MAIARA BATISTA BITTENCOURT","MARIA HELENA OLIVEIRA FERNANDES","MARIA LAURA FLAUSINO MONTEIRO SILVA","MARIA VITORIA COSTA LEITE","MARIANE LOPES DOS SANTOS","MARINA BARRETO AMARIO","MATHEUS SILVESTRE GONÇALVES DE LIMA","MIGUEL VINNICIUS SERPA DE ASSIS","PEDRO HENRIQUE SIMÕES CHAGAS BEZERRA","RAY APARECIDO ALEXANDRE SAMPAIO","REBECA VENTURA MATOS FAGUNDES","RENATA ALECSANDRA CARVALHO DE SOUZA","SAMANTA CONCEIÇÃO DE MOURA","VITORIA GABRIELY MOREIRA LIMA","WINNE VITÓRIA SANTOS GOMES","YAGO GODOI FERREIRA","YASMIN DE LIMA AVILA","YASMIN LOHANNA BERNARDES FERREIRA","YASMIN RIBEIRO PEREIRA"],
+        "2 DS - SJC": ["ANA CLARA RODRIGUES DE FREITAS","EMANUELL NEGREIROS FERREIRA","ENZO VINICIUS DE OLIVEIRA MARTINS","ERIC ASSIS DE OLIVEIRA","GABRIELI ORTIZ CAMARGO DE OLIVEIRA","GUSTAVO HENRIQUE TEIXEIRA RAMOS","GUSTAVO MIGUEL DA SILVA CABRAL","GUSTAVO RAMOS SANTOS","HEITOR SILVA CRUZ","HUGO MICHALEWICZ SOBRAL","ISABELA SANTOS GALDINO","JOAQUIM GONÇALVES DOS SANTOS","JOSÉ ISAC MENESES SANTOS","KAUÊ ISMAEL SILVA MACHADO","LARA LÊDA MACIEL","LEONARDO AUGUSTO BARBOSA","LIVIA FEITOSA DE OLIVEIRA","LUANA PORFIRIO BATISTA DA SILVA","LUCA PETRONI SANTOS","LUCAS AUGUSTO GAMA SILVA","LUCAS VINICIUS DA COSTA MINEIRO","LUIS FELIPE PAULINO","LUIZ FELIPE OLIVEIRA DE ALMEIDA","MARLON COSTA PASSOS","MATEUS CALDEIRA CARVALHO SANTANA","MELISSA DE BARROS SILVA","MIRELLA VALENTE VALUTO","NICULLAS MOREIRA ARAUJO","PEDRO EMANUEL ARAUJO MORAES","RAFAEL BRYAN DE OLIVEIRA SANTOS","RAFAEL DE OLIVEIRA CARVALHO","RAPHAEL DE MORAES DANIEL","RILARY DOS REIS FONSECA","RYAN AUGUSTO SANTOS DE MATOS SILVA","RYAN GABRIEL BATISTA GOULART","URIEL ANTÃO LIMA NASCIMENTO","VITOR GABRIEL MOREIRA DE BRITO","VITOR SILVA DE OLIVEIRA COSTA","YAN DE MORAES SILVEIRA"],
+        "2 ADM - SJC": ["ALEXANDRE TERRA DE SÁ","ANA CAROLINE RAMOS DE REZENDE FORTES","ARTHUR SANTANA FARIA LEITE","BEATRIZ MELO LEMES PINTO","EDUARDA SAYURI SUZUKI IWAMA","ELOISE CHRISTINE FERREIRA LEAL","ENZO PRIETO DE CARVALHO","FELIX RODRIGUES DOS SANTOS","GABRIEL REIS COSTA","GABRIELA DONEGA LEITE","GUILHERME COSTA DE JESUS BONFIM","GUILHERME MENEZES CARVALHO","GUILHERME PEREIRA DOS SANTOS","GUSTAVO CONCEIÇÃO DE ARAÚJO","GUSTAVO SOARES RODRIGUES","ISAAC D'ALICIO BENEDITO DE ANDRADE","ISABELLA DE SOUSA SIQUEIRA OLIVEIRA MARQUES","JOÃO HENRIQUE PEREIRA NOGUEIRA","JOÃO VITOR DE SOUZA","JÚLIA ARAUJO SANTOS SILVA","JÚLIO CÉSAR APARECIDO RENNÓ","JYULLY GABRIELLE FORTUNATO LEITE","LARA MARIA CARDOSO VIEIRA","LAVÍNIA DANTAS CARDOSO RUFINO","LEONARDO OSCAR SOARES DE CAMPOS","LUCAS CANCIAN MONSTANS","MARCO ANTONIO MITSUO CHUBATSU KENNER PEREIRA","MARIA EDUARDA XAVIER SILVA","MARIA ELOÁ COSTA RAMALHO","MARIANA AUREA GONÇALVES FERREIRA DE SOUZA","MARIANA GONÇALVES DE SOUZA","NICOLAS HENRIQUE OLIVEIRA MACHADO","NICOLLY ESTÉFANI BARBOSA DE FARIA","RAYANE ALVES RODRIGUES","SABRINA RIBEIRO GONÇALVES","VITOR HUGO SANTOS DE MATOS","VITOR LIPARELLI LOPES DOS SANTOS","WALLISSOM ROLDAN BOLCONT","YURI WALLACE DOS SANTOS MARQUES"],
+        "2 ADM - JAC": ["AMANDA ALVES FERREIRA","ANA LUISA DE MOURA","ARTHUR RODOLPHI MACENA","BRENO OLIVEIRA PACHECO","CAIO SOUZA BORGES","DAVI DEGLI DOS REIS SILVÉRIO","DÉNIL ARAÚJO RODRIGUES DOS SANTOS","ELLEN CRISTINA SIQUEIRA DOS SANTOS","ELMARIE AKEMI NAKASHIMA","EMILLY SOUSA ALVES SANTOS","EMILY BRAGA REIS","GABRIELA MATHEUS CARNEIRO","GABRIELLA PROVIER LOPES DOS SANTOS","GIOVANI DE CARVALHO BRANDÃO","GIOVANNA FLÁVIA SANTOS DA SILVA","GUSTAVO DAIKI KANDA","IURI DE MOURA FERREIRA TENÓRIO","JOÃO VITOR MATOS DE LIMA","JÚLIA VIEIRA","KEVIN EDUARDO DO PRADO","LARISSA VIEIRA","LAURA RODRIGUES PINELI","LUARA MORAES DOS SANTOS PACHECO","MÁRCIO HENRIQUE DA SILVA GOMES","MARIA JÚLIA SILVA JANUÁRIO","MICKELYN CARDOSO PEREIRA","MIRELA MARIA DE LIMA BRAGA","NOEMIA RABELO MARINHO DE SOUZA","PEDRO HENRIQUE FEIKES DANDREA","PEDRO HENRIQUE FERREIRA CASSEMIRO","PEDRO HENRIQUE RODRIGUES CHIMENDES","QUEIZE GUEDES RAMOS","RAFAEL OLIVEIRA FERNANDES","RAFAEL ROCHA RESENDE","ROBERTA FLORIS SOARES","RUAN DA SILVA BUENO","SAMUEL MARTINS REZENDE","SARA DOS SANTOS","THIAGO JOSÉ SANTANA DIAS DE SOUZA","VERÓNICA MARIA DE PAULA AZEVEDO","VICTÓRIA DA SILVA OLIVEIRA"],
+        "3 ADM - SJC (Integral)": ["ALEXANDRE CESAR DOS SANTOS MARTINS","ANA CLARA COUTINHO MORENO","ANA CLARA FARIA ANDRIOLLO","ANA LUIZA FORTUNATO GOMES","ANA LUIZA MAIA DE SALES","BARBARA PESSIN MENESES","BEATRIZ BATISTA DE FREITAS","BEATRIZ DOURADO DE SOUZA","BEATRIZ RICI BIAGGIONI SILVA","BEATRIZ VITÓRIA GARAVELO","CAMILA ALVES PEREIRA","CAROLINE MENEZES OLIVEIRA","ELISA CAMARGO MARQUES DA CUNHA","FERNANDA GOUVEIA SILVA","GABRIEL HENRIQUE ARAÚJO NUNES","ISABELA FERREIRA SENA","ISABELLA SOUSA BERTETTI","ISABELLA WENCESLAU DA PALMA CRAVEIRO","ISADORA AMARAL DIAS DA SILVA","JHENNIFER THALIA BRAZ CUNHA","JHOVANNA DA SILVA CASTRO","JOÃO HEITOR FERREIRA FONSECA","JÚLIA VITÓRIA VELOSO ALEIXO","JULIANA DE JESUS BASTOS OLIVEIRA","LAURA DOS SANTOS DE ANDRADE","LÍVIA DOS SANTOS CREPALDI","LUCAS GABRIEL DA SILVA LIRA","LUÍS GUSTAVO OLIVEIRA TREVISAN","MARIA CLARA SANTOS PEREIRA DA SILVA","MARIA CLARA SCHOTT GERBER","MARIA FERNANDA DA SILVA SOARES","MARIA VITÓRIA DA COSTA","MARIANA SANTOS SILVA","MARINA BRAGA DOS SANTOS","NATHAN GABRIEL ANDRADE JUVENTINO DA SILVA","NICOLE STEPHANIE ALVES DOS SANTOS","VITÓRIA SAORI HAZUMA SOUZA"],
+        "3 MA - JAC": ["ALIAH GUIMARÃES GONÇALVES","ALICE PINHEIRO SILVA","ANA CAROLINA DE MORAES ARANTES","ANA CLARA SANTOS DE OLIVEIRA","ANA JULYA DA SILVA LEITE","ANNA JÚLLYA DE SOUZA BAPTISTA","ARTUR MICHELIN SIQUEIRA","BRYAN FERREIRA DE MIRANDA","ESTELLA CAVALCANTE VEIGA","FRANCIELE APARECIDA BARBOSA","GABRIEL MELO DA SILVA PINTO","HEITOR VOLTEZOU DE LIMA FRANCO","HENRIQUE DE OLIVEIRA DAMASCENO","ISABELLY SAMIRE TIDIOLI BACCARO","ISADORA MOREIRA CESÁRIO","ITHALO MARCOS FERNANDES DA SILVA","JOANA MELISSA MERLI","JOYCE APARECIDA DE OLIVEIRA CHAVES","JULIA CASSIANO GOMES DA SILVA","LEVI SILVA PRADO E SOUSA","LÍVYA DE OLIVEIRA NEVES","MARIA CLARA ALMEIDA XAVIER DA SILVA","MARINA JÚLIO GONÇALVES","MAYARA RAMOS GIL DE OLIVEIRA","MIGUEL DE LIMA HALLER","OTÁVIO ANGELO DE ALMEIDA MENDES","PEDRO GERVASIO REIS","RAUL ANTONIO CAVALCANTE ANZOLIN COSTA","RHAYANE DA SILVA RODRIGUES","SOPHIA FERNANDES SIQUEIRA DA COSTA","THIAGO MOREIRA ARAUJO","VINÍCIUS HENRIQUE CORRÊA COSTA","VITOR AGATA LARA","VITÓRIA BORGES SILVA","YASMIN OLIVEIRA DE SANTI"]
+    };
+
+    // Preencher seletor de turmas
+    const turmaSelect = document.getElementById('turmaSelect');
+    const alunoSelect = document.getElementById('alunoSelect');
+    for (let turma in turmasAlunos) {
+        let opt = document.createElement('option');
+        opt.value = turma;
+        opt.textContent = turma;
+        turmaSelect.appendChild(opt);
+    }
+
+    turmaSelect.addEventListener('change', function() {
+        const turma = turmaSelect.value;
+        alunoSelect.innerHTML = '<option value="">Selecione um aluno</option>';
+        if (turma && turmasAlunos[turma]) {
+            turmasAlunos[turma].forEach(nome => {
+                let opt = document.createElement('option');
+                opt.value = nome;
+                opt.textContent = nome;
+                alunoSelect.appendChild(opt);
+            });
+            alunoSelect.disabled = false;
+        } else {
+            alunoSelect.disabled = true;
+        }
+        startBtn.disabled = !(turma && alunoSelect.value);
+    });
+    alunoSelect.addEventListener('change', () => startBtn.disabled = !(turmaSelect.value && alunoSelect.value));
+
+    const disciplinasSelect = document.getElementById('disciplinaSelect');
+    const bimestreSelect = document.getElementById('bimestreSelect');
+    const startBtn = document.getElementById('startBtn');
+
+    // 30 questões (conteúdo igual à versão anterior)
+    const questions = [
+        { text: "Paulo Freire nasceu em Recife, Pernambuco, em 1921.", correct: true, justification: "Sim, Paulo Freire nasceu em 19 de setembro de 1921, no bairro de Casa Amarela, Recife." },
+        { text: "Sua obra mais famosa é 'Pedagogia do Oprimido', publicada em 1968.", correct: true, justification: "Publicado originalmente em 1968 (no exílio), é um dos livros mais citados na área da educação mundial." },
+        { text: "Freire defendia a 'educação bancária' como modelo ideal para a aprendizagem.", correct: false, justification: "Ele criticava a educação bancária (depósito de informações) e propunha a educação problematizadora e dialógica." },
+        { text: "Foi preso e exilado após o golpe militar de 1964 no Brasil.", correct: true, justification: "Após o golpe, Freire foi preso por 70 dias e depois se exilou no Chile, Bolívia e outros países." },
+        { text: "O método Paulo Freire foi usado pela primeira vez em Angicos (RN) para alfabetizar 300 trabalhadores rurais em 45 dias.", correct: true, justification: "Em 1963, o método foi aplicado com sucesso em Angicos, alfabetizando 300 camponeses em 40 horas." },
+        { text: "Freire defendia que o aluno é um sujeito passivo no processo de ensino.", correct: false, justification: "Pelo contrário, ele via o aluno como sujeito ativo, produtor de conhecimento em diálogo com o professor." },
+        { text: "Entre suas obras estão 'Educação como Prática da Liberdade' e 'Pedagogia da Esperança'.", correct: true, justification: "Sim, são dois livros fundamentais que complementam sua visão humanista e política da educação." },
+        { text: "Freire foi o primeiro autor brasileiro a ter um livro inteiro proibido pela ditadura.", correct: false, justification: "Não há registro exclusivo; sua obra foi censurada, mas não foi o primeiro; muitos autores sofreram censura." },
+        { text: "Recebeu o título de 'Patrono da Educação Brasileira' por lei federal em 2012.", correct: true, justification: "Lei 12.612/2012 concedeu-lhe o título de Patrono da Educação Brasileira." },
+        { text: "Foi inspetor escolar em São Paulo durante a ditadura militar.", correct: false, justification: "Na ditadura, foi preso, exilado; não atuou como inspetor no Brasil nesse período." },
+        { text: "Freire colaborou com governos populares na América Latina, como no Chile e na Nicarágua.", correct: true, justification: "No Chile, trabalhou em reforma agrária; na Nicarágua, auxiliou na campanha de alfabetização sandinista." },
+        { text: "A 'pedagogia da autonomia' é um conceito central em sua obra.", correct: true, justification: "O livro 'Pedagogia da Autonomia' (1996) sintetiza saberes necessários à prática educativa." },
+        { text: "Paulo Freire nunca foi convidado para atuar em governos de esquerda.", correct: false, justification: "Foi Secretário de Educação de São Paulo na gestão da prefeita Luiza Erundina (1989-1991)." },
+        { text: "A 'círculo de cultura' substitui a sala de aula tradicional em seu método.", correct: true, justification: "Nos círculos de cultura, coordenadores e alunos aprendem juntos, sem hierarquia rígida." },
+        { text: "Freire considerava a leitura da palavra inseparável da leitura do mundo.", correct: true, justification: "Para ele, alfabetizar é também despertar a consciência crítica sobre a realidade social." },
+        { text: "Foi indicado ao Prêmio Nobel da Paz em 2000.", correct: false, justification: "Na verdade, foi em 1973, 1974 e 1975; faleceu em 1997, nunca recebeu o Nobel, mas recebeu o 'Prêmio Educação para a Paz' da UNESCO." },
+        { text: "Freire criticava o uso de 'palavras geradoras' como ferramenta pedagógica.", correct: false, justification: "Pelo contrário, as palavras geradoras são a base do seu método, extraídas do universo vocabular dos alunos." },
+        { text: "Sua filha, Madalena Freire, também é educadora e seguidora de suas ideias.", correct: true, justification: "Madalena Freire Weffort é pedagoga e continua difundindo a obra do pai." },
+        { text: "Para Freire, o professor não deve ter autoridade em sala de aula.", correct: false, justification: "Ele defendia a 'autoridade democrática', baseada no respeito e no saber, não no autoritarismo." },
+        { text: "A obra 'Pedagogia da Indignação' foi publicada postumamente.", correct: true, justification: "Publicada em 2000, reúne cartas e reflexões finais de Freire." },
+        { text: "Paulo Freire foi alfabetizador de adultos desde os anos 1940.", correct: true, justification: "Começou trabalhando com operários no Serviço Social da Indústria (SESI) em Recife." },
+        { text: "Seu método foi aplicado também em países africanos de língua portuguesa (PALOP).", correct: true, justification: "Guiné-Bissau, Moçambique, Cabo Verde usaram o método Freire após independência." },
+        { text: "Freire defendia que a educação deve ser neutra e apolítica.", correct: false, justification: "Para ele, toda educação é política; ou contribui para a dominação ou para a libertação." },
+        { text: "A 'conscientização' é um dos objetivos centrais da pedagogia freiriana.", correct: true, justification: "Conscientização significa tomar consciência crítica das opressões e agir para transformá-las." },
+        { text: "Freire faleceu em São Paulo, em 1997, vítima de ataque cardíaco.", correct: true, justification: "Morreu em 2 de maio de 1997, aos 75 anos, deixando vasta obra." },
+        { text: "O método Paulo Freire foi oficialmente proibido durante a ditadura militar brasileira.", correct: true, justification: "Sim, o método foi considerado subversivo e censurado, embora alguns educadores o utilizassem clandestinamente." },
+        { text: "A 'Pedagogia da Tolerância' foi um livro escrito exclusivamente por Freire.", correct: false, justification: "Não existe esse título; existe 'Pedagogia da Autonomia', 'Pedagogia da Esperança' etc." },
+        { text: "Freire foi o único educador brasileiro a receber o título de 'Educador do Ano' pela UNESCO.", correct: false, justification: "Recebeu o 'Prêmio UNESCO de Educação para a Paz' em 1986, mas não esse título específico." },
+        { text: "Participou ativamente da criação do Partido dos Trabalhadores (PT).", correct: true, justification: "Sim, foi um dos intelectuais que apoiou a fundação do PT em 1980." },
+        { text: "A 'Pedagogia do Oprimido' já vendeu milhões de exemplares em todo o mundo.", correct: true, justification: "Estima-se mais de 1 milhão de cópias." }
+    ];
+
+    // Estado do quiz
+    let currentIndex = 0;
+    const total = questions.length;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+    let quizData = null;
+    let tentativas = 0;   // contador de tentativas (incrementado a cada "Nova Tentativa")
+
+    // Elementos DOM
+    const startScreen = document.getElementById('startScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const congratsScreen = document.getElementById('congratsScreen');
+    const finalScreen = document.getElementById('finalScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const sendResultBtn = document.getElementById('sendResultBtn');
+    const printResultBtn = document.getElementById('printResultBtn');
+    const closeFinalBtn = document.getElementById('closeFinalBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .btn-primary, .print-btn, .restart-btn, .send-btn, .close-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    // Iniciar quiz
+    startBtn.addEventListener('click', () => {
+        quizData = {
+            nome: alunoSelect.value,
+            turma: turmaSelect.value,
+            disciplina: disciplinasSelect.value,
+            bimestre: bimestreSelect.value
+        };
+        // Recupera tentativas do localStorage (persiste entre reinícios)
+        let stored = localStorage.getItem('tentativas_quiz');
+        tentativas = stored ? parseInt(stored) : 1;   // primeira tentativa = 1
+        localStorage.setItem('tentativas_quiz', tentativas);
+        localStorage.setItem('quiz_aluno', JSON.stringify(quizData));
+        startScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        currentIndex = 0;
+        renderQuestion();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerText = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                if ((btn.getAttribute('data-value') === 'true' && selected === true) ||
+                    (btn.getAttribute('data-value') === 'false' && selected === false)) {
+                    btn.classList.add('selected');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === questions[currentIndex].correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selectedBtn = Array.from(btns).find(btn => btn.getAttribute('data-value') === value);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    // Função para calcular e exibir o resultado (sem enviar)
+    function mostrarResultado() {
+        let acertos = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+        }
+        const nota = (acertos / total) * 10;
+        let mensao = '';
+        if (nota < 5) mensao = 'Não foi muito bem';
+        else if (nota < 6.5) mensao = 'Regular';
+        else if (nota < 8.5) mensao = 'Bom';
+        else mensao = 'Excelente';
+
+        const resultadoHTML = `
+            <p><strong>Aluno:</strong> ${quizData.nome}</p>
+            <p><strong>Turma:</strong> ${quizData.turma}</p>
+            <p><strong>Disciplina:</strong> ${quizData.disciplina}</p>
+            <p><strong>Bimestre:</strong> ${quizData.bimestre}</p>
+            <p><strong>Acertos:</strong> ${acertos} de ${total}</p>
+            <p><strong>Nota:</strong> ${nota.toFixed(1)}</p>
+            <p><strong>Mensão:</strong> ${mensao}</p>
+            <p><strong>Tentativa nº:</strong> ${tentativas}</p>
+        `;
+        resultContent.innerHTML = resultadoHTML;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+        
+        // Armazena dados para envio posterior (se o aluno clicar em enviar)
+        window.dadosParaEnvio = {
+            aluno: quizData.nome,
+            turma: quizData.turma,
+            disciplina: quizData.disciplina,
+            bimestre: quizData.bimestre,
+            nota: nota,
+            acertos: acertos,
+            tentativas: tentativas
+        };
+    }
+
+    // Envio manual (apenas quando o aluno clicar no botão)
+    async function enviarParaPlanilha(dados) {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyJJNSHTm5HucSg2rT3Qm-o-C-HjqgzG3IIHK21v1rTFqYwcusCmUZejKYun1AM0bjU1A/exec';
+        const payload = {
+            aluno: dados.aluno,
+            tentativas: dados.tentativas,
+            turma: dados.turma,
+            disciplina: dados.disciplina,
+            bimestre: dados.bimestre,
+            atividade: "Quiz - Paulo Freire",
+            nota: dados.nota.toFixed(1),
+            acertos: dados.acertos,
+            total: total,
+            data: new Date().toISOString()
+        };
+        try {
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            return true;
+        } catch(e) {
+            console.warn("Erro no envio:", e);
+            return false;
+        }
+    }
+
+    sendResultBtn.addEventListener('click', async () => {
+        if (window.dadosParaEnvio) {
+            const enviado = await enviarParaPlanilha(window.dadosParaEnvio);
+            if (enviado !== false) {
+                resultScreen.classList.remove('active');
+                congratsScreen.classList.add('active');
+            } else {
+                alert("Erro ao enviar. Tente novamente mais tarde.");
+            }
+        } else {
+            alert("Nenhum resultado para enviar. Complete o quiz primeiro.");
+        }
+    });
+
+    // Nova tentativa: limpa respostas, mantém identificação, incrementa tentativas
+    restartQuizBtn.addEventListener('click', () => {
+        tentativas++;
+        localStorage.setItem('tentativas_quiz', tentativas);
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    printResultBtn.addEventListener('click', () => { window.print(); });
+    closeFinalBtn.addEventListener('click', () => {
+        congratsScreen.classList.remove('active');
+        finalScreen.classList.add('active');
+    });
+    setFontSize(16);
+</script>
+</body>
+</html>

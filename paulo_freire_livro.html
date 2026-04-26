@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Paulo Freire · Livro Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.6;
+        }
+
+        .book-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            background: #1a5e44;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .toolbar .title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            background: #2a7f5e;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: #3a9a73;
+        }
+
+        .audio-bar {
+            background: #e6f0ea;
+            padding: 8px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #cde0d6;
+        }
+
+        .audio-bar span {
+            font-weight: bold;
+            color: #1a5e44;
+        }
+
+        .chapter-menu {
+            background: #e6f0ea;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #cde0d6;
+            position: sticky;
+            top: 52px;
+            z-index: 99;
+        }
+
+        .chapter-menu a {
+            background: white;
+            color: #1a5e44;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+            border: 1px solid #b3cebf;
+            cursor: pointer;
+        }
+
+        .chapter-menu a:hover {
+            background: #1a5e44;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f0f7f3;
+            border-top: 1px solid #dde5e0;
+        }
+
+        .nav-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .nav-btn:disabled {
+            background: #b0c9bc;
+            cursor: not-allowed;
+        }
+
+        .chapter-container {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .chapter {
+            display: none;
+        }
+
+        .chapter.active {
+            display: block;
+        }
+
+        .chapter h1 {
+            color: #0f3d2e;
+            border-left: 6px solid #2a7f5e;
+            padding-left: 20px;
+            margin-bottom: 25px;
+            font-size: 1.9rem;
+        }
+
+        .chapter h2 {
+            color: #1a5e44;
+            margin: 25px 0 15px;
+            font-size: 1.5rem;
+        }
+
+        .chapter p {
+            margin-bottom: 1.2em;
+            text-align: justify;
+        }
+
+        .img-left {
+            float: left;
+            margin: 8px 20px 15px 0;
+            max-width: 280px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .img-right {
+            float: right;
+            margin: 8px 0 15px 20px;
+            max-width: 280px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .img-fullwidth {
+            display: block;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .video-btn {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0 20px;
+            display: inline-block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .send-report {
+            background: #2a7f5e;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        .congrats-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .congrats-box {
+            background: white;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 28px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .congrats-box h2 {
+            color: #1a5e44;
+            margin-bottom: 15px;
+        }
+
+        .congrats-box p {
+            margin-bottom: 25px;
+            color: #2d4a3b;
+        }
+
+        .close-congrats {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .img-left, .img-right {
+                float: none;
+                display: block;
+                margin: 20px auto;
+                max-width: 100%;
+            }
+            .chapter-container {
+                padding: 20px;
+            }
+            .toolbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .chapter-menu {
+                top: 85px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="book-wrapper">
+    <div class="toolbar">
+        <span class="title">📖 Paulo Freire · Educador e Humanista</span>
+        <div class="toolbar-buttons">
+            <button class="tool-btn" id="fontMinus">A−</button>
+            <button class="tool-btn" id="fontPlus">A+</button>
+            <button class="tool-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+            <button class="tool-btn" id="backToTop">🔝 Início</button>
+        </div>
+    </div>
+
+    <div class="audio-bar">
+        <span>🔊 Leitura em voz alta:</span>
+        <button class="tool-btn" id="speakToggleBtn" style="background: #1a5e44;">🔊 Ouvir página</button>
+        <select id="rateSelect" style="background: white; border-radius: 30px; padding: 4px 8px;">
+            <option value="1">1x</option>
+            <option value="1.3">1.3x</option>
+            <option value="1.5">1.5x</option>
+        </select>
+    </div>
+
+    <div class="chapter-menu" id="chapterMenu"></div>
+    <div class="chapter-container" id="chapterContainer"></div>
+    <div class="nav-buttons">
+        <button class="nav-btn" id="prevChapter">◀ Capítulo anterior</button>
+        <button class="nav-btn" id="nextChapter">Próximo capítulo ▶</button>
+    </div>
+</div>
+
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="video-container">
+            <iframe id="youtubeIframe" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // 1. TURMAS E ALUNOS (mesmas do quiz)
+    // ============================================================
+    const turmasAlunos = {
+        "1 ADM - SJC": ["AMANDA ALBUQUERQUE DOS SANTOS","ANA MANCCINI RIBEIRO FERNANDES","BRIAN DAMASCENA PESSOA","BRYAN CORRÊA RIBEIRO","DAVI CRISTOVÃO DA SILVA","DAVI SANTOS LIMA","EMILLY POLICARPO FREITAS DE MORAES","EVELIN JULIA DA SILVA","EVELLYN LAVINIA ALVES RIBEIRO BERNARDES","FERNANDO BITTENCOURT SILVÉRIO SANTOS","GABRIEL GUSHI DALMASO","GABRIELA LEMES ROSA","GABRIELLA ASSIS VITAL NUNES","HELENA KITA TAIRA MIKAMI","IRAN ALVES SOARES JUNIOR","ISABELLE DE PALMA CARVALHO","ISABELLE LEAL FERREIRA","JOÃO CARLOS EDUARDO SANTOS ALVES","JULIA HONORIO RIBEIRO BUENO","KAUAN ISAMU HAYASHI REIS HIRATA","LUCAS LANCELLOTTI DI LUCCIO BRAGA","LUIZ GUILHERME SILVA NASCIMENTO","LUIZ HENRIQUE OLIVEIRA RIBEIRO","MANUELLA VICHI DOS SANTOS","MARIA EDUARDA GOMES LISBOA DE ALMEIDA","MARIA EDUARDA LOPES FEITOSA","MARIA VITTORIA BETINI SANTOS","MIGUEL OLIVEIRA DREYFUS MARINHO","NATAN TOLEDO SILVA","NICOLAS SAMUEL LUCENA DOS SANTOS","NICOLAS VINICIUS MALAQUIAS DE SOUZA","PAULO ROBERTO SANTOS MENEZES","PYETRA DA SILVA ALCÂNTARA","SAMUEL GONÇALVES BARBOSA","SANMYA ISID OLIVEIRA DA COSTA","TÁBATA APARECIDA OLIVEIRA DE CARVALHO","THAINÁ VICTORIA VILELA SANTOS","YASMIN DE SOUZA PEREIRA","YASMIN MICHELE DE MORAIS SANT ANA"],
+        "1 DS - SJC": ["ANDRÉ DA PAZ PEREIRA","ANDRÉ RAMON JOSÉ CLARO","ARIEL TRANNIN MARTINS","BENÍCIO NEGRO GONÇALVES","CAIO CORREA DA SILVA","CAUÁ DE LIMA ALMEIDA","EDUARDA LANDIM DA SILVA","EMANUEL SOUZA ARAÚJO DE OLIVEIRA","ENZO PAIVA DE ANDRADE","FELIPE LOURIMER TAKAKI","GABRIEL FERREIRA UCIEL","HADASSA GARCIA DE SOUZA","JOÃO RIBEIRO SILVA","JOÃO VITOR DIAS GUIMARÃES","LETÍCIA LEMOS COSTA E SILVA","LETÍCIA RODRIGUES DA SILVA","LUCCA MARTINEZ MENDES","LUIZ EDUARDO MALATESTA ALVIM FERREIRA","LUIZ EDUARDO SANTOS COSTA","LUIZ MIGUEL DE SIQUEIRA RIBEIRO","MATHEUS CREPALDI","MATHEUS FERREIRA PACHECO","MATHEUS FRAGA SOARES","MATHEUS SBRAGIA GONÇALVES FERREIRA","MIGUEL DOS SANTOS FERREIRA","MIGUEL MIRANDA DE ARAUJO","NICKOLAS MOREIRA DIAS","NICOLAS RIBEIRO INÁCIO","PEDRO HENRIQUE SILVA DE OLIVEIRA","RAFAEL DANTAS DOS SANTOS","RAFAEL SABINO JAKUBOWSKI MOREIRA","REBECA VITORIA SOUZA OLIVEIRA","RUAN THIAGO DOS SANTOS GODOY","SAMUEL ELIAS DA SILVA ALVES","SAMUEL FELIPE ROLIM MEZZOMO","THÉO FERREIRA OLIVEIRA","VINÍCIUS DOS SANTOS ALMEIDA","VINICIUS LEE SANTOS ALVES"],
+        "1 RH - SJC": ["ANA BEATRIZ FRANCO CAMARGO","ANA CAROLINA DA MOTTA CARVALHO","ANA LAURA DE PAIVA ALMENDAGNA","BEATRIZ LOPES REZENDE","EDUARDA VITÓRIA MIONI GODOI DA SILVA","EVELYN KYARA TAGLIAMENTO","GABRIEL LEITE DA SILVA","GIOVANE EDUARDO MENEZES DE OLIVEIRA","GIOVANNA BARROS DOS SANTOS","ISABELA MOREIRA DOS SANTOS MARTINS","ISABELI VITORIA DE SOUZA SANTOS","ISABELLA ROSESTOLATO MACHADO","JENIFER KREFF SOARES VIEIRA","JULIA GABRIELE RIBEIRO FERREIRA","KAMILLY DIOVANNA ROCHA CARMO SANTOS","LARA CRISTINNY RODRIGUES BRITO","LUANY CRISTHINE CARDOSO DOS SANTOS","LUCAS WALLAN SIMÕES LINO","LUCCA SANEFUJI MOURA","MAIARA BATISTA BITTENCOURT","MARIA HELENA OLIVEIRA FERNANDES","MARIA LAURA FLAUSINO MONTEIRO SILVA","MARIA VITORIA COSTA LEITE","MARIANE LOPES DOS SANTOS","MARINA BARRETO AMARIO","MATHEUS SILVESTRE GONÇALVES DE LIMA","MIGUEL VINNICIUS SERPA DE ASSIS","PEDRO HENRIQUE SIMÕES CHAGAS BEZERRA","RAY APARECIDO ALEXANDRE SAMPAIO","REBECA VENTURA MATOS FAGUNDES","RENATA ALECSANDRA CARVALHO DE SOUZA","SAMANTA CONCEIÇÃO DE MOURA","VITORIA GABRIELY MOREIRA LIMA","WINNE VITÓRIA SANTOS GOMES","YAGO GODOI FERREIRA","YASMIN DE LIMA AVILA","YASMIN LOHANNA BERNARDES FERREIRA","YASMIN RIBEIRO PEREIRA"],
+        "2 DS - SJC": ["ANA CLARA RODRIGUES DE FREITAS","EMANUELL NEGREIROS FERREIRA","ENZO VINICIUS DE OLIVEIRA MARTINS","ERIC ASSIS DE OLIVEIRA","GABRIELI ORTIZ CAMARGO DE OLIVEIRA","GUSTAVO HENRIQUE TEIXEIRA RAMOS","GUSTAVO MIGUEL DA SILVA CABRAL","GUSTAVO RAMOS SANTOS","HEITOR SILVA CRUZ","HUGO MICHALEWICZ SOBRAL","ISABELA SANTOS GALDINO","JOAQUIM GONÇALVES DOS SANTOS","JOSÉ ISAC MENESES SANTOS","KAUÊ ISMAEL SILVA MACHADO","LARA LÊDA MACIEL","LEONARDO AUGUSTO BARBOSA","LIVIA FEITOSA DE OLIVEIRA","LUANA PORFIRIO BATISTA DA SILVA","LUCA PETRONI SANTOS","LUCAS AUGUSTO GAMA SILVA","LUCAS VINICIUS DA COSTA MINEIRO","LUIS FELIPE PAULINO","LUIZ FELIPE OLIVEIRA DE ALMEIDA","MARLON COSTA PASSOS","MATEUS CALDEIRA CARVALHO SANTANA","MELISSA DE BARROS SILVA","MIRELLA VALENTE VALUTO","NICULLAS MOREIRA ARAUJO","PEDRO EMANUEL ARAUJO MORAES","RAFAEL BRYAN DE OLIVEIRA SANTOS","RAFAEL DE OLIVEIRA CARVALHO","RAPHAEL DE MORAES DANIEL","RILARY DOS REIS FONSECA","RYAN AUGUSTO SANTOS DE MATOS SILVA","RYAN GABRIEL BATISTA GOULART","URIEL ANTÃO LIMA NASCIMENTO","VITOR GABRIEL MOREIRA DE BRITO","VITOR SILVA DE OLIVEIRA COSTA","YAN DE MORAES SILVEIRA"],
+        "2 ADM - SJC": ["ALEXANDRE TERRA DE SÁ","ANA CAROLINE RAMOS DE REZENDE FORTES","ARTHUR SANTANA FARIA LEITE","BEATRIZ MELO LEMES PINTO","EDUARDA SAYURI SUZUKI IWAMA","ELOISE CHRISTINE FERREIRA LEAL","ENZO PRIETO DE CARVALHO","FELIX RODRIGUES DOS SANTOS","GABRIEL REIS COSTA","GABRIELA DONEGA LEITE","GUILHERME COSTA DE JESUS BONFIM","GUILHERME MENEZES CARVALHO","GUILHERME PEREIRA DOS SANTOS","GUSTAVO CONCEIÇÃO DE ARAÚJO","GUSTAVO SOARES RODRIGUES","ISAAC D'ALICIO BENEDITO DE ANDRADE","ISABELLA DE SOUSA SIQUEIRA OLIVEIRA MARQUES","JOÃO HENRIQUE PEREIRA NOGUEIRA","JOÃO VITOR DE SOUZA","JÚLIA ARAUJO SANTOS SILVA","JÚLIO CÉSAR APARECIDO RENNÓ","JYULLY GABRIELLE FORTUNATO LEITE","LARA MARIA CARDOSO VIEIRA","LAVÍNIA DANTAS CARDOSO RUFINO","LEONARDO OSCAR SOARES DE CAMPOS","LUCAS CANCIAN MONSTANS","MARCO ANTONIO MITSUO CHUBATSU KENNER PEREIRA","MARIA EDUARDA XAVIER SILVA","MARIA ELOÁ COSTA RAMALHO","MARIANA AUREA GONÇALVES FERREIRA DE SOUZA","MARIANA GONÇALVES DE SOUZA","NICOLAS HENRIQUE OLIVEIRA MACHADO","NICOLLY ESTÉFANI BARBOSA DE FARIA","RAYANE ALVES RODRIGUES","SABRINA RIBEIRO GONÇALVES","VITOR HUGO SANTOS DE MATOS","VITOR LIPARELLI LOPES DOS SANTOS","WALLISSOM ROLDAN BOLCONT","YURI WALLACE DOS SANTOS MARQUES"],
+        "2 ADM - JAC": ["AMANDA ALVES FERREIRA","ANA LUISA DE MOURA","ARTHUR RODOLPHI MACENA","BRENO OLIVEIRA PACHECO","CAIO SOUZA BORGES","DAVI DEGLI DOS REIS SILVÉRIO","DÉNIL ARAÚJO RODRIGUES DOS SANTOS","ELLEN CRISTINA SIQUEIRA DOS SANTOS","ELMARIE AKEMI NAKASHIMA","EMILLY SOUSA ALVES SANTOS","EMILY BRAGA REIS","GABRIELA MATHEUS CARNEIRO","GABRIELLA PROVIER LOPES DOS SANTOS","GIOVANI DE CARVALHO BRANDÃO","GIOVANNA FLÁVIA SANTOS DA SILVA","GUSTAVO DAIKI KANDA","IURI DE MOURA FERREIRA TENÓRIO","JOÃO VITOR MATOS DE LIMA","JÚLIA VIEIRA","KEVIN EDUARDO DO PRADO","LARISSA VIEIRA","LAURA RODRIGUES PINELI","LUARA MORAES DOS SANTOS PACHECO","MÁRCIO HENRIQUE DA SILVA GOMES","MARIA JÚLIA SILVA JANUÁRIO","MICKELYN CARDOSO PEREIRA","MIRELA MARIA DE LIMA BRAGA","NOEMIA RABELO MARINHO DE SOUZA","PEDRO HENRIQUE FEIKES DANDREA","PEDRO HENRIQUE FERREIRA CASSEMIRO","PEDRO HENRIQUE RODRIGUES CHIMENDES","QUEIZE GUEDES RAMOS","RAFAEL OLIVEIRA FERNANDES","RAFAEL ROCHA RESENDE","ROBERTA FLORIS SOARES","RUAN DA SILVA BUENO","SAMUEL MARTINS REZENDE","SARA DOS SANTOS","THIAGO JOSÉ SANTANA DIAS DE SOUZA","VERÓNICA MARIA DE PAULA AZEVEDO","VICTÓRIA DA SILVA OLIVEIRA"],
+        "3 ADM - SJC (Integral)": ["ALEXANDRE CESAR DOS SANTOS MARTINS","ANA CLARA COUTINHO MORENO","ANA CLARA FARIA ANDRIOLLO","ANA LUIZA FORTUNATO GOMES","ANA LUIZA MAIA DE SALES","BARBARA PESSIN MENESES","BEATRIZ BATISTA DE FREITAS","BEATRIZ DOURADO DE SOUZA","BEATRIZ RICI BIAGGIONI SILVA","BEATRIZ VITÓRIA GARAVELO","CAMILA ALVES PEREIRA","CAROLINE MENEZES OLIVEIRA","ELISA CAMARGO MARQUES DA CUNHA","FERNANDA GOUVEIA SILVA","GABRIEL HENRIQUE ARAÚJO NUNES","ISABELA FERREIRA SENA","ISABELLA SOUSA BERTETTI","ISABELLA WENCESLAU DA PALMA CRAVEIRO","ISADORA AMARAL DIAS DA SILVA","JHENNIFER THALIA BRAZ CUNHA","JHOVANNA DA SILVA CASTRO","JOÃO HEITOR FERREIRA FONSECA","JÚLIA VITÓRIA VELOSO ALEIXO","JULIANA DE JESUS BASTOS OLIVEIRA","LAURA DOS SANTOS DE ANDRADE","LÍVIA DOS SANTOS CREPALDI","LUCAS GABRIEL DA SILVA LIRA","LUÍS GUSTAVO OLIVEIRA TREVISAN","MARIA CLARA SANTOS PEREIRA DA SILVA","MARIA CLARA SCHOTT GERBER","MARIA FERNANDA DA SILVA SOARES","MARIA VITÓRIA DA COSTA","MARIANA SANTOS SILVA","MARINA BRAGA DOS SANTOS","NATHAN GABRIEL ANDRADE JUVENTINO DA SILVA","NICOLE STEPHANIE ALVES DOS SANTOS","VITÓRIA SAORI HAZUMA SOUZA"],
+        "3 MA - JAC": ["ALIAH GUIMARÃES GONÇALVES","ALICE PINHEIRO SILVA","ANA CAROLINA DE MORAES ARANTES","ANA CLARA SANTOS DE OLIVEIRA","ANA JULYA DA SILVA LEITE","ANNA JÚLLYA DE SOUZA BAPTISTA","ARTUR MICHELIN SIQUEIRA","BRYAN FERREIRA DE MIRANDA","ESTELLA CAVALCANTE VEIGA","FRANCIELE APARECIDA BARBOSA","GABRIEL MELO DA SILVA PINTO","HEITOR VOLTEZOU DE LIMA FRANCO","HENRIQUE DE OLIVEIRA DAMASCENO","ISABELLY SAMIRE TIDIOLI BACCARO","ISADORA MOREIRA CESÁRIO","ITHALO MARCOS FERNANDES DA SILVA","JOANA MELISSA MERLI","JOYCE APARECIDA DE OLIVEIRA CHAVES","JULIA CASSIANO GOMES DA SILVA","LEVI SILVA PRADO E SOUSA","LÍVYA DE OLIVEIRA NEVES","MARIA CLARA ALMEIDA XAVIER DA SILVA","MARINA JÚLIO GONÇALVES","MAYARA RAMOS GIL DE OLIVEIRA","MIGUEL DE LIMA HALLER","OTÁVIO ANGELO DE ALMEIDA MENDES","PEDRO GERVASIO REIS","RAUL ANTONIO CAVALCANTE ANZOLIN COSTA","RHAYANE DA SILVA RODRIGUES","SOPHIA FERNANDES SIQUEIRA DA COSTA","THIAGO MOREIRA ARAUJO","VINÍCIUS HENRIQUE CORRÊA COSTA","VITOR AGATA LARA","VITÓRIA BORGES SILVA","YASMIN OLIVEIRA DE SANTI"]
+    };
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyJJNSHTm5HucSg2rT3Qm-o-C-HjqgzG3IIHK21v1rTFqYwcusCmUZejKYun1AM0bjU1A/exec';
+
+    // Disciplinas
+    const disciplinas = ["Geografia", "História", "Filosofia", "Sociologia", "ARIA", "EACH"];
+
+    // ============================================================
+    // 2. CONTEÚDO DOS CAPÍTULOS
+    // ============================================================
+    const chapters = [
+        {
+            title: "Capítulo 1 · Biografia de Paulo Freire",
+            content: `
+                <p>Paulo Reglus Neves Freire nasceu em 19 de setembro de 1921, na cidade de Recife, capital de Pernambuco. Filho, junto com seus dois irmãos e uma irmã, de um policial militar e de uma dona de casa, Paulo Freire ficou órfão de pai aos treze anos. Sua educação inicial contou com o ingresso no Colégio Oswaldo Cruz, em Recife, por meio de bolsa concedida pelo diretor. Mais tarde, Freire tornou-se auxiliar de disciplina e, após formação, professor de Língua Portuguesa.</p>
+                <img src="https://s5.static.brasilescola.uol.com.br/img/2019/05/paulo-freire-foto.jpg" alt="Paulo Freire" class="img-right">
+                <p>Paulo Freire é mundialmente conhecido pelas suas obras e contribuições à educação.</p>
+                <p>Em 1943, ingressou no curso de Direito da Universidade de Recife e, em 1944, casou-se com sua primeira esposa, a professora Elza Maia Costa de Oliveira, casamento que durou até o falecimento de Elza, em 1986. Em 1947, Freire foi nomeado diretor do Departamento de Educação e Cultura, do Serviço Social da Indústria, iniciando um trabalho com a alfabetização de jovens e adultos carentes e de trabalhadores da indústria.</p>
+                <p>Em 1959, Paulo Freire passou no processo seletivo para a cátedra de História e Filosofia da Educação da Escola de Belas Artes da Universidade de Recife, com a tese Educação e atualidade brasileira. Em 1961, o professor tornou-se diretor do Departamento de Extensões Culturais, da Universidade de Recife, o que o possibilitou realizar as primeiras experiências mais amplas com alfabetização de adultos, que culminaram na experiência de Angicos.</p>
+                <img src="https://reporterbrasil.org.br/wp-content/uploads/2019/03/Angicos6_Foto-arquivo.jpg" alt="Paulo Freire atuando como educador" class="img-fullwidth">
+                <p>Por possibilitar a alfabetização de jovens e adultos em cerca de 40 horas e com baixos custos, o método desenvolvido por Paulo Freire inspirou o Plano Nacional de Alfabetização, que começou a ser encabeçado pelo Ministério da Educação e Cultura (MEC) ainda no governo de João Goulart. A experiência de Angicos causou alvoroço na cidade.</p>
+                <button class="video-btn" id="openVideoBtn">🎬 Assistir vídeo: Paulo Freire · Documentário</button>
+                <p>Uma greve de trabalhadores de uma obra que se recusaram a trabalhar enquanto não tivessem seus direitos garantidos, como descanso semanal remunerado e uma jornada de trabalho que respeitasse a jornada estabelecida pela Consolidação das Leis Trabalhistas (CLT), foi o início para a acusação de comunismo contra o projeto de alfabetização freireano. Empresários e fazendeiros, primeiramente do Rio Grande do Norte, não aceitaram a reivindicação dos trabalhadores, antes analfabetos e agora entendedores de seus direitos.</p>
+                <p>Outra questão entrou em jogo no cenário político: na época, somente poderia votar quem fosse alfabetizado. O Plano Nacional de Alfabetização poderia levar o letramento a até seis milhões de brasileiros, o que significaria seis milhões de novos eleitores fora das classes dominantes. Esses fatores foram decisivos para que, ainda em abril de 1964, o Plano Nacional de Alfabetização fosse cancelado. Esses também foram fatores decisivos para a prisão de Paulo Freire, Marcos Guerra (advogado e um dos coordenadores do projeto em Angicos) e dezenas de outras pessoas, que, como no caso de Freire, também foram exiladas.</p>
+                <img src="https://www.diariodocentrodomundo.com.br/wp-content/uploads/2021/09/paulo-freire-2-1.jpg" alt="O retorno do exílio" class="img-fullwidth">
+                <p>Paulo Freire passou 70 dias preso e foi exilado. No exílio, foi primeiramente para o Chile, onde coordenou projetos de alfabetização de adultos, pelo Instituto Chileno da Reforma Agrária, por cinco anos. Em 1969, o professor pernambucano foi convidado a lecionar na Universidade de Harvard. Em 1970, foi consultor e coordenador emérito do Conselho Mundial de Igrejas (CMI), com sede em Genebra, na Suíça.</p>
+                <p>Até o seu retorno ao Brasil, em 1980, Freire fez viagens a mais de 30 países pelo CMI, prestando consultoria educacional e implementando projetos de educação voltados para a alfabetização, para a redução da desigualdade social e para a garantia de direitos. Foi nesse período em que o pensador brasileiro implementou importantes projetos educativos em Guiné-Bissau, Moçambique, Zâmbia e Cabo Verde.</p>
+                <p>Em 1978, a Lei da Anistia permitiu o retorno de exilados políticos. Em 1980, Freire retornou ao Brasil. Após isso, passou a lecionar na Pontifícia Universidade Católica de São Paulo (PUC-SP) e na Universidade de Campinas (Unicamp). Em 1986, sua primeira esposa, Elza, com quem teve cinco filhos, morreu. Em 1988, Freire casou-se com sua segunda esposa, Ana Maria Araújo, com quem permaneceu até a sua morte, em 1997.</p>
+                <img src="https://luizaerundina.com.br/wp-content/uploads/2021/09/FPF_ICO_01_1380.png" alt="Mario Cortella, Luiza Erundina e Paulo Freire" class="img-fullwidth">
+                <p>Entre 1988 e 1991, Freire foi nomeado secretário de educação do município de São Paulo pela então prefeita, Luiza Erundina, na época filiada ao Partido dos Trabalhadores (PT). Ao sair do cargo antes do término da gestão, Mário Sérgio Cortella, então assessor de Freire e mais tarde seu orientando de doutorado na PUC-SP, ocupou o cargo até o ano de 1992.</p>
+                <p>No dia 2 de maio de 1997, Paulo Freire morreu, aos 76 anos, após passar por uma angioplastia e apresentar um complexo quadro de saúde devido a problemas no sistema circulatório. Em vida e postumamente, o professor Paulo Freire foi condecorado com 48 títulos honoríficos.</p>
+                <p>Em todo o mundo, cerca de 350 escolas e instituições, como bibliotecas e universidades, levam o seu nome como forma de homenagem. Em 2005, a deputada Luiza Erundina criou um projeto de lei para reconhecer Paulo Freire como Patrono da Educação Brasileira. O projeto de lei somente sancionado em 2012, por meio da Lei 12.612/12, pela então presidente Dilma Rousseff.</p>
+                <p>Segundo levantamento feito, em 2016, por Elliot Greeni, pesquisador especialista em estudos sobre desenvolvimento e aprendizagem da London School of Economics, a obra <em>Pedagogia do oprimido</em>, de Paulo Freire, é o terceiro livro mais citado em trabalhos da área de humanidades no mundo. Até o ano do levantamento, o livro de Freire já havia sido citado 72.359 vezes, estando à frente no ranking de pensadores como Michel Foucault, Pierre Bourdieu e Karl Marx. À frente de Freire estavam apenas Thomas Kuhn e Everett Rogers.</p>
+            `
+        },
+        {
+            title: "Capítulo 2 · Método Paulo Freire",
+            content: `
+                <p>No auge da Guerra Fria, os Estados Unidos lançaram um projeto chamado Aliança para o Progresso, que visava a alavancar o processo de crescimento econômico e acabar com o que o bloco capitalista entendia como “crescente comunismo” que vinha assolando a América Latina. No entendimento de quem liderou o projeto, a erradicação do analfabetismo seria uma maneira de frear a ascensão socialista.</p>
+                <img src="https://centrodepesquisaeformacao.sescsp.org.br/uploads/AtividadeTable/5a2a96f30f07e7e7380e9164aa599b5b/4019/cheia.jpg" alt="Método Paulo Freire" class="img-fullwidth">
+                <p>O Brasil foi um dos contemplados pelo projeto, e no Nordeste, ainda como fase experimental, a cidade de Angicos, no Rio Grande do Norte, foi uma das primeiras grandes experiências de tentativa de erradicação do analfabetismo. A escolha da cidade e a verba destinada ao projeto de Angicos, cerca de 36 dólares por aluno, vieram desse plano norte-americano. Paulo Freire elaborou o projeto, formou uma comissão de coordenadores e treinou professores para aplicar o plano.</p>
+                <p>Em 40 horas, percorridas durante quase um mês, 300 jovens e adultos foram alfabetizados pelo método desenvolvido por Freire. O educador brasileiro criticava o modelo de educação que ele chamava de “educação bancária”. Esse modelo é baseado na visão de que o professor é o centro do processo e detentor do conhecimento das matérias, sendo o responsável por depositar aquilo que sabe em seus alunos.</p>
+                <p>Freire falava da importância de pensar-se em uma educação capaz de reconhecer a cultura do educando e agir com base nela, naquela realidade, pois somente assim ela faria sentido para aquele que vai ser alfabetizado. Nas palavras do filósofo:</p>
+                <p><em>“A leitura do mundo precede a leitura da palavra, daí que a posterior leitura desta não possa prescindir da continuidade da leitura daquele.”</em></p>
+                <p>Na visão de Freire, a leitura (e, no mesmo sentido, a escrita) somente fará sentido se for acompanhada de uma capacidade de ler o mundo, de perceber o mundo, de reconhecer os papéis desempenhados pelos atores do mundo e de reconhecer-se como peça naquele mundo. Por isso, Freire agia com base nas palavras que faziam parte do cotidiano dos trabalhadores em processo de alfabetização para ensiná-los.</p>
+                <p>Marcos Guerra, advogado e coordenador do projeto em Angicos, conta que “a alfabetização era baseada em 12 a 15 palavras apenas que continham todos os fonemas da língua portuguesa. No debate sobre a palavra trabalho, o que é que vem? Vem as condições de trabalho. Aí evoca discussões sobre trabalho, condição de trabalho [...] remuneração de trabalho, garantias, direitos, deveres”. Palavras como tijolo, barro, trabalho, labuta e telha eram as norteadoras do método, que não foca no conteúdo ensinado, mas no processo.</p>
+                <p>Outra característica do método freireano é a tentativa de levar uma conscientização política e de classe para os educandos. Talvez esse seja o fator que mais tenha despertado a ira dos setores conservadores, responsáveis por extinguir o Plano Nacional da Alfabetização e por exilar o professor pernambucano. Os depoimentos descritos, a seguir, atestam essa ideia:</p>
+                <p>“Depois do curso, uma greve na cidade parou a construção de uma obra. Acredita-se que eles teriam sido inspirados pelo ensino dos direitos trabalhistas em sala de aula, com a metodologia freiriana. Os trabalhadores disseram ao dono da empresa que sabiam que tinham direitos. Eles pediam carteira assinada, repouso semanal remunerado e férias. E o patrão disse: ‘eu não dou isso não, ninguém dá’, lembra Guerra.</p>
+                <p>Eles passaram a reivindicar direitos, como repouso semanal remunerado e jornada de trabalho, que era intensiva e ultrapassava as horas estabelecidas pela lei. A carteira assinada os entusiasmava, conta a juíza aposentada Valquíria Félix da Silva, 78, que foi uma das professoras do curso na cidade.</p>
+                <p>A obra de Paulo Freire e o seu método são profundamente marcados pela insistência de levantar-se um novo tipo de educação, capaz de dar autonomia às classes dominadas por meio do diálogo e de uma educação emancipadora.</p>
+                <p>Para quem se simpatiza com as ideias do filósofo pernambucano, essa tarefa é necessária para a criação de um novo Brasil, mais justo e igualitário. Para quem discorda de sua obra (não pretendemos fazer uma afirmação generalizadora, pois podem existir críticas pontuais plausíveis acerca do método ou da obra freireana, e lembrando que as críticas não presumem sua anulação), há, em geral, um medo de que ela seja a cartilha para fazer o que setores conservadores têm chamado de “doutrinação marxista nas salas de aula”.</p>
+                <p>Essa acusação, sustentada nos dias atuais por grupos políticos ligados à extrema-direita, era a mesma que condenava Paulo Freire em 1964. O doutor em Educação pela Universidade de São Paulo (USP) e biógrafo de Freire, Sérgio Haddad, conta, em matéria publicada na Folha de São Paulo, acerca do relatório escrito sobre Freire para justificar a sua prisão, dias após o seu exílio.</p>
+                <p>O inquérito, comandado pelo tenente-coronel Hélio Ibiapina Lima, dizia que Paulo Freire era “um dos maiores responsáveis pela subversão imediata dos menos favorecidos”, que “sua atuação no campo da alfabetização de adultos nada mais é que uma extraordinária tarefa marxista de politização das mesmas” e que Freire “é um cripto-comunista encapuçado sob a forma de alfabetizador”.</p>
+            `
+        },
+        {
+            title: "Capítulo 3 · Obras e frases de Paulo Freire",
+            content: `
+                <h2>As Obras de Paulo Freire</h2>
+                <img src="https://cdn.pensador.com/img/frase/pa/ul/paulo_freire_ninguem_educa_ninguem_ninguem_educa_a_si_m_ljwo5zl.jpg" alt="Frase de Paulo Freire" class="img-fullwidth">
+                <p>Entre publicações em vida, publicações póstumas, cartas, entrevistas, ensaios e artigos, somam-se em sua obra quase 40 livros publicados. Os mais importantes, para a compreensão da trajetória intelectual do filósofo e educador, são as seguintes:</p>
+                <p><strong>Pedagogia do oprimido:</strong> escrito ainda no início do exílio, quando Freire estava no Chile, o livro propõe uma revisão da relação entre educadores e educandos. O diálogo deve ser a base primeira para a constituição do processo de ensino e aprendizagem. Segundo Freire, “o diálogo é uma exigência existencial”. Com base nesse pressuposto, ele reconhece que a educação dialógica é a chave para levar uma educação libertadora às massas, sem excluir a própria massa do processo educativo. Em sua reflexão, Freire questiona-se: “Como posso dialogar, se parto de que a pronúncia do mundo é tarefa de homens seletos e que a presença das massas na história é sinal de sua deterioração que devo evitar?” Reconhecendo as massas e os outros e respeitando a diferença dos outros é como o educador deve atuar. Freire defende que a finalidade desse trabalhoso processo é propiciar uma libertação: a emancipação das massas de oprimidos por meio da educação.</p>
+                <p><strong>Educação como prática da liberdade:</strong> escrito no exílio após o término de Pedagogia do oprimido, esse livro é uma autocrítica de sua atuação e uma proposta de educação que visa a acabar com a exclusão. Ele aponta a relação intrínseca entre educação, conscientização e inclusão.</p>
+                <p><strong>Cartas à Guiné-Bissau:</strong> livro escrito entre 1976 e 1977, período em que Freire atuou no projeto de alfabetização popular promovido em Guiné-Bissau após a sua independência. O conjunto de cartas que compõem a obra tem um objetivo mais reflexivo de apontar a potência, a paixão e a criação daquele povo recém-independente e a aproximação da realidade social africana com a brasileira da época.</p>
+                <p><strong>Pedagogia da autonomia:</strong> Freire tem um objetivo muito claro nesse livro de apresentar um conjunto de conhecimentos e práticas indispensáveis a qualquer educador. Como o próprio autor anuncia no escrito, não importa se se trata de um professor ou professora progressista ou reacionário, deve-se saber daquele conjunto básico. O livro carrega em seu primeiro capítulo o título que resume grande parte da defesa de Freire no reconhecimento da alteridade e do respeito à individualidade do educando: “Não há docência sem discência”. Um desses elementos básicos é o reconhecimento da importante relação entre teoria e prática que deve ser primordial e indissolúvel. Segundo Freire, “a reflexão crítica sobre a prática torna-se uma exigência da relação Teoria/Prática sem a qual a teoria pode ir virando blábláblá, e a prática, ativismo”.</p>
+                <h2>Algumas Frases de Paulo Freire</h2>
+                <p>“A leitura do mundo precede a leitura da palavra, daí que a posterior leitura desta não possa prescindir da continuidade da leitura daquele.”</p>
+                <p>“Não existe docência sem discência.”</p>
+                <p>“Se a educação sozinha não transforma a sociedade, sem ela tampouco a sociedade muda.”</p>
+                <p>“Ninguém educa ninguém, ninguém educa a si mesmo, os homens educam-se entre si, mediatizados pelo mundo.”</p>
+                <p>“A alegria não chega apenas no encontro do achado, mas faz parte do processo da busca. E ensinar e aprender não pode dar-se fora da procura, fora da boniteza e da alegria.”</p>
+                <p>“Ninguém ignora tudo. Ninguém sabe tudo. Todos nós sabemos alguma coisa. Todos nós ignoramos alguma coisa. Por isso aprendemos sempre.”</p>
+            `
+        }
+    ];
+
+    // ============================================================
+    // 3. LÓGICA DOS CAPÍTULOS
+    // ============================================================
+    let currentChapter = 0;
+    const chapterContainer = document.getElementById('chapterContainer');
+    const prevChapterBtn = document.getElementById('prevChapter');
+    const nextChapterBtn = document.getElementById('nextChapter');
+    const chapterMenuDiv = document.getElementById('chapterMenu');
+
+    function loadChapter(index) {
+        const chapter = chapters[index];
+        const sendBtnHtml = (index === chapters.length-1) ? '<button class="send-report" id="sendReportBtn">📤 Enviar relatório para o professor</button>' : '';
+        const html = `
+            <div id="chapter-${index}" class="chapter active">
+                <h1>${chapter.title}</h1>
+                ${chapter.content}
+                ${sendBtnHtml}
+            </div>
+        `;
+        chapterContainer.innerHTML = html;
+        prevChapterBtn.disabled = (index === 0);
+        nextChapterBtn.disabled = (index === chapters.length-1);
+        document.querySelectorAll('.chapter-menu a').forEach((link, i) => {
+            if (i === index) link.style.fontWeight = 'bold';
+            else link.style.fontWeight = 'normal';
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        stopAudio();
+        if (index === chapters.length-1) {
+            const sendBtn = document.getElementById('sendReportBtn');
+            if (sendBtn) sendBtn.addEventListener('click', enviarRelatorio);
+        }
+    }
+
+    // Menu
+    chapters.forEach((chap, idx) => {
+        const link = document.createElement('a');
+        link.textContent = `Cap. ${idx+1} · ${chap.title.split('·')[1] || chap.title}`;
+        link.setAttribute('data-chapter', idx);
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentChapter = idx;
+            loadChapter(currentChapter);
+        });
+        chapterMenuDiv.appendChild(link);
+    });
+
+    prevChapterBtn.addEventListener('click', () => {
+        if (currentChapter > 0) {
+            currentChapter--;
+            loadChapter(currentChapter);
+        }
+    });
+    nextChapterBtn.addEventListener('click', () => {
+        if (currentChapter < chapters.length-1) {
+            currentChapter++;
+            loadChapter(currentChapter);
+        }
+    });
+
+    // ============================================================
+    // 4. ÁUDIO
+    // ============================================================
+    let synth = window.speechSynthesis;
+    let isSpeaking = false;
+    let currentUtterance = null;
+
+    function stopAudio() {
+        if (synth.speaking || synth.pending) synth.cancel();
+        isSpeaking = false;
+        document.getElementById('speakToggleBtn').innerHTML = '🔊 Ouvir página';
+    }
+
+    function speakCurrentPage() {
+        const activeChapter = document.querySelector('.chapter.active');
+        if (!activeChapter) return;
+        const text = activeChapter.innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = synth.getVoices();
+        utterance.voice = voices.find(v => v.lang === 'pt-BR') || voices[0];
+        const rate = parseFloat(document.getElementById('rateSelect').value);
+        utterance.rate = rate;
+        utterance.onend = () => {
+            isSpeaking = false;
+            document.getElementById('speakToggleBtn').innerHTML = '🔊 Ouvir página';
+        };
+        synth.speak(utterance);
+        isSpeaking = true;
+        currentUtterance = utterance;
+        document.getElementById('speakToggleBtn').innerHTML = '⏹️ Parar leitura';
+    }
+
+    document.getElementById('speakToggleBtn').addEventListener('click', () => {
+        if (isSpeaking) stopAudio();
+        else speakCurrentPage();
+    });
+
+    // ============================================================
+    // 5. AJUSTES GERAIS
+    // ============================================================
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        currentFontSize = size;
+        chapterContainer.style.fontSize = size + 'px';
+    }
+    document.getElementById('fontMinus').addEventListener('click', () => {
+        if (currentFontSize > 12) setFontSize(currentFontSize - 2);
+    });
+    document.getElementById('fontPlus').addEventListener('click', () => {
+        if (currentFontSize < 36) setFontSize(currentFontSize + 2);
+    });
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+    document.getElementById('backToTop').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ============================================================
+    // 6. IDENTIFICAÇÃO (COM DISCIPLINA)
+    // ============================================================
+    let alunoData = null;
+    let alreadySent = false; // para evitar duplicidade de envio
+
+    function mostrarIdentificacao() {
+        const overlay = document.createElement('div');
+        overlay.id = 'identOverlay';
+        overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; display:flex; justify-content:center; align-items:center;';
+        overlay.innerHTML = `
+            <div style="background:white; max-width:500px; width:90%; border-radius:28px; padding:25px;">
+                <h2 style="color:#0f3d2e;">📖 Identificação</h2>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>📌 Turma</label>
+                    <select id="idTurma" style="width:100%; padding:10px; border-radius:20px;">
+                        <option value="">Selecione</option>
+                        ${Object.keys(turmasAlunos).map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>👤 Aluno</label>
+                    <select id="idAluno" disabled style="width:100%; padding:10px; border-radius:20px;">
+                        <option value="">Primeiro selecione a turma</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>📖 Disciplina</label>
+                    <select id="idDisciplina" style="width:100%; padding:10px; border-radius:20px;">
+                        <option value="">Selecione</option>
+                        ${disciplinas.map(d => `<option value="${d}">${d}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>📅 Bimestre</label>
+                    <select id="idBimestre" style="width:100%; padding:10px; border-radius:20px;">
+                        <option value="1º">1º bimestre</option><option value="2º">2º bimestre</option>
+                        <option value="3º">3º bimestre</option><option value="4º">4º bimestre</option>
+                    </select>
+                </div>
+                <button id="confirmarIdent" style="background:#1a5e44; color:white; border:none; padding:12px; width:100%; border-radius:40px;">▶ Iniciar Leitura</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        const turmaSel = document.getElementById('idTurma');
+        const alunoSel = document.getElementById('idAluno');
+        turmaSel.addEventListener('change', () => {
+            const turma = turmaSel.value;
+            alunoSel.innerHTML = '<option value="">Selecione um aluno</option>';
+            if (turma && turmasAlunos[turma]) {
+                turmasAlunos[turma].forEach(nome => {
+                    const opt = document.createElement('option');
+                    opt.value = nome;
+                    opt.textContent = nome;
+                    alunoSel.appendChild(opt);
+                });
+                alunoSel.disabled = false;
+            } else {
+                alunoSel.disabled = true;
+            }
+        });
+        document.getElementById('confirmarIdent').addEventListener('click', () => {
+            const turma = turmaSel.value;
+            const aluno = alunoSel.value;
+            const disciplina = document.getElementById('idDisciplina').value;
+            const bimestre = document.getElementById('idBimestre').value;
+            if (!turma || !aluno || !disciplina) {
+                alert('Preencha turma, aluno e disciplina.');
+                return;
+            }
+            alunoData = { turma, nome: aluno, disciplina, bimestre };
+            localStorage.setItem('leitura_aluno', JSON.stringify(alunoData));
+            overlay.remove();
+            loadChapter(0);
+        });
+    }
+
+    // ============================================================
+    // 7. ENVIO DO RELATÓRIO COM CONGRATULAÇÕES
+    // ============================================================
+    async function enviarRelatorio() {
+        if (alreadySent) {
+            alert('Relatório já enviado. Você pode fechar a página.');
+            return;
+        }
+        if (!alunoData) {
+            const stored = localStorage.getItem('leitura_aluno');
+            if (stored) alunoData = JSON.parse(stored);
+            else {
+                alert('Dados do aluno não encontrados. Refaça a identificação.');
+                mostrarIdentificacao();
+                return;
+            }
+        }
+        const agora = new Date();
+        const dados = {
+            aluno: alunoData.nome,
+            tentativas: 1,
+            turma: alunoData.turma,
+            disciplina: alunoData.disciplina,
+            bimestre: alunoData.bimestre,
+            atividade: "Livro Digital Paulo Freire",
+            nota: 10,
+            acertos: null,
+            total: null,
+            data: agora.toISOString()
+        };
+        try {
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+            alreadySent = true;
+            // Mostra tela de congratulações
+            mostrarCongratulacoes();
+        } catch(e) {
+            console.warn(e);
+            alert('Erro ao enviar. Tente novamente.');
+        }
+    }
+
+    function mostrarCongratulacoes() {
+        const overlay = document.createElement('div');
+        overlay.className = 'congrats-overlay';
+        overlay.innerHTML = `
+            <div class="congrats-box">
+                <h2>🎉 Parabéns! 🎉</h2>
+                <p>Você concluiu a leitura do livro digital sobre Paulo Freire.</p>
+                <p>Seu relatório foi enviado com sucesso para o professor.</p>
+                <p>Agora você pode fechar esta janela ou continuar navegando.</p>
+                <button class="close-congrats" id="closeCongratsBtn">Fechar</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        document.getElementById('closeCongratsBtn').addEventListener('click', () => {
+            overlay.remove();
+            // Opcional: redirecionar para uma página em branco ou simplesmente fechar
+            // Vamos apenas remover o overlay e deixar o conteúdo normal.
+        });
+    }
+
+    // ============================================================
+    // 8. INICIALIZAÇÃO E VÍDEO
+    // ============================================================
+    mostrarIdentificacao();
+
+    const modal = document.getElementById('videoModal');
+    const closeSpan = document.querySelector('.close-modal');
+    const iframe = document.getElementById('youtubeIframe');
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'openVideoBtn') {
+            modal.style.display = 'block';
+            iframe.src = "https://www.youtube.com/embed/cB5kSRL0KxI?autoplay=1";
+        }
+    });
+    closeSpan.addEventListener('click', () => {
+        modal.style.display = 'none';
+        iframe.src = "";
+    });
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            iframe.src = "";
+        }
+    });
+</script>
+</body>
+</html>

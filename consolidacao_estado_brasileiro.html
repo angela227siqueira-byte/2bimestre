@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 A consolidação do Estado brasileiro</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .init-card h2 { font-size: 1.9rem; font-weight: 600; margin-bottom: 6px; color: #0f3d2e; }
+        .subhead { color: #2a5e4a; margin-bottom: 28px; font-style: italic; border-left: 5px solid #2a7f5e; padding-left: 16px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; color: #1e4f3e; }
+        input, select { width: 100%; padding: 16px 14px; font-size: 1rem; border: 1.5px solid #cbdcd2; border-radius: 18px; background: white; font-family: inherit; }
+        input:focus, select:focus { border-color: #197350; outline: none; box-shadow: 0 0 0 3px rgba(25,115,80,0.1); }
+        .btn-primary { background: #1a5e44; color: white; border: none; padding: 18px 20px; font-size: 1.3rem; font-weight: bold; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-primary:disabled { background: #b0c9bc; cursor: not-allowed; }
+
+        .fixed-header { margin-bottom: 12px; border-bottom: 2px solid #dde5e0; padding-bottom: 8px; }
+        .fixed-header h1 { font-size: 1.7rem; font-weight: 700; color: #0f3d2e; line-height: 1.2; margin-bottom: 6px; }
+        .progress-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: #1a5e44; margin-bottom: 6px; }
+        .progress-bar-bg { background: #dee6e1; height: 7px; border-radius: 20px; overflow: hidden; }
+        .progress-fill { background: #1a7a58; height: 7px; width: 0%; border-radius: 20px; transition: width 0.2s; }
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 { margin: 1.2em 0 0.3em; color: #154e3a; font-weight: 600; }
+
+        /* Flexbox para imagens ao lado do texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        /* Para páginas com duas seções independentes */
+        .two-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .report-box { background: #f0f7f3; border-radius: 24px; padding: 24px 18px; margin: 20px 0; }
+        .report-line { font-size: 1.1rem; margin-bottom: 14px; border-bottom: 1px dashed #9dbbae; padding-bottom: 8px; }
+
+        .congrats-box {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .congrats-box h2 { color: #1a5e44; margin-bottom: 20px; }
+        .congrats-box p { margin-bottom: 30px; font-size: 1.2rem; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container {
+                order: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA INICIAL -->
+    <div id="startScreen" class="screen active init-card">
+        <h2>📘 A consolidação do Estado brasileiro</h2>
+        <div class="subhead">Capítulo 9 – Independência, Império e abolição</div>
+        <div class="form-group">
+            <label>📌 Turma</label>
+            <select id="classSelect">
+                <option value="">Selecione a turma</option>
+                <option value="2º ADM - SJC">2º ADM - SJC</option>
+                <option value="2º DS - SJC">2º DS - SJC</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>👤 Aluno</label>
+            <select id="studentSelect" disabled>
+                <option value="">Primeiro selecione a turma</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>📚 Disciplina</label>
+            <input type="text" id="discipline" value="História" readonly style="background:#f0f3f2; color:#1a2e2a;">
+        </div>
+        <button class="btn-primary" id="startReadingBtn" disabled>▶ Iniciar Leitura</button>
+    </div>
+
+    <!-- TELA DE LEITURA -->
+    <div id="readerScreen" class="screen">
+        <div class="fixed-header">
+            <h1>A consolidação do Estado brasileiro</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 13</span>
+                <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- TELA DE RELATÓRIO -->
+    <div id="reportScreen" class="screen">
+        <h2 style="color:#0f3d2e; margin-bottom: 20px;">📋 Relatório de Leitura</h2>
+        <div class="report-box" id="reportContent"></div>
+        <button class="btn-primary" id="closeReportBtn">Encerrar</button>
+    </div>
+
+    <!-- TELA DE CONGRATULAÇÕES FINAL -->
+    <div id="congratsScreen" class="screen congrats-box">
+        <h2>🎉 Parabéns, leitura concluída!</h2>
+        <p>Você finalizou o estudo do Capítulo 9.<br>Você já pode fechar esta janela.</p>
+        <button class="btn-primary" id="finalCloseBtn">Fechar janela</button>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- DADOS DOS ALUNOS -----
+        const alunosData = {
+            "2º ADM - SJC": ["ALEXANDRE TERRA DE SÁ", "ANA CAROLINE RAMOS DE REZENDE FORTES", "ARTHUR SANTANA FARIA LEITE", "BEATRIZ MELO LEMES PINTO", "EDUARDA SAYURI SUZUKI IWAMA", "ELOISE CHRISTINE FERREIRA LEAL", "ENZO PRIETO DE CARVALHO", "FELIX RODRIGUES DOS SANTOS", "GABRIEL REIS COSTA", "GABRIELA DONEGA LEITE", "GUILHERME COSTA DE JESUS BONFIM", "GUILHERME MENEZES CARVALHO", "GUILHERME PEREIRA DOS SANTOS", "GUSTAVO CONCEIÇÃO DE ARAÚJO", "GUSTAVO SOARES RODRIGUES", "ISAAC D'ALICIO BENEDITO DE ANDRADE", "ISABELLA DE SOUSA SIQUEIRA OLIVEIRA MARQUES", "JOÃO HENRIQUE PEREIRA NOGUEIRA", "JOÃO VITOR DE SOUZA", "JÚLIA ARAUJO SANTOS SILVA", "JÚLIO CÉSAR APARECIDO RENNÓ", "JYULLY GABRIELLE FORTUNATO LEITE", "LARA MARIA CARDOSO VIEIRA", "LAVÍNIA DANTAS CARDOSO RUFINO", "LEONARDO OSCAR SOARES DE CAMPOS", "LUCAS CANCIAN MONSTANS", "MARCO ANTONIO MITSUO CHUBATSU KENNER PEREIRA", "MARIA EDUARDA XAVIER SILVA", "MARIA ELOÁ COSTA RAMALHO", "MARIANA AUREA GONÇALVES FERREIRA DE SOUZA", "MARIANA GONÇALVES DE SOUZA", "NICOLAS HENRIQUE OLIVEIRA MACHADO", "NICOLLY ESTÉFANI BARBOSA DE FARIA", "RAYANE ALVES RODRIGUES", "SABRINA RIBEIRO GONÇALVES", "VITOR HUGO SANTOS DE MATOS", "VITOR LIPARELLI LOPES DOS SANTOS", "WALLISSOM ROLDAN BOLCONT", "YURI WALLACE DOS SANTOS MARQUES"],
+            "2º DS - SJC": ["ANA CLARA RODRIGUES DE FREITAS", "EMANUELL NEGREIROS FERREIRA", "ENZO VINICIUS DE OLIVEIRA MARTINS", "ERIC ASSIS DE OLIVEIRA", "GABRIELI ORTIZ CAMARGO DE OLIVEIRA", "GUSTAVO HENRIQUE TEIXEIRA RAMOS", "GUSTAVO MIGUEL DA SILVA CABRAL", "GUSTAVO RAMOS SANTOS", "HEITOR SILVA CRUZ", "HUGO MICHALEWICZ SOBRAL", "ISABELA SANTOS GALDINO", "JOAQUIM GONÇALVES DOS SANTOS", "JOSÉ ISAC MENESES SANTOS", "KAUÊ ISMAEL SILVA MACHADO", "LARA LÊDA MACIEL", "LEONARDO AUGUSTO BARBOSA", "LIVIA FEITOSA DE OLIVEIRA", "LUANA PORFIRIO BATISTA DA SILVA", "LUCA PETRONI SANTOS", "LUCAS AUGUSTO GAMA SILVA", "LUCAS VINICIUS DA COSTA MINEIRO", "LUIS FELIPE PAULINO", "LUIZ FELIPE OLIVEIRA DE ALMEIDA", "MARLON COSTA PASSOS", "MATEUS CALDEIRA CARVALHO SANTANA", "MELISSA DE BARROS SILVA", "MIRELLA VALENTE VALUTO", "NICULLAS MOREIRA ARAUJO", "PEDRO EMANUEL ARAUJO MORAES", "RAFAEL BRYAN DE OLIVEIRA SANTOS", "RAFAEL DE OLIVEIRA CARVALHO", "RAPHAEL DE MORAES DANIEL", "RILARY DOS REIS FONSECA", "RYAN AUGUSTO SANTOS DE MATOS SILVA", "RYAN GABRIEL BATISTA GOULART", "URIEL ANTÃO LIMA NASCIMENTO", "VITOR GABRIEL MOREIRA DE BRITO", "VITOR SILVA DE OLIVEIRA COSTA", "YAN DE MORAES SILVEIRA"]
+        };
+
+        // CONTEÚDO DAS 13 PÁGINAS (COM SEÇÕES CORRIGIDAS)
+        const pageContents = [
+            // Página 1 - Direita
+            `<div class="img-text-row right-image">
+                <div class="text-container"><p><strong>A consolidação do Estado brasileiro</strong></p><p>Após a independência, o Brasil precisou construir um Estado nacional unificado. Diferentemente das repúblicas hispano-americanas, que se fragmentaram em vários países, o Brasil manteve a unidade territorial sob um regime monárquico. Esse processo, porém, não foi pacífico. Envolveu guerras, revoltas populares, disputas políticas e, ao longo de todo o século XIX, a lenta agonia da escravidão.</p></div>
+                <div class="img-container"><img src="https://s2-g1.glbimg.com/9hDuiL1uhk5dL48rXIEJM3FQtQY=/0x0:1700x1065/1008x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2020/t/R/soAulmTvG0oedzk3WKVw/dois-julho.jpg" alt="Dois de Julho"><div class="img-caption">Comemoração do Dois de Julho – data que marca o fim da Guerra de Independência na Bahia (Salvador, 2024)</div></div>
+            </div>`,
+            // Página 2 - Direita
+            `<div class="img-text-row right-image">
+                <div class="text-container"><p><strong>A consolidação da independência e o Primeiro Reinado</strong></p><p>A independência foi proclamada em 7 de setembro de 1822, mas a guerra contra as tropas portuguesas se prolongou até 1823... Para obter reconhecimento internacional, o Império Brasileiro contou com a ajuda do Reino Unido... Em 1824, dom Pedro I outorgou a primeira Constituição brasileira. Criou o <strong>Poder Moderador</strong>, que dava ao imperador amplos poderes. O voto era censitário e excluía mulheres, escravizados, indígenas, religiosos, criados e criminosos. Os libertos podiam votar, mas não se candidatar.</p></div>
+                <div class="img-container"><img src="https://atlas.fgv.br/sites/atlas.fgv.br/files/05-01-b-full_0.png" alt="Esquema institucional 1824"><div class="img-caption">Esquema institucional do Brasil Império (1824-1834) – Atlas Histórico do Brasil</div></div>
+            </div>`,
+            // Página 3 (sem imagem)
+            `<p><strong>A Confederação do Equador e a crise do Primeiro Reinado</strong></p><p>A centralização autoritária de dom Pedro I gerou revolta. Em 1824, em Pernambuco, liderados por frei Joaquim do Amor Divino Rabelo (frei Caneca), os rebeldes proclamaram a <strong>Confederação do Equador</strong>, uma república federalista. O movimento foi duramente reprimido, e frei Caneca foi executado.</p><p>A impopularidade do imperador aumentou com a Guerra da Cisplatina (1825-1828, perda do Uruguai), crise econômica, envolvimento na sucessão portuguesa, morte do jornalista Líbero Badaró sem punição, e a Noite das Garrafadas (1831). Isolado, dom Pedro I abdicou em 7 de abril de 1831, partindo para Portugal. Seu filho tinha 5 anos. Iniciou-se o Período Regencial.</p>`,
+            // Página 4 - Esquerda
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://sme.goiania.go.gov.br/conexaoescola/wp-content/uploads/2022/09/Revoltas-Regenciais-e1662935126826.jpg" alt="Revoltas regenciais"><div class="img-caption">Revoltas no período Regencial</div></div>
+                <div class="text-container"><p><strong>O Período Regencial (1831-1840)</strong></p><p>Segundo a Constituição de 1824, o herdeiro só poderia governar aos 18 anos. Quatro regências... Em 1834, o <strong>Ato Adicional</strong> criou assembleias provinciais, extinguiu o Conselho de Estado, e substituiu a regência trina por una (mas limitada). A ausência de um imperador e as tensões sociais provocaram revoltas em todo o país.</p></div>
+            </div>`,
+            // Página 5 (sem imagem)
+            `<p><strong>Revoltas regenciais: Cabanagem e Farroupilha</strong></p><p><strong>Cabanagem (Grão-Pará, 1835-1840):</strong> Liderada por cabanos (pobres de cabanas), com participação de indígenas, mestiços e negros. Tomaram Belém, mataram o presidente da província. Repressão violenta: cerca de 30 mil mortos.</p><p><strong>Revolução Farroupilha (Rio Grande do Sul, 1835-1845):</strong> Movimento da elite gaúcha contra impostos sobre charque, couro e gado. Liderada por Bento Gonçalves, com Garibaldi e Anita. Proclamaram a República Rio-Grandense (1836) e a República Catarinense (1839). Conflito terminou em 1845, com anistia e incorporação dos farrapos ao exército imperial.</p>`,
+            // Página 6 - Direita
+            `<div class="img-text-row right-image">
+                <div class="text-container"><p><strong>Revoltas regenciais: Malês, Sabinada e Balaiada</strong></p><p><strong>Revolta dos Malês (Salvador, 1835):</strong> Levante de escravizados islamizados (malês – iorubás e hauçás). Reprimida com centenas de mortos, açoites, prisões e deportações.</p><p><strong>Sabinada (Bahia, 1837-1838):</strong> Liderada pelo médico Francisco Sabino Vieira, queria uma república provisória até a maioridade. Reprimida com mais de 1.200 mortos e 3 mil presos.</p><p><strong>Balaiada (Maranhão, 1838-1841):</strong> Movimento popular de vaqueiros, artesãos, escravizados e quilombolas. Liderada por Manuel dos Anjos (Balaio), Raimundo Gomes (Cara Preta) e Cosme Bento das Chagas (Preto Cosme). Preto Cosme comandou um quilombo com mais de 3 mil pessoas e uma escola. Sufocada pelo futuro duque de Caxias. Estima-se 12 mil mortos.</p></div>
+                <div class="img-container"><img src="https://i.ytimg.com/vi/V0Q1d6CGevU/sddefault.jpg" alt="Memorial da Balaiada"><div class="img-caption">Memorial da Balaiada em Caxias, Maranhão</div></div>
+            </div>`,
+            // Página 7 - Esquerda
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://dauo5zdfqzq1q.cloudfront.net/images/concursos/764a2f31347dac0bfdce25b5265b08f1.png" alt="Política no Segundo Reinado"><div class="img-caption">Política no Segundo Reinado</div></div>
+                <div class="text-container"><p><strong>O Segundo Reinado (1840-1889) – início e conflitos políticos</strong></p><p>Em 1840, antecipando a maioridade de dom Pedro II (15 anos), liberais promoveram o <strong>Golpe da Maioridade</strong>. O imperador foi coroado em 1841. Os dois partidos principais eram: <strong>Partido Liberal</strong> (luzias, mais autonomia para províncias) e <strong>Partido Conservador</strong> (saquaremas, centralizadores).</p><p>Entre 1842 e 1848, novas revoltas liberais ocorreram em São Paulo, Minas Gerais e Pernambuco (<strong>Revolução Praieira</strong>). Os praieiros exigiram fim do voto censitário, extinção do Poder Moderador, nacionalização do comércio e liberdade de imprensa. A revolta foi esmagada em 1850.</p></div>
+            </div>`,
+            // Página 8 - Duas seções esquerda (cada uma com seu texto)
+            `<div class="two-sections">
+                <div class="img-text-row left-image">
+                    <div class="img-container"><img src="https://d1o6h00a1h5k7q.cloudfront.net/imagens/img_g/22624/11035125.jpg" alt="Último Tamoio"><div class="img-caption">O último Tamoio – Rodolfo Amoedo, 1883</div></div>
+                    <div class="text-container"><p><strong>A construção da identidade nacional e a Lei de Terras</strong></p><p>O governo imperial investiu na criação de uma história oficial. O <strong>Instituto Histórico e Geográfico Brasileiro (IHGB)</strong> promovia obras que exaltavam a natureza e a suposta “harmonia” entre os povos formadores do Brasil. A escravidão era apagada do discurso oficial. O indígena foi idealizado na literatura e nas artes (indianismo), mas os povos indígenas reais foram perseguidos, aldeados e tiveram suas terras tomadas.</p></div>
+                </div>
+                <div class="img-text-row left-image">
+                    <div class="img-container"><img src="https://www.seculodiario.com.br/wp-content/uploads/2018/05/220518_livroindigena_arquivopublico_divulgaC3A7C3A3o.png" alt="Questão indígena"><div class="img-caption">Questão indígena no Império</div></div>
+                    <div class="text-container"><p>Em 1850, a <strong>Lei de Terras</strong> determinou que terras devolutas (inclusive as ocupadas por indígenas) pertenciam ao Estado, só podendo ser adquiridas mediante compra. Isso dificultou o acesso à terra por negros libertos, imigrantes e pequenos agricultores.</p></div>
+                </div>
+            </div>`,
+            // Página 9 - Esquerda
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://revistapesquisa.fapesp.br/wp-content/uploads/2023/10/RPF-fotografos-Vincenzo-Pastore-2023-10-1140-00.jpg" alt="Fotógrafos italianos"><div class="img-caption">Atuação de fotógrafos italianos no Brasil – século XIX</div></div>
+                <div class="text-container"><p><strong>Expansão do café, imigração e fotografia</strong></p><p>O café tornou-se o principal produto de exportação brasileiro, inicialmente produzido no Vale do Paraíba (RJ, SP, MG) com mão de obra escravizada. Depois de 1850, passou a usar imigrantes europeus, especialmente no Oeste Paulista. O capital acumulado financiou ferrovias, bancos e a modernização do Rio de Janeiro e São Paulo.</p><p>A fotografia chegou ao Brasil em 1840, incentivada por dom Pedro II. Retratos tornaram-se mais acessíveis. Fotógrafos italianos e outros europeus abriram estúdios nas principais cidades.</p></div>
+            </div>`,
+            // Página 10 - Esquerda
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Juan_Manuel_Blanes_-_La_Paraguaya.png" alt="A paraguaia"><div class="img-caption">A paraguaia – Juan Manuel Blanes, 1879</div></div>
+                <div class="text-container"><p><strong>A Guerra do Paraguai (1864-1870)</strong></p><p>Conflito causado por disputas na bacia do Rio da Prata. O ditador paraguaio Francisco Solano López, sem saída para o mar, invadiu Mato Grosso (1864) e depois Corrientes (Argentina). Brasil, Argentina e Uruguai formaram a Tríplice Aliança. A guerra durou mais de 5 anos. O Brasil enviou cerca de 140 mil soldados, muitos escravizados alforriados para lutar. O Paraguai foi arrasado: perdeu cerca de 60% da população.</p><p>A guerra fortaleceu o Exército brasileiro, aumentou a dívida do império e alimentou o descontentamento de cafeicultores e militares.</p></div>
+            </div>`,
+            // Página 11 - Direita
+            `<div class="img-text-row right-image">
+                <div class="text-container"><p><strong>O fim do tráfico de escravizados e a Lei do Ventre Livre</strong></p><p>Sob pressão britânica (Bill Aberdeen, 1845) e com a fiscalização dos navios negreiros, em 1850 foi aprovada a <strong>Lei Eusébio de Queirós</strong>, proibindo definitivamente o tráfico transatlântico de escravizados para o Brasil.</p><p>Em 1871, a <strong>Lei do Ventre Livre</strong> (Lei Rio Branco) determinou que filhos de escravizadas nascidos a partir daquela data seriam livres, mas ficariam sob tutela dos senhores até os 21 anos. Na prática, poucos se libertaram.</p></div>
+                <div class="img-container"><img src="https://media.brainly.com.br/image/rs:fill/w:640/q:75/plain/https://pt-static.z-dn.net/files/de1/ac3e82f3e7dc41e7be2ed90e52a5dca8.png" alt="Tráfico de escravos"><div class="img-caption">Importação de escravos (1501-1865)</div></div>
+            </div>`,
+            // Página 12 - Duas seções esquerda
+            `<div class="two-sections">
+                <div class="img-text-row left-image">
+                    <div class="img-container"><img src="https://media.brainly.com.br/image/rs:fill/w:1200/q:75/plain/https://pt-static.z-dn.net/files/db6/9e3be009013ae63c4c11c50204a2363d.png" alt="Fuga de escravos"><div class="img-caption">Fuga de escravos – charge de Angelo Agostini, 1887</div></div>
+                    <div class="text-container"><p><strong>A abolição da escravidão (1888)</strong></p><p>Em 1884, Ceará e Amazonas aboliram a escravidão. A campanha abolicionista se intensificou: fugas em massa (Quilombo do Jabaquara, 20 mil pessoas). Em 1885, a Lei Saraiva-Cotegipe (Lei dos Sexagenários) libertou escravizados com mais de 60 anos – medida inócua.</p></div>
+                </div>
+                <div class="img-text-row left-image">
+                    <div class="img-container"><img src="https://i.ytimg.com/vi/hyAGftWKEh0/maxresdefault.jpg" alt="Vidas negras importam"><div class="img-caption">Manifestação "Vidas Negras Importam" – atualidade</div></div>
+                    <div class="text-container"><p>Em 13 de maio de 1888, a <strong>princesa Isabel</strong> assinou a <strong>Lei Áurea</strong>, abolindo a escravidão sem indenização e sem políticas de integração. Cerca de 700 mil pessoas foram libertadas, mas a maioria permaneceu na miséria, sofrendo racismo.</p></div>
+                </div>
+            </div>`,
+            // Página 13 - Esquerda (imagem nova)
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://www.florence.edu.br/wp-content/uploads/2020/11/Site_ProclamacaoRepublica.png" alt="Proclamação da República"><div class="img-caption">Marechal Manuel Deodoro da Fonseca - Primeiro Presidente do Brasil.</div></div>
+                <div class="text-container"><p><strong>O fim da monarquia e a proclamação da república (1889)</strong></p><p>Após a abolição, cafeicultores (sem indenização), militares (desejavam mais poder), Igreja (desgastada) e republicanos se voltaram contra a monarquia. Dom Pedro II, envelhecido, não reagiu. Em 15 de novembro de 1889, o marechal <strong>Deodoro da Fonseca</strong> liderou um golpe militar, depôs o gabinete e proclamou a república. O povo, segundo Aristides Lobo, “assistiu àquilo bestializado”. A família real foi exilada.</p></div>
+            </div>`
+        ];
+
+        let currentPage = 0;
+        const totalPages = pageContents.length;
+        let fontSizeIndex = 2;
+        const fontSizes = [14, 18, 22, 26, 30];
+
+        let selectedClass = "", selectedStudent = "";
+        let startTime = null;
+
+        // Elementos
+        const startScr = document.getElementById('startScreen');
+        const readerScr = document.getElementById('readerScreen');
+        const reportScr = document.getElementById('reportScreen');
+        const congratsScr = document.getElementById('congratsScreen');
+        const classSelect = document.getElementById('classSelect');
+        const studentSelect = document.getElementById('studentSelect');
+        const startBtn = document.getElementById('startReadingBtn');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const closeReportBtn = document.getElementById('closeReportBtn');
+        const reportContentDiv = document.getElementById('reportContent');
+        const finalCloseBtn = document.getElementById('finalCloseBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        // Função para selecionar voz feminina em português
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = false;
+            stopReading();
+            // Rolagem do texto para o topo
+            pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === totalPages) {
+                finishReading();
+            }
+        }
+
+        function finishReading() {
+            if (!startTime) return;
+            const endTime = new Date();
+            const duration = Math.round((endTime - startTime) / 60000);
+            reportContentDiv.innerHTML = `
+                <div class="report-line"><strong>👤 Aluno:</strong> ${selectedStudent}</div>
+                <div class="report-line"><strong>📌 Turma:</strong> ${selectedClass}</div>
+                <div class="report-line"><strong>📚 Disciplina:</strong> História</div>
+                <div class="report-line"><strong>⏱️ Início:</strong> ${startTime.toLocaleString('pt-BR')}</div>
+                <div class="report-line"><strong>🏁 Fim:</strong> ${endTime.toLocaleString('pt-BR')}</div>
+                <div class="report-line"><strong>📖 Páginas lidas:</strong> ${totalPages} de ${totalPages}</div>
+                <div class="report-line"><strong>⏳ Duração:</strong> ${duration} minuto(s)</div>
+            `;
+            readerScr.classList.remove('active');
+            reportScr.classList.add('active');
+            stopReading();
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = getFemaleVoice();
+            if (femaleVoice) currentUtterance.voice = femaleVoice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) {
+                synth.cancel();
+            }
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Eventos
+        classSelect.addEventListener('change', () => {
+            const turma = classSelect.value;
+            studentSelect.innerHTML = '<option value="">Selecione o aluno</option>';
+            if (turma && alunosData[turma]) {
+                alunosData[turma].forEach(aluno => {
+                    const opt = document.createElement('option');
+                    opt.value = aluno;
+                    opt.textContent = aluno;
+                    studentSelect.appendChild(opt);
+                });
+                studentSelect.disabled = false;
+            } else {
+                studentSelect.disabled = true;
+            }
+            startBtn.disabled = !(classSelect.value && studentSelect.value);
+        });
+        studentSelect.addEventListener('change', () => {
+            startBtn.disabled = !(classSelect.value && studentSelect.value);
+        });
+        startBtn.addEventListener('click', () => {
+            selectedClass = classSelect.value;
+            selectedStudent = studentSelect.value;
+            startTime = new Date();
+            startScr.classList.remove('active');
+            readerScr.classList.add('active');
+            currentPage = 0;
+            updateUI();
+        });
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+        closeReportBtn.addEventListener('click', () => {
+            reportScr.classList.remove('active');
+            congratsScr.classList.add('active');
+        });
+        finalCloseBtn.addEventListener('click', () => {
+            window.close();
+            // Fallback
+            congratsScr.innerHTML = '<div class="congrats-box"><h2>✅ Você pode fechar esta janela.</h2><p>Obrigado por estudar!</p></div>';
+        });
+
+        applyFontSize();
+        // Forçar load de vozes para evitar atraso
+        if (synth) {
+            synth.getVoices();
+        }
+    })();
+</script>
+</body>
+</html>

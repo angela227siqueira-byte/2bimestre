@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Brasil Imperial - Consolidação do Estado Brasileiro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        /* Flexbox para imagens ao lado do texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA DE LEITURA (única tela, sem identificação) -->
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Brasil Imperial · Consolidação do Estado Brasileiro</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 16</span>
+                <span id="progressPercent">6%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CONTEÚDO DAS PÁGINAS ----------
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>Brasil Imperial</h1>
+                <h2>Consolidação do Estado Brasileiro</h2>
+                <p>Professora Angela Siqueira</p>
+            </div>`,
+            
+            // Página 1 - Índice
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 ÍNDICE</h3>
+                <ol>
+                    <li>Introdução (Por que começar em 1808?) – Pág. 2</li>
+                    <li>A chegada da família real (1808) – Pág. 3</li>
+                    <li>Revolução Pernambucana (1817) – Pág. 4</li>
+                    <li>Independência do Brasil (1822) – Pág. 5</li>
+                    <li>Primeiro Reinado (1822-1831) – Pág. 6</li>
+                    <li>Período Regencial (1831-1840) – Pág. 7</li>
+                    <li>Período Regencial: Principais Revoltas – Pág. 8</li>
+                    <li>Segundo Reinado – início (1840-1850) – Pág. 9</li>
+                    <li>Auge do Império: café e modernização (1850-1870) – Pág. 10</li>
+                    <li>Guerra do Paraguai (1864-1870) – Pág. 11</li>
+                    <li>Crise da escravidão e abolição (1871-1888) – Pág. 12</li>
+                    <li>Proclamação da República (1889) – Pág. 13</li>
+                    <li>Fechamento – Pág. 14</li>
+                </ol>
+            </div>`,
+            
+            // Página 2 - Introdução
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Por que começar em 1808?</strong></p>
+                    <p>O período Joanino (1808-1821) não faz parte, tecnicamente, do Brasil Imperial. O país ainda era colônia quando a família real aqui chegou. Mas este material começa ali por um motivo claro: foi em 1808 que o Brasil deixou de ser uma simples colônia de exploração.</p>
+                    <p>A vinda da corte portuguesa para o Rio de Janeiro, a Abertura dos Portos, a criação do Banco do Brasil, da Imprensa Régia, da Biblioteca Nacional – tudo o que era proibido passou a existir. O Brasil sediou um império europeu antes mesmo da independência.</p>
+                    <p>Sem esse período, não haveria infraestrutura, instituições nem unidade territorial para sustentar um Império depois de 1822. Por isso, o Joanino é o alicerce do Brasil Imperial.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.bancarios-es.org.br/wp-content/uploads/2020/10/121020_bb_fachada_interna.jpg" alt="Banco do Brasil">
+                    <div class="img-caption">O primeiro Banco do Brasil</div>
+                </div>
+            </div>`,
+            
+            // Página 3 - Chegada da família real (imagem ampliada 1.6x)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Chegada da família real (1808)</strong></p>
+                    <p>Com a invasão de Portugal por Napoleão, d. João VI transferiu a corte portuguesa para o Rio de Janeiro em 1808. A <strong>Abertura dos Portos</strong> rompeu o pacto colonial, permitindo ao Brasil comerciar com outras nações. Foram criadas instituições como o Banco do Brasil, a Imprensa Régia, a Biblioteca Nacional, o Jardim Botânico e os primeiros cursos superiores. O Brasil deixava de ser colônia e se tornava sede do império português.</p>
+                </div>
+                <div class="img-container" style="transform: scale(1.6); margin: 20px auto;">
+                    <img src="https://imagens.globoradio.globo.com/cbn/fotos/uploads/87446/familia_real_02_270x167.jpg" alt="Chegada da família real">
+                    <div class="img-caption">A chegada da família real</div>
+                </div>
+            </div>`,
+            
+            // Página 4 - Revolução Pernambucana (tamanho normal)
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://www.brasildefato.com.br/wp-content/uploads/2024/09/image_processing20200201-29235-xud827.jpg" alt="Revolução Pernambucana">
+                    <div class="img-caption">Revolução Pernambucana</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Revolução Pernambucana (1817)</strong></p>
+                    <p>Insatisfeitos com os altos impostos e a presença da corte no Rio de Janeiro, pernambucanos se revoltaram em 1817. Inspirados nos ideais iluministas, proclamaram uma república, aboliram impostos abusivos e declararam liberdade religiosa. O movimento se espalhou pela Paraíba, Rio Grande do Norte e Ceará, mas foi duramente reprimido por tropas enviadas por d. João VI. Centenas de rebeldes foram executados ou presos.</p>
+                </div>
+            </div>`,
+            
+            // Página 5 - Independência
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Independência do Brasil (1822)</strong></p>
+                    <p>Em 1820, a Revolução Liberal do Porto forçou d. João VI a retornar a Portugal, deixando seu filho, d. Pedro, como príncipe regente. Cortes portuguesas tentaram recolonizar o Brasil. D. Pedro, pressionado por cerca de 8 mil assinaturas, respondeu no <strong>Dia do Fico</strong> (1822): “Fico”. Em 7 de setembro de 1822, às margens do Ipiranga, proclamou a independência. Guerra contra tropas portuguesas se estendeu até 1823, especialmente na Bahia, Maranhão e Pará.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://aventurasnahistoria.com.br/wp-content/uploads/2024/09/ah-padrao-16.jpg" alt="Independência do Brasil">
+                    <div class="img-caption">A Independência do Brasil</div>
+                </div>
+            </div>`,
+            
+            // Página 6 - Primeiro Reinado
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://static.historiadomundo.com.br/2024/06/pintura-de-dom-pedro-i-o-governante-do-brasil-durante-o-primeiro-reinado.jpg" alt="Dom Pedro I">
+                    <div class="img-caption">Dom Pedro Primeiro</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Primeiro Reinado (1822-1831)</strong></p>
+                    <p>A primeira Constituição, outorgada em 1824, criou o <strong>Poder Moderador</strong>, que dava amplos poderes ao imperador. O voto era censitário (restrito a homens livres com renda). A Confederação do Equador (1824), liderada por frei Caneca, foi duramente reprimida. A Guerra da Cisplatina (1825-1828) resultou na perda do Uruguai. Após crises sucessivas, d. Pedro I abdicou em 7 de abril de 1831, partindo para Portugal. Seu filho tinha apenas 5 anos.</p>
+                </div>
+            </div>`,
+            
+            // Página 7 - Período Regencial
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Período Regencial (1831-1840)</strong></p>
+                    <p>Com um imperador menor, o Brasil foi governado por regências. O Ato Adicional de 1834 criou assembleias provinciais e substituiu a regência trina por una, mas não conteve as revoltas que eclodiram em várias províncias.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://proffernando.com.br/wp-content/uploads/2020/10/Periodo-Regencial.jpg" alt="Período Regencial">
+                    <div class="img-caption">O rei-menino D. Pedro II</div>
+                </div>
+            </div>`,
+            
+            // Página 8 - Revoltas (agora com lista única e uma única imagem)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Período Regencial: Principais Revoltas</h3>
+                    <ul>
+                        <li><strong>Cabanagem (Grão-Pará, 1835-1840):</strong> movimento popular de cabanos. Tomaram Belém. Repressão: cerca de 30 mil mortos.</li>
+                        <li><strong>Revolução Farroupilha (RS, 1835-1845):</strong> liderada pela elite gaúcha contra impostos. Proclamaram a República Rio-Grandense e a República Catarinense. Terminou com anistia em 1845.</li>
+                        <li><strong>Revolta dos Malês (Salvador, 1835):</strong> levante de escravizados islamizados. Reprimido com centenas de mortos e deportações.</li>
+                        <li><strong>Sabinada (Bahia, 1837-1838):</strong> republicana. Mais de 1.200 mortos.</li>
+                        <li><strong>Balaiada (Maranhão, 1838-1841):</strong> movimento popular. Sufocada por Caxias. Estima-se 12 mil mortos.</li>
+                    </ul>
+                </div>
+                <div class="img-container">
+                    <img src="https://sme.goiania.go.gov.br/conexaoescola/wp-content/uploads/2022/09/Revoltas-Regenciais-e1662935126826.jpg" alt="Revoltas regenciais">
+                    <div class="img-caption">Revoltas no período Regencial</div>
+                </div>
+            </div>`,
+            
+            // Página 9 - Segundo Reinado início
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://static.planejativo.com/uploads/novas/561f2eaadbf7e3d5580299670ffc2d3c.jpg" alt="Dom Pedro II">
+                    <div class="img-caption">Dom Pedro II</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Segundo Reinado – início (1840-1850)</strong></p>
+                    <p>O Golpe da Maioridade (1840) antecipou a maioridade de d. Pedro II. O imperador foi coroado em 1841. Os dois grandes partidos eram o Conservador (centralizador) e o Liberal (descentralizador). A Revolução Praieira (Pernambuco, 1848-1850) foi a última grande rebelião imperial. Em 1850, a <strong>Lei de Terras</strong> dificultou o acesso de pequenos agricultores à terra, e a <strong>Lei Eusébio de Queirós</strong> extinguiu o tráfico transatlântico de escravizados.</p>
+                </div>
+            </div>`,
+            
+            // Página 10 - Auge do Império
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Auge do Império: café e modernização (1850-1870)</strong></p>
+                    <p>O café tornou-se o principal produto de exportação. No Oeste Paulista, a lavoura cafeeira passou a usar <strong>imigrantes europeus</strong> em substituição à mão de obra escrava. O capital do café financiou ferrovias, bancos e a modernização do Rio de Janeiro e São Paulo. A fotografia chegou ao Brasil em 1840, incentivada por d. Pedro II. A imigração em massa transformou a estrutura social brasileira.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Railroad_station_brazil_1885.jpg" alt="Estrada de Ferro Minas-Rio">
+                    <div class="img-caption">Estrada de Ferro Minas-Rio</div>
+                </div>
+            </div>`,
+            
+            // Página 11 - Guerra do Paraguai
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://f.i.uol.com.br/fotografia/2020/06/15/15922382035ee7a07b82db5_1592238203_3x2_md.jpg" alt="Guerra do Paraguai">
+                    <div class="img-caption">Guerra do Paraguai</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Guerra do Paraguai (1864-1870)</strong></p>
+                    <p>A guerra mais sangrenta da América do Sul. Brasil, Argentina e Uruguai formaram a Tríplice Aliança contra o ditador paraguaio Solano López. O Brasil enviou cerca de 140 mil soldados, muitos escravizados alforriados em troca da liberdade. O Paraguai foi arrasado, perdendo cerca de 60% da população. Consequências: endividamento, fortalecimento do Exército e desgaste da monarquia.</p>
+                </div>
+            </div>`,
+            
+            // Página 12 - Abolição
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Crise da escravidão e abolição (1871-1888)</strong></p>
+                    <p>Leis abolicionistas gradualistas: Lei do Ventre Livre (1871), Lei dos Sexagenários (1885). A campanha abolicionista se intensificou na década de 1880 com fugas em massa e pressão da imprensa. Em 13 de maio de 1888, a princesa Isabel assinou a <strong>Lei Áurea</strong>, abolindo a escravidão sem indenização aos senhores e sem políticas de integração aos libertos. Cerca de 700 mil pessoas foram libertas, mas a maioria permaneceu na miséria e marginalizada.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Biard_Abolition_de_l%27esclavage_1849.jpg" alt="Abolição da escravatura">
+                    <div class="img-caption">Movimento Abolicionista</div>
+                </div>
+            </div>`,
+            
+            // Página 13 - Proclamação da República
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://cdn-defesaaereanaval.nuneshost.com/wp-content/uploads/2022/11/20221115_074516.jpg" alt="Proclamação da República">
+                    <div class="img-caption">Proclamação da República</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Proclamação da República (1889)</strong></p>
+                    <p>A abolição deixou cafeicultores descontentes (sem indenização). Igreja, militares (influenciados pelo positivismo) e republicanos se voltaram contra a monarquia. Em 15 de novembro de 1889, o marechal Deodoro da Fonseca liderou um golpe militar, depôs o gabinete imperial e proclamou a república. A família real foi exilada. Segundo Aristides Lobo, o povo “assistiu àquilo bestializado”, sem participar.</p>
+                </div>
+            </div>`,
+            
+            // Página 14 - Fechamento
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Fechamento</strong></p>
+                    <p>De colônia a sede do império português, depois independência, revoltas, guerra, abolição e república – o Brasil Imperial deixou marcas profundas na nossa política, economia, distribuição de terras e relações raciais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://museuartesacra.org.br/wp-content/uploads/2021/10/Capa-Segundo-Reinado.png" alt="Família Real Brasileira">
+                    <div class="img-caption">Família Real Brasileira</div>
+                </div>
+            </div>`,
+            
+            // Página 15 - Congratulações (imagem com scale 1.3)
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu a leitura sobre o Brasil Imperial.</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Isso é Tudo por Hoje!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

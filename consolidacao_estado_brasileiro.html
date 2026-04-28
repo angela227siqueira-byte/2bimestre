@@ -228,7 +228,10 @@
             "2º DS - SJC": ["ANA CLARA RODRIGUES DE FREITAS", "EMANUELL NEGREIROS FERREIRA", "ENZO VINICIUS DE OLIVEIRA MARTINS", "ERIC ASSIS DE OLIVEIRA", "GABRIELI ORTIZ CAMARGO DE OLIVEIRA", "GUSTAVO HENRIQUE TEIXEIRA RAMOS", "GUSTAVO MIGUEL DA SILVA CABRAL", "GUSTAVO RAMOS SANTOS", "HEITOR SILVA CRUZ", "HUGO MICHALEWICZ SOBRAL", "ISABELA SANTOS GALDINO", "JOAQUIM GONÇALVES DOS SANTOS", "JOSÉ ISAC MENESES SANTOS", "KAUÊ ISMAEL SILVA MACHADO", "LARA LÊDA MACIEL", "LEONARDO AUGUSTO BARBOSA", "LIVIA FEITOSA DE OLIVEIRA", "LUANA PORFIRIO BATISTA DA SILVA", "LUCA PETRONI SANTOS", "LUCAS AUGUSTO GAMA SILVA", "LUCAS VINICIUS DA COSTA MINEIRO", "LUIS FELIPE PAULINO", "LUIZ FELIPE OLIVEIRA DE ALMEIDA", "MARLON COSTA PASSOS", "MATEUS CALDEIRA CARVALHO SANTANA", "MELISSA DE BARROS SILVA", "MIRELLA VALENTE VALUTO", "NICULLAS MOREIRA ARAUJO", "PEDRO EMANUEL ARAUJO MORAES", "RAFAEL BRYAN DE OLIVEIRA SANTOS", "RAFAEL DE OLIVEIRA CARVALHO", "RAPHAEL DE MORAES DANIEL", "RILARY DOS REIS FONSECA", "RYAN AUGUSTO SANTOS DE MATOS SILVA", "RYAN GABRIEL BATISTA GOULART", "URIEL ANTÃO LIMA NASCIMENTO", "VITOR GABRIEL MOREIRA DE BRITO", "VITOR SILVA DE OLIVEIRA COSTA", "YAN DE MORAES SILVEIRA"]
         };
 
-        // CONTEÚDO DAS 13 PÁGINAS (COM SEÇÕES CORRIGIDAS)
+        // URL do Google Apps Script (mesma do projeto AIA)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7-dUgW_Jr7hfJzuzzgLigxC0mX7Fv8Rb5iYUqRVjlBpU04KRb0olGX3LHVUuVgXk0BQ/exec";
+
+        // CONTEÚDO DAS 13 PÁGINAS (COM CORREÇÕES SOLICITADAS)
         const pageContents = [
             // Página 1 - Direita
             `<div class="img-text-row right-image">
@@ -242,13 +245,16 @@
             </div>`,
             // Página 3 (sem imagem)
             `<p><strong>A Confederação do Equador e a crise do Primeiro Reinado</strong></p><p>A centralização autoritária de dom Pedro I gerou revolta. Em 1824, em Pernambuco, liderados por frei Joaquim do Amor Divino Rabelo (frei Caneca), os rebeldes proclamaram a <strong>Confederação do Equador</strong>, uma república federalista. O movimento foi duramente reprimido, e frei Caneca foi executado.</p><p>A impopularidade do imperador aumentou com a Guerra da Cisplatina (1825-1828, perda do Uruguai), crise econômica, envolvimento na sucessão portuguesa, morte do jornalista Líbero Badaró sem punição, e a Noite das Garrafadas (1831). Isolado, dom Pedro I abdicou em 7 de abril de 1831, partindo para Portugal. Seu filho tinha 5 anos. Iniciou-se o Período Regencial.</p>`,
-            // Página 4 - Esquerda
+            // Página 4 - Esquerda (IMAGEM SUBSTITUÍDA: D. Pedro II criança)
             `<div class="img-text-row left-image">
-                <div class="img-container"><img src="https://sme.goiania.go.gov.br/conexaoescola/wp-content/uploads/2022/09/Revoltas-Regenciais-e1662935126826.jpg" alt="Revoltas regenciais"><div class="img-caption">Revoltas no período Regencial</div></div>
+                <div class="img-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RetratodompedroIIcrianca.JPG/250px-RetratodompedroIIcrianca.JPG" alt="D. Pedro II criança"><div class="img-caption">D. Pedro II – aos 5 anos, início do Período Regencial</div></div>
                 <div class="text-container"><p><strong>O Período Regencial (1831-1840)</strong></p><p>Segundo a Constituição de 1824, o herdeiro só poderia governar aos 18 anos. Quatro regências... Em 1834, o <strong>Ato Adicional</strong> criou assembleias provinciais, extinguiu o Conselho de Estado, e substituiu a regência trina por una (mas limitada). A ausência de um imperador e as tensões sociais provocaram revoltas em todo o país.</p></div>
             </div>`,
-            // Página 5 (sem imagem)
-            `<p><strong>Revoltas regenciais: Cabanagem e Farroupilha</strong></p><p><strong>Cabanagem (Grão-Pará, 1835-1840):</strong> Liderada por cabanos (pobres de cabanas), com participação de indígenas, mestiços e negros. Tomaram Belém, mataram o presidente da província. Repressão violenta: cerca de 30 mil mortos.</p><p><strong>Revolução Farroupilha (Rio Grande do Sul, 1835-1845):</strong> Movimento da elite gaúcha contra impostos sobre charque, couro e gado. Liderada por Bento Gonçalves, com Garibaldi e Anita. Proclamaram a República Rio-Grandense (1836) e a República Catarinense (1839). Conflito terminou em 1845, com anistia e incorporação dos farrapos ao exército imperial.</p>`,
+            // Página 5 - Esquerda (NOVA IMAGEM: Revolução Farroupilha)
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://beduka.com/blog/wp-content/uploads/2019/07/Guerra-dos-Farrapos.jpg" alt="Revolução Farroupilha"><div class="img-caption">Revolução Farroupilha (1835-1845) – Cavalaria farrapa</div></div>
+                <div class="text-container"><p><strong>Revoltas regenciais: Cabanagem e Farroupilha</strong></p><p><strong>Cabanagem (Grão-Pará, 1835-1840):</strong> Liderada por cabanos (pobres de cabanas), com participação de indígenas, mestiços e negros. Tomaram Belém, mataram o presidente da província. Repressão violenta: cerca de 30 mil mortos.</p><p><strong>Revolução Farroupilha (Rio Grande do Sul, 1835-1845):</strong> Movimento da elite gaúcha contra impostos sobre charque, couro e gado. Liderada por Bento Gonçalves, com Garibaldi e Anita. Proclamaram a República Rio-Grandense (1836) e a República Catarinense (1839). Conflito terminou em 1845, com anistia e incorporação dos farrapos ao exército imperial.</p></div>
+            </div>`,
             // Página 6 - Direita
             `<div class="img-text-row right-image">
                 <div class="text-container"><p><strong>Revoltas regenciais: Malês, Sabinada e Balaiada</strong></p><p><strong>Revolta dos Malês (Salvador, 1835):</strong> Levante de escravizados islamizados (malês – iorubás e hauçás). Reprimida com centenas de mortos, açoites, prisões e deportações.</p><p><strong>Sabinada (Bahia, 1837-1838):</strong> Liderada pelo médico Francisco Sabino Vieira, queria uma república provisória até a maioridade. Reprimida com mais de 1.200 mortos e 3 mil presos.</p><p><strong>Balaiada (Maranhão, 1838-1841):</strong> Movimento popular de vaqueiros, artesãos, escravizados e quilombolas. Liderada por Manuel dos Anjos (Balaio), Raimundo Gomes (Cara Preta) e Cosme Bento das Chagas (Preto Cosme). Preto Cosme comandou um quilombo com mais de 3 mil pessoas e uma escola. Sufocada pelo futuro duque de Caxias. Estima-se 12 mil mortos.</p></div>
@@ -259,44 +265,32 @@
                 <div class="img-container"><img src="https://dauo5zdfqzq1q.cloudfront.net/images/concursos/764a2f31347dac0bfdce25b5265b08f1.png" alt="Política no Segundo Reinado"><div class="img-caption">Política no Segundo Reinado</div></div>
                 <div class="text-container"><p><strong>O Segundo Reinado (1840-1889) – início e conflitos políticos</strong></p><p>Em 1840, antecipando a maioridade de dom Pedro II (15 anos), liberais promoveram o <strong>Golpe da Maioridade</strong>. O imperador foi coroado em 1841. Os dois partidos principais eram: <strong>Partido Liberal</strong> (luzias, mais autonomia para províncias) e <strong>Partido Conservador</strong> (saquaremas, centralizadores).</p><p>Entre 1842 e 1848, novas revoltas liberais ocorreram em São Paulo, Minas Gerais e Pernambuco (<strong>Revolução Praieira</strong>). Os praieiros exigiram fim do voto censitário, extinção do Poder Moderador, nacionalização do comércio e liberdade de imprensa. A revolta foi esmagada em 1850.</p></div>
             </div>`,
-            // Página 8 - Duas seções esquerda (cada uma com seu texto)
-            `<div class="two-sections">
-                <div class="img-text-row left-image">
-                    <div class="img-container"><img src="https://d1o6h00a1h5k7q.cloudfront.net/imagens/img_g/22624/11035125.jpg" alt="Último Tamoio"><div class="img-caption">O último Tamoio – Rodolfo Amoedo, 1883</div></div>
-                    <div class="text-container"><p><strong>A construção da identidade nacional e a Lei de Terras</strong></p><p>O governo imperial investiu na criação de uma história oficial. O <strong>Instituto Histórico e Geográfico Brasileiro (IHGB)</strong> promovia obras que exaltavam a natureza e a suposta “harmonia” entre os povos formadores do Brasil. A escravidão era apagada do discurso oficial. O indígena foi idealizado na literatura e nas artes (indianismo), mas os povos indígenas reais foram perseguidos, aldeados e tiveram suas terras tomadas.</p></div>
-                </div>
-                <div class="img-text-row left-image">
-                    <div class="img-container"><img src="https://www.seculodiario.com.br/wp-content/uploads/2018/05/220518_livroindigena_arquivopublico_divulgaC3A7C3A3o.png" alt="Questão indígena"><div class="img-caption">Questão indígena no Império</div></div>
-                    <div class="text-container"><p>Em 1850, a <strong>Lei de Terras</strong> determinou que terras devolutas (inclusive as ocupadas por indígenas) pertenciam ao Estado, só podendo ser adquiridas mediante compra. Isso dificultou o acesso à terra por negros libertos, imigrantes e pequenos agricultores.</p></div>
-                </div>
+            // Página 8 - REMOVIDA A SEGUNDA FIGURA (mantida apenas "Último Tamoio")
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://d1o6h00a1h5k7q.cloudfront.net/imagens/img_g/22624/11035125.jpg" alt="Último Tamoio"><div class="img-caption">O último Tamoio – Rodolfo Amoedo, 1883</div></div>
+                <div class="text-container"><p><strong>A construção da identidade nacional e a Lei de Terras</strong></p><p>O governo imperial investiu na criação de uma história oficial. O <strong>Instituto Histórico e Geográfico Brasileiro (IHGB)</strong> promovia obras que exaltavam a natureza e a suposta “harmonia” entre os povos formadores do Brasil. A escravidão era apagada do discurso oficial. O indígena foi idealizado na literatura e nas artes (indianismo), mas os povos indígenas reais foram perseguidos, aldeados e tiveram suas terras tomadas.</p><p>Em 1850, a <strong>Lei de Terras</strong> determinou que terras devolutas (inclusive as ocupadas por indígenas) pertenciam ao Estado, só podendo ser adquiridas mediante compra. Isso dificultou o acesso à terra por negros libertos, imigrantes e pequenos agricultores.</p></div>
             </div>`,
-            // Página 9 - Esquerda
+            // Página 9 - Esquerda (sem alterações)
             `<div class="img-text-row left-image">
                 <div class="img-container"><img src="https://revistapesquisa.fapesp.br/wp-content/uploads/2023/10/RPF-fotografos-Vincenzo-Pastore-2023-10-1140-00.jpg" alt="Fotógrafos italianos"><div class="img-caption">Atuação de fotógrafos italianos no Brasil – século XIX</div></div>
                 <div class="text-container"><p><strong>Expansão do café, imigração e fotografia</strong></p><p>O café tornou-se o principal produto de exportação brasileiro, inicialmente produzido no Vale do Paraíba (RJ, SP, MG) com mão de obra escravizada. Depois de 1850, passou a usar imigrantes europeus, especialmente no Oeste Paulista. O capital acumulado financiou ferrovias, bancos e a modernização do Rio de Janeiro e São Paulo.</p><p>A fotografia chegou ao Brasil em 1840, incentivada por dom Pedro II. Retratos tornaram-se mais acessíveis. Fotógrafos italianos e outros europeus abriram estúdios nas principais cidades.</p></div>
             </div>`,
-            // Página 10 - Esquerda
+            // Página 10 - Esquerda (sem alterações)
             `<div class="img-text-row left-image">
                 <div class="img-container"><img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Juan_Manuel_Blanes_-_La_Paraguaya.png" alt="A paraguaia"><div class="img-caption">A paraguaia – Juan Manuel Blanes, 1879</div></div>
                 <div class="text-container"><p><strong>A Guerra do Paraguai (1864-1870)</strong></p><p>Conflito causado por disputas na bacia do Rio da Prata. O ditador paraguaio Francisco Solano López, sem saída para o mar, invadiu Mato Grosso (1864) e depois Corrientes (Argentina). Brasil, Argentina e Uruguai formaram a Tríplice Aliança. A guerra durou mais de 5 anos. O Brasil enviou cerca de 140 mil soldados, muitos escravizados alforriados para lutar. O Paraguai foi arrasado: perdeu cerca de 60% da população.</p><p>A guerra fortaleceu o Exército brasileiro, aumentou a dívida do império e alimentou o descontentamento de cafeicultores e militares.</p></div>
             </div>`,
-            // Página 11 - Direita
+            // Página 11 - Direita (sem alterações)
             `<div class="img-text-row right-image">
                 <div class="text-container"><p><strong>O fim do tráfico de escravizados e a Lei do Ventre Livre</strong></p><p>Sob pressão britânica (Bill Aberdeen, 1845) e com a fiscalização dos navios negreiros, em 1850 foi aprovada a <strong>Lei Eusébio de Queirós</strong>, proibindo definitivamente o tráfico transatlântico de escravizados para o Brasil.</p><p>Em 1871, a <strong>Lei do Ventre Livre</strong> (Lei Rio Branco) determinou que filhos de escravizadas nascidos a partir daquela data seriam livres, mas ficariam sob tutela dos senhores até os 21 anos. Na prática, poucos se libertaram.</p></div>
                 <div class="img-container"><img src="https://media.brainly.com.br/image/rs:fill/w:640/q:75/plain/https://pt-static.z-dn.net/files/de1/ac3e82f3e7dc41e7be2ed90e52a5dca8.png" alt="Tráfico de escravos"><div class="img-caption">Importação de escravos (1501-1865)</div></div>
             </div>`,
-            // Página 12 - Duas seções esquerda
-            `<div class="two-sections">
-                <div class="img-text-row left-image">
-                    <div class="img-container"><img src="https://media.brainly.com.br/image/rs:fill/w:1200/q:75/plain/https://pt-static.z-dn.net/files/db6/9e3be009013ae63c4c11c50204a2363d.png" alt="Fuga de escravos"><div class="img-caption">Fuga de escravos – charge de Angelo Agostini, 1887</div></div>
-                    <div class="text-container"><p><strong>A abolição da escravidão (1888)</strong></p><p>Em 1884, Ceará e Amazonas aboliram a escravidão. A campanha abolicionista se intensificou: fugas em massa (Quilombo do Jabaquara, 20 mil pessoas). Em 1885, a Lei Saraiva-Cotegipe (Lei dos Sexagenários) libertou escravizados com mais de 60 anos – medida inócua.</p></div>
-                </div>
-                <div class="img-text-row left-image">
-                    <div class="img-container"><img src="https://i.ytimg.com/vi/hyAGftWKEh0/maxresdefault.jpg" alt="Vidas negras importam"><div class="img-caption">Manifestação "Vidas Negras Importam" – atualidade</div></div>
-                    <div class="text-container"><p>Em 13 de maio de 1888, a <strong>princesa Isabel</strong> assinou a <strong>Lei Áurea</strong>, abolindo a escravidão sem indenização e sem políticas de integração. Cerca de 700 mil pessoas foram libertadas, mas a maioria permaneceu na miséria, sofrendo racismo.</p></div>
-                </div>
+            // Página 12 - REMOVIDA A SEGUNDA FIGURA (mantida apenas a charge)
+            `<div class="img-text-row left-image">
+                <div class="img-container"><img src="https://media.brainly.com.br/image/rs:fill/w:1200/q:75/plain/https://pt-static.z-dn.net/files/db6/9e3be009013ae63c4c11c50204a2363d.png" alt="Fuga de escravos"><div class="img-caption">Fuga de escravos – charge de Angelo Agostini, 1887</div></div>
+                <div class="text-container"><p><strong>A abolição da escravidão (1888)</strong></p><p>Em 1884, Ceará e Amazonas aboliram a escravidão. A campanha abolicionista se intensificou: fugas em massa (Quilombo do Jabaquara, 20 mil pessoas). Em 1885, a Lei Saraiva-Cotegipe (Lei dos Sexagenários) libertou escravizados com mais de 60 anos – medida inócua.</p><p>Em 13 de maio de 1888, a <strong>princesa Isabel</strong> assinou a <strong>Lei Áurea</strong>, abolindo a escravidão sem indenização e sem políticas de integração. Cerca de 700 mil pessoas foram libertadas, mas a maioria permaneceu na miséria, sofrendo racismo.</p></div>
             </div>`,
-            // Página 13 - Esquerda (imagem nova)
+            // Página 13 - Esquerda (sem alterações)
             `<div class="img-text-row left-image">
                 <div class="img-container"><img src="https://www.florence.edu.br/wp-content/uploads/2020/11/Site_ProclamacaoRepublica.png" alt="Proclamação da República"><div class="img-caption">Marechal Manuel Deodoro da Fonseca - Primeiro Presidente do Brasil.</div></div>
                 <div class="text-container"><p><strong>O fim da monarquia e a proclamação da república (1889)</strong></p><p>Após a abolição, cafeicultores (sem indenização), militares (desejavam mais poder), Igreja (desgastada) e republicanos se voltaram contra a monarquia. Dom Pedro II, envelhecido, não reagiu. Em 15 de novembro de 1889, o marechal <strong>Deodoro da Fonseca</strong> liderou um golpe militar, depôs o gabinete e proclamou a república. O povo, segundo Aristides Lobo, “assistiu àquilo bestializado”. A família real foi exilada.</p></div>
@@ -338,7 +332,6 @@
         let currentUtterance = null;
         let isSpeaking = false;
 
-        // Função para selecionar voz feminina em português
         function getFemaleVoice() {
             const voices = synth.getVoices();
             const ptVoices = voices.filter(v => v.lang === 'pt-BR');
@@ -356,7 +349,6 @@
             prevBtn.disabled = (currentPage === 0);
             nextBtn.disabled = false;
             stopReading();
-            // Rolagem do texto para o topo
             pageContent.scrollTop = 0;
         }
 
@@ -431,6 +423,31 @@
             speakBtn.textContent = '🔊';
         }
 
+        // Função para enviar dados para a planilha
+        function enviarParaPlanilha() {
+            if (!selectedStudent || !selectedClass) {
+                console.warn("Dados do aluno não disponíveis");
+                return;
+            }
+            const dados = {
+                aluno: selectedStudent,
+                turma: selectedClass,
+                disciplina: "História",
+                atividade: "Leitura - A consolidação do Estado brasileiro (Cap.9)",
+                bimestre: "1º",
+                tentativas: 1,
+                nota: 10,
+                acertos: "",
+                total: ""
+            };
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            }).catch(erro => console.warn("Erro no envio (ignorado):", erro));
+        }
+
         // Eventos
         classSelect.addEventListener('change', () => {
             const turma = classSelect.value;
@@ -481,17 +498,16 @@
             }
         });
         closeReportBtn.addEventListener('click', () => {
+            enviarParaPlanilha();   // envio silencioso
             reportScr.classList.remove('active');
             congratsScr.classList.add('active');
         });
         finalCloseBtn.addEventListener('click', () => {
             window.close();
-            // Fallback
             congratsScr.innerHTML = '<div class="congrats-box"><h2>✅ Você pode fechar esta janela.</h2><p>Obrigado por estudar!</p></div>';
         });
 
         applyFontSize();
-        // Forçar load de vozes para evitar atraso
         if (synth) {
             synth.getVoices();
         }

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Indivíduo e sociedade · Perspectivas sociológicas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        /* Layout flexível para imagem + texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 280px;
+            max-width: 280px;
+            text-align: center;
+        }
+        .img-container img {
+            width: 280px;
+            height: 200px;
+            object-fit: fill;   /* distorce para preencher o espaço, conforme solicitado */
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        /* Para páginas sem imagem (texto puro) */
+        .text-only {
+            width: 100%;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { flex-basis: auto; max-width: 100%; }
+            .img-container img { width: 100%; height: auto; object-fit: contain; } /* em mobile, não distorce */
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Indivíduo e sociedade · Perspectivas sociológicas</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 13</span>
+                <span id="progressPercent">7%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- PÁGINAS (capa + índice + conteúdo + congratulações) ----------
+        const pageContents = [
+            // ---- PÁGINA 0 - CAPA ----
+            `<div class="capa">
+                <h1>A relação entre indivíduo e sociedade</h1>
+                <h2>Perspectivas sociológicas</h2>
+                <p>Professora Angela Siqueira</p>
+            </div>`,
+            // ---- PÁGINA 1 - ÍNDICE ----
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Conteúdo</h3>
+                <ol>
+                    <li>Três matrizes clássicas da relação indivíduo‑sociedade</li>
+                    <li>O objeto da sociologia e os fatos sociais (Durkheim)</li>
+                    <li>Max Weber e a ação social</li>
+                    <li>Tipologia da ação social</li>
+                    <li>Karl Marx e a perspectiva materialista histórica</li>
+                    <li>Anthony Giddens e a reflexividade</li>
+                    <li>Pierre Bourdieu e o habitus</li>
+                    <li>Heleieth Saffioti – gênero, raça e classe</li>
+                    <li>Charles Wright Mills – imaginação sociológica</li>
+                </ol>
+            </div>`,
+            // ---- PÁGINA 2 - Três matrizes (com imagem 1) ----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Três matrizes da relação indivíduo‑sociedade</h3>
+                    <p>No século XIX, três grandes correntes definiram princípios gerais da sociologia:</p>
+                    <ul>
+                        <li><strong>A sociedade molda os indivíduos</strong> (coercitividade dos fatos sociais) – Émile Durkheim</li>
+                        <li><strong>A sociedade é resultado da ação social dos indivíduos</strong> – Max Weber</li>
+                        <li><strong>Sociedade e indivíduos são expressão das contradições de classe</strong> – Karl Marx e Friedrich Engels</li>
+                    </ul>
+                    <p>Essas diferentes abordagens mostram que múltiplas teorias podem explicar as complexas relações entre indivíduo e sociedade. Não representam um esquema evolutivo, mas modos distintos de construir conhecimento sociológico.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://cafecomsociologia.com/wp-content/uploads/2016/05/individuo_versus_sociedade.png" alt="Indivíduo e Sociedade">
+                    <div class="img-caption">Figura 1 – Indivíduo e Sociedade</div>
+                </div>
+            </div>`,
+            // ---- PÁGINA 3 - Objeto da sociologia e fatos sociais (imagem 2) ----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://adilsoncardoso.com/wp-content/uploads/2023/05/Sociologia.jpg" alt="Objeto de estudo da sociologia">
+                    <div class="img-caption">Figura 2 – Objeto de estudo da sociologia</div>
+                </div>
+                <div class="text-container">
+                    <h3>O objeto da sociologia e os fatos sociais (Durkheim)</h3>
+                    <p>Durkheim sistematizou o objeto da sociologia: os <strong>fatos sociais</strong> – formas de pensar, sentir e agir cuja manifestação coletiva constitui a sociedade.</p>
+                    <p><strong>Características dos fatos sociais:</strong></p>
+                    <ul>
+                        <li><strong>Externos</strong> – antecedem os indivíduos e independem de sua vontade.</li>
+                        <li><strong>Coercitivos</strong> – impõem penalidades a quem não os cumpre.</li>
+                        <li><strong>Gerais</strong> – aplicam-se a todos os membros da sociedade.</li>
+                    </ul>
+                    <p><strong>Exemplo:</strong> regras de silêncio numa biblioteca – são exteriores (não dependem de você), coercitivas (podem ser advertido) e gerais (todos devem seguir). Outros exemplos: modo de falar, vestir-se, cumprimentar.</p>
+                </div>
+            </div>`,
+            // ---- PÁGINA 4 - Max Weber (imagem 3) ----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Max Weber e a ação social</h3>
+                    <p>Para Weber, o ponto de partida da análise sociológica é a <strong>ação dos indivíduos e suas intenções</strong> em relação a outras pessoas. A sociedade só pode ser compreendida a partir das relações entre indivíduos racionais.</p>
+                    <p><strong>Ação social</strong> é aquela realizada pelo indivíduo levando em consideração a expectativa da ação de outros. Não é todo comportamento coletivo que é ação social.</p>
+                    <p>Exemplo: abrir guarda-chuva na chuva <strong>não</strong> é ação social (não considera a ação dos outros). Já desviar para evitar colisão ou prestar socorro <strong>é</strong> ação social.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://cdn.pensador.com/img/authors/ma/xw/max-weber-l.jpg" alt="Max Weber">
+                    <div class="img-caption">Figura 3 – Max Weber</div>
+                </div>
+            </div>`,
+            // ---- PÁGINA 5 - Tipologia da ação social (apenas uma imagem: Figura 5) ----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://blogdoenem.com.br/wp-content/uploads/2017/02/3.jpg" alt="Tipologias de Ação Social">
+                    <div class="img-caption">Figura 4 – Tipologias da ação social (Weber)</div>
+                </div>
+                <div class="text-container">
+                    <h3>Tipologia da ação social (Weber)</h3>
+                    <p>Weber identificou quatro tipos fundamentais:</p>
+                    <ul>
+                        <li><strong>Ação tradicional</strong> – motivada por hábitos ou costumes (ex.: cumprimentar com aperto de mãos).</li>
+                        <li><strong>Ação afetiva</strong> – determinada por sentimentos ou emoções (ex.: gargalhada).</li>
+                        <li><strong>Ação racional orientada a valores</strong> – crença consciente em um valor, independente das consequências (ex.: ativista em manifestação).</li>
+                        <li><strong>Ação racional orientada a fins</strong> – cálculo racional de meios para atingir objetivos (ex.: estratégia para aprovação em vestibular).</li>
+                    </ul>
+                    <p>Essa tipologia permite analisar as motivações por trás das ações cotidianas, desde gestos automáticos até decisões estratégicas complexas. Para Weber, o sentido subjetivo da ação é o que importa para a sociologia.</p>
+                </div>
+            </div>`,
+            // ---- PÁGINA 6 - Karl Marx e Engels (imagem 5) ----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Karl Marx e a perspectiva materialista histórica</h3>
+                    <p>Para Marx e Engels, a base material (produção) condiciona a vida social, política e cultural. "Os homens fazem a sua própria história; contudo, não a fazem de livre e espontânea vontade, pois não são eles quem escolhem as circunstâncias sob as quais ela é feita."</p>
+                    <p>A posição social é definida pela relação com os <strong>meios de produção</strong> (terras, fábricas, máquinas). Isso divide a sociedade em <strong>classes sociais</strong> com interesses antagônicos (burguesia × proletariado).</p>
+                    <p>A greve é uma expressão da contradição entre classes. Marx criticou o capitalismo e defendeu uma sociedade sem classes, com propriedade coletiva dos meios de produção.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.todamateria.com.br/upload/ma/te/materialismo-historico-og.jpg" alt="Karl Marx e Friedrich Engels">
+                    <div class="img-caption">Figura 5 – Karl Marx e Friedrich Engels</div>
+                </div>
+            </div>`,
+            // ---- PÁGINA 7 - Reflexividade (Giddens) (imagem 6) ----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://fernandonogueiracosta.wordpress.com/wp-content/uploads/2018/10/reflexividade.jpg" alt="Teoria da reflexividade">
+                    <div class="img-caption">Figura 6 – Teoria da reflexividade (Giddens)</div>
+                </div>
+                <div class="text-container">
+                    <h3>Anthony Giddens e a reflexividade</h3>
+                    <p>Giddens propõe que os agentes são influenciados pelas estruturas sociais, mas ao mesmo tempo as recriam por meio da <strong>reflexividade</strong> – o processo de interpretar as estruturas e agir sobre elas.</p>
+                    <p>Na modernidade tardia, ocorre uma <strong>radicalização da reflexividade</strong>: as mudanças são mais rápidas, gerando incertezas e riscos globais (pandemias, atentados). Os indivíduos reexaminam constantemente suas práticas, o que lhes confere alguma autonomia.</p>
+                </div>
+            </div>`,
+            // ---- PÁGINA 8 - Bourdieu e habitus (imagem 7) ----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Pierre Bourdieu e o habitus</h3>
+                    <p>Bourdieu rompe com a dicotomia indivíduo vs. sociedade. O <strong>habitus</strong> é um sistema de disposições incorporadas que orienta o pensar, sentir e agir – um "estilo de vida" condicionado pela posição social.</p>
+                    <p>O habitus se expressa em gostos, práticas alimentares, lazer, etc. Ele evidencia a <strong>relação dialética</strong> (interação dinâmica e contraditória) entre indivíduo e sociedade.</p>
+                    <p>Bourdieu também identificou diferentes formas de capital:</p>
+                    <ul>
+                        <li><strong>Econômico</strong> (renda, salário)</li>
+                        <li><strong>Simbólico</strong> (prestígio, reconhecimento)</li>
+                        <li><strong>Cultural</strong> (acesso à educação formal)</li>
+                        <li><strong>Social</strong> (redes de relações)</li>
+                    </ul>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Pierre_Bourdieu_%281%29.jpg/960px-Pierre_Bourdieu_%281%29.jpg" alt="Pierre Bourdieu">
+                    <div class="img-caption">Figura 7 – Pierre Bourdieu</div>
+                </div>
+            </div>`,
+            // ---- PÁGINA 9 - Heleieth Saffioti (imagem 8) ----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://memoriafeminista.com.br/wp-content/uploads/2023/09/SAFFIOTI-Heleieth-Foto-3.jpg" alt="Heleieth Saffioti">
+                    <div class="img-caption">Figura 8 – Heleieth Saffioti</div>
+                </div>
+                <div class="text-container">
+                    <h3>Heleieth Saffioti – mulher na sociedade de classes</h3>
+                    <p>Saffioti analisou as desigualdades e a violência de gênero, evidenciando a importância de considerar <strong>conjuntamente gênero, raça/etnia e classe social</strong> (interseccionalidade).</p>
+                    <p>Inspirada também por Lélia Gonzalez, Saffioti mostrou que as mulheres negras trabalhadoras ocupam a base da pirâmide social, marcadas e silenciadas, mas capazes de mover estruturas por meio da contestação.</p>
+                    <p>A vida social está inserida em uma trama complexa de relações de poder. A análise sociológica precisa dar conta dessa pluralidade de opressões.</p>
+                </div>
+            </div>`,
+            // ---- PÁGINA 10 - Charles Wright Mills (imagem 9) ----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>Charles Wright Mills – imaginação sociológica</h3>
+                    <p><strong>Imaginação sociológica</strong> é a capacidade de compreender que questões aparentemente individuais são na verdade problemas coletivos. Nossas experiências pessoais não estão isoladas – fazem parte de uma estrutura social mais ampla.</p>
+                    <p><strong>Exemplo:</strong> o assassinato de George Floyd (2020) e o movimento Black Lives Matter. O que parecia um ato policial isolado se revelou como expressão do racismo estrutural, gerando protestos em todo o mundo.</p>
+                    <p>A imaginação sociológica nos ajuda a conectar a biografia à história, transformando "dores pessoais" em "questões públicas".</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://3.bp.blogspot.com/-U1xQ95bzvBg/UDzqY-feCSI/AAAAAAAABj0/jMKmKivCoFk/s1600/mills.jpg" alt="Charles Wright Mills">
+                    <div class="img-caption">Figura 9 – Charles Wright Mills</div>
+                </div>
+            </div>`,
+            // ---- PÁGINA 11 - Fechamento / congratulações ----
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo sobre a relação entre indivíduo e sociedade.</p>
+                <p>As perspectivas de Durkheim, Weber, Marx, Giddens, Bourdieu, Saffioti e Mills mostram que a sociologia oferece múltiplas lentes para compreender o mundo social.</p>
+                <p>Isso é tudo por hoje!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;  // começa em 18px (índice 4)
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

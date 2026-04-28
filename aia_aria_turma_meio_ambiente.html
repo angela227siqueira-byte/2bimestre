@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Avaliação de Impacto Ambiental (AIA)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .init-card h2 { font-size: 1.9rem; font-weight: 600; margin-bottom: 6px; color: #0f3d2e; }
+        .subhead { color: #2a5e4a; margin-bottom: 28px; font-style: italic; border-left: 5px solid #2a7f5e; padding-left: 16px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; color: #1e4f3e; }
+        input, select { width: 100%; padding: 16px 14px; font-size: 1rem; border: 1.5px solid #cbdcd2; border-radius: 18px; background: white; font-family: inherit; }
+        input:focus, select:focus { border-color: #197350; outline: none; box-shadow: 0 0 0 3px rgba(25,115,80,0.1); }
+        .btn-primary { background: #1a5e44; color: white; border: none; padding: 18px 20px; font-size: 1.3rem; font-weight: bold; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-primary:disabled { background: #b0c9bc; cursor: not-allowed; }
+
+        .fixed-header { margin-bottom: 12px; border-bottom: 2px solid #dde5e0; padding-bottom: 8px; }
+        .fixed-header h1 { font-size: 1.7rem; font-weight: 700; color: #0f3d2e; line-height: 1.2; margin-bottom: 6px; }
+        .progress-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: #1a5e44; margin-bottom: 6px; }
+        .progress-bar-bg { background: #dee6e1; height: 7px; border-radius: 20px; overflow: hidden; }
+        .progress-fill { background: #1a7a58; height: 7px; width: 0%; border-radius: 20px; transition: width 0.2s; }
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 { margin: 1.2em 0 0.3em; color: #154e3a; font-weight: 600; }
+        .text-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+        .text-content th, .text-content td { border: 1px solid #cbdcd2; padding: 8px; text-align: left; vertical-align: top; }
+        .text-content th { background: #ecf3ef; font-weight: 600; }
+
+        /* Layout imagem-texto – imagem maior (dobro: 360px) */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 360px;   /* largura fixa em desktop */
+            text-align: center;
+        }
+        .img-container img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container { flex: 2; min-width: 200px; }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .report-box { background: #f0f7f3; border-radius: 24px; padding: 24px 18px; margin: 20px 0; }
+        .report-line { font-size: 1.1rem; margin-bottom: 14px; border-bottom: 1px dashed #9dbbae; padding-bottom: 8px; }
+
+        .congrats-box { text-align: center; padding: 40px 20px; }
+        .congrats-box h2 { color: #1a5e44; margin-bottom: 20px; }
+        .congrats-box p { margin-bottom: 30px; font-size: 1.2rem; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { flex-basis: auto; width: 100%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA INICIAL -->
+    <div id="startScreen" class="screen active init-card">
+        <h2>📘 Avaliação de Impacto Ambiental (AIA)</h2>
+        <div class="subhead">Instrumento da Política Nacional do Meio Ambiente</div>
+        <div class="form-group">
+            <label>📌 Turma</label>
+            <select id="classSelect">
+                <option value="">Selecione a turma</option>
+                <option value="3º MEIO AMBIENTE JACAREÍ">3º MEIO AMBIENTE JACAREÍ</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>👤 Aluno</label>
+            <select id="studentSelect" disabled>
+                <option value="">Primeiro selecione a turma</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>📚 Disciplina</label>
+            <input type="text" id="discipline" value="ARIA" readonly style="background:#f0f3f2; color:#1a2e2a;">
+        </div>
+        <button class="btn-primary" id="startReadingBtn" disabled>▶ Iniciar Leitura</button>
+    </div>
+
+    <!-- TELA DE LEITURA -->
+    <div id="readerScreen" class="screen">
+        <div class="fixed-header">
+            <h1>Avaliação de Impacto Ambiental (AIA)</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 8</span>
+                <span id="progressPercent">12%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- TELA DE RELATÓRIO -->
+    <div id="reportScreen" class="screen">
+        <h2 style="color:#0f3d2e; margin-bottom: 20px;">📋 Relatório de Leitura</h2>
+        <div class="report-box" id="reportContent"></div>
+        <button class="btn-primary" id="closeReportBtn">Encerrar</button>
+    </div>
+
+    <!-- TELA DE CONGRATULAÇÕES FINAL -->
+    <div id="congratsScreen" class="screen congrats-box">
+        <h2>🎉 Parabéns, leitura concluída!</h2>
+        <p>Você finalizou o estudo sobre Avaliação de Impacto Ambiental.<br>Você já pode fechar esta janela.</p>
+        <button class="btn-primary" id="finalCloseBtn">Fechar janela</button>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- DADOS DOS ALUNOS (35 nomes do PDF) -----
+        const alunosData = {
+            "3º MEIO AMBIENTE JACAREÍ": [
+                "ALIAH GUIMARÃES GONÇALVES", "ALICE PINHEIRO SILVA", "ANA CAROLINA DE MORAES ARANTES",
+                "ANA CLARA SANTOS DE OLIVEIRA", "ANA JULYA DA SILVA LEITE", "ANNA JULLYA DE SOUZA BAPTISTA",
+                "ARTUR MICHELIN SIQUEIRA", "BRYAN FERREIRA DE MIRANDA", "ESTELLA CAVALCANTE VEIGA",
+                "FRANCIELE APARECIDA BARBOSA", "GABRIEL MELO DA SILVA PINTO", "HEITOR VOLTEZOU DE LIMA FRANCO",
+                "HENRIQUE DE OLIVEIRA DAMASCENO", "ISABELLY SAMIRE TIDIOLI BACCARO", "ISADORA MOREIRA CESÁRIO",
+                "ITHALO MARCOS FERNANDES DA SILVA", "JOANA MELISSA MERLI", "JOYCE APARECIDA DE OLIVEIRA CHAVES",
+                "JULIA CASSIANO GOMES DA SILVA", "LEVI SILVA PRADO E SOUSA", "LÍVYA DE OLIVEIRA NEVES",
+                "MARIA CLARA ALMEIDA XAVIER DA SILVA", "MARINA JÚLIO GONÇALVES", "MAYARA RAMOS GIL DE OLIVEIRA",
+                "MIGUEL DE LIMA HALLER", "OTÁVIO ANGELO DE ALMEIDA MENDES", "PEDRO GERVASIO REIS",
+                "RAUL ANTONIO CAVALCANTE ANZOLIN COSTA", "RHAYANE DA SILVA RODRIGUES", "SOPHIA FERNANDES SIQUEIRA DA COSTA",
+                "THIAGO MOREIRA ARAUJO", "VINÍCIUS HENRIQUE CORRÊA COSTA", "VITOR AGATA LARA",
+                "VITÓRIA BORGES SILVA", "YASMIN OLIVEIRA DE SANTI"
+            ]
+        };
+
+        // CONTEÚDO DAS 8 PÁGINAS (com imagens posicionadas)
+        const pageContents = [
+            // Página 1 - Introdução (imagem 1 direita)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Avaliação de Impacto Ambiental – instrumento preventivo</strong></p>
+                    <p>A Avaliação de Impacto Ambiental (AIA) é um instrumento da Política Nacional do Meio Ambiente (Lei 6.938/81). Ela foi sistematizada nos Estados Unidos em 1969, com a National Environmental Policy Act (NEPA), e passou a vigorar em 1970. A ideia central é simples, mas revolucionária: <strong>prevenir os danos ambientais antes que eles aconteçam</strong>, em vez de remediá‑los depois.</p>
+                    <p>No Brasil, a Resolução CONAMA nº 001/1986 estabeleceu as diretrizes gerais para a AIA. Ela define impacto ambiental como qualquer alteração das propriedades físicas, químicas e biológicas do meio ambiente causada por atividades humanas que afete a saúde, a segurança, o bem‑estar da população, as atividades sociais e econômicas, a biota, as condições estéticas e sanitárias e a qualidade dos recursos ambientais.</p>
+                    <p>A AIA não se aplica apenas a grandes projetos, como hidrelétricas ou rodovias. Ela deve ser usada sempre que uma ação humana tiver o potencial de modificar significativamente o ambiente. Seu objetivo primário é fornecer informações claras e objetivas para que os tomadores de decisão possam escolher a alternativa menos impactante – ou, quando necessário, exigir medidas mitigadoras ou compensatórias.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://greenviewgv.com.br/wp-content/uploads/2023/11/447-Avaliacao-Impacto-Ambiental_FEED-1024x1024.jpg" alt="Avaliação de Impacto Ambiental">
+                    <div class="img-caption">Figura 1 – Avaliação de Impacto Ambiental</div>
+                </div>
+            </div>`,
+            // Página 2 - Objetivos (imagem 2 esquerda)
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://cdn.awsli.com.br/1081/1081221/arquivos/1709309472674.jpeg" alt="Desenvolvimento Sustentável">
+                    <div class="img-caption">Figura 2 – Desenvolvimento Sustentável</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Objetivos da AIA</strong></p>
+                    <p>Segundo Tommasi, a AIA tem seis grandes objetivos:</p>
+                    <ol>
+                        <li>Proteger o ambiente para as futuras gerações – garantir que os recursos naturais não sejam esgotados ou degradados de forma irreversível.</li>
+                        <li>Garantir a segurança, a saúde e a produtividade do meio ambiente – incluindo seus aspectos estéticos e culturais.</li>
+                        <li>Assegurar a maior amplitude possível de usos e benefícios dos ambientes não degradados, sem riscos ou consequências indesejáveis.</li>
+                        <li>Preservar importantes aspectos históricos, culturais e naturais da nossa herança, mantendo a diversidade ambiental.</li>
+                        <li>Garantir a qualidade dos recursos renováveis e incentivar a reciclagem dos não renováveis.</li>
+                        <li>Permitir uma ponderação entre os benefícios de um projeto e os seus custos ambientais – custos que normalmente não são computados nos orçamentos econômicos tradicionais.</li>
+                    </ol>
+                    <p>Esses objetivos mostram que a AIA não é apenas um checklist burocrático. Ela é uma ferramenta de gestão ambiental estratégica que busca conciliar desenvolvimento econômico com preservação ambiental, ou seja, o caminho do desenvolvimento sustentável.</p>
+                </div>
+            </div>`,
+            // Página 3 - Etapas parte 1 (imagem 3 direita)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Etapas do processo de AIA – triagem e escopo</strong></p>
+                    <p>O processo de Avaliação de Impacto Ambiental é dividido em fases bem definidas. A primeira etapa é a <strong>triagem (screening)</strong>, que decide se a atividade tem potencial de causar impacto significativo.</p>
+                    <p>A triagem utiliza critérios como: listas positivas (empreendimentos que obrigatoriamente exigem EIA/RIMA, conforme Resolução CONAMA 001/86); localização em áreas sensíveis (unidades de conservação, terras indígenas, manguezais); porte do empreendimento (ex.: barragens acima de 10 MW, rodovias com duas ou mais faixas).</p>
+                    <p>Se a triagem indicar que os impactos podem ser relevantes, parte‑se para a <strong>determinação do escopo (scoping)</strong>. Nessa fase, o órgão ambiental competente (ou o próprio empreendedor, sob supervisão) elabora um Termo de Referência (TR). O TR define exatamente quais estudos devem ser realizados, quais fatores ambientais investigar e qual a profundidade da análise. Ele evita que o Estudo de Impacto Ambiental (EIA) se torne uma lista genérica e sem foco.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://image2.slideserve.com/3677766/crit-rios-e-procedimentos-de-triagem-l.jpg" alt="Etapa Triagem">
+                    <div class="img-caption">Figura 3 – Etapa de triagem (screening)</div>
+                </div>
+            </div>`,
+            // Página 4 - Etapas parte 2 (imagem 4 esquerda)
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://revistaminerios.com.br/wp-content/uploads/2025/09/reflorestamento-feito-por-grupo-voluntario-scaled.jpg" alt="Análise técnica">
+                    <div class="img-caption">Figura 4 – Análise técnica e vistoria de campo</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Análise, consulta pública, decisão e monitoramento</strong></p>
+                    <p>Com o Termo de Referência aprovado, a equipe multidisciplinar elabora o <strong>Estudo de Impacto Ambiental (EIA)</strong> e o seu resumo em linguagem acessível, o <strong>Relatório de Impacto Ambiental (RIMA)</strong>. O EIA contém o diagnóstico ambiental (meios físico, biótico e socioeconômico), a previsão de impactos e a proposição de medidas mitigadoras. O RIMA traduz essas informações para o público leigo, com mapas, gráficos e ilustrações.</p>
+                    <p>Após a entrega do EIA/RIMA, o órgão ambiental realiza a <strong>análise técnica</strong> do documento, verificando se atende ao Termo de Referência. Em seguida, é aberto o prazo para consulta pública, geralmente por meio de <strong>audiências públicas</strong> (quando solicitadas por pelo menos 50 cidadãos ou pelo Ministério Público). Nessas audiências, a comunidade pode tirar dúvidas, criticar e sugerir alterações.</p>
+                    <p>Com base em toda essa informação, a autoridade ambiental <strong>decide</strong> pela aprovação ou rejeição do projeto, podendo impor condicionantes (medidas mitigadoras, planos de monitoramento). Por fim, depois da implantação, ocorre o <strong>monitoramento</strong> – acompanhamento contínuo para verificar se os impactos reais estão de acordo com os previstos e se as medidas adotadas são eficazes.</p>
+                </div>
+            </div>`,
+            // Página 5 - Indicadores ambientais (imagem 5 direita)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Uso de indicadores ambientais</strong></p>
+                    <p>Um <strong>indicador ambiental</strong> é uma medida (qualitativa ou quantitativa) que representa um aspecto da qualidade ambiental. Ele serve para traduzir fenômenos complexos em dados compreensíveis, permitindo a comparação no tempo e no espaço.</p>
+                    <p>No processo de AIA, os indicadores são usados em duas etapas principais: no diagnóstico ambiental (descrição da situação atual) e no monitoramento (avaliação da eficácia das medidas mitigadoras).</p>
+                    <p>Exemplos comuns de indicadores:</p>
+                    <ul>
+                        <li><strong>Físicos:</strong> concentração de material particulado (ar), turbidez da água, nível de ruído, pH do solo.</li>
+                        <li><strong>Biológicos:</strong> índice de diversidade de espécies, presença de macroinvertebrados bentônicos, cobertura vegetal nativa.</li>
+                        <li><strong>Socioeconômicos:</strong> renda média da população afetada, número de empregos gerados, deslocamento de comunidades tradicionais.</li>
+                    </ul>
+                    <p>A escolha dos indicadores deve ser feita no Termo de Referência, de forma que os dados coletados sejam comparáveis ao longo do tempo e possam embasar decisões técnicas e políticas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://midias-blog-mkt.s3.amazonaws.com/uploads/2022/08/indicadores-ambientais-br.jpg" alt="Indicadores Ambientais">
+                    <div class="img-caption">Figura 5 – Exemplos de indicadores ambientais</div>
+                </div>
+            </div>`,
+            // Página 6 - Tipos de impactos (classificação qualitativa) (imagem 6 esquerda)
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://conhecimentocientifico.r7.com/wp-content/uploads/2019/06/impacto-ambiental.jpg" alt="Impactos Ambientais">
+                    <div class="img-caption">Figura 6 – Exemplo de impacto negativo (desmatamento)</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Tipos de impactos ambientais – classificação qualitativa</strong></p>
+                    <p>Segundo a Deliberação CECA (RJ) n° 1078/87 e a Resolução CONAMA 001/86, os impactos ambientais podem ser classificados de acordo com diversos critérios. A tabela abaixo resume os principais tipos:</p>
+                    <table>
+                        <tr><th>Critério</th><th>Classificação</th><th>Exemplo</th></tr>
+                        <tr><td>Valor</td><td>Positivo / Negativo</td><td>Geração de emprego / Lançamento de esgoto</td></tr>
+                        <tr><td>Ordem</td><td>Direto / Indireto</td><td>Derrubada de floresta / Erosão → assoreamento</td></tr>
+                        <tr><td>Espacial</td><td>Local / Regional / Estratégico</td><td>Mineração / Rodovia / Projeto de irrigação semiárido</td></tr>
+                        <tr><td>Temporal</td><td>Imediato / Médio-longo prazo / Cíclico</td><td>Morte de peixes / Bioacumulação / Anoxia sazonal</td></tr>
+                        <tr><td>Dinâmico</td><td>Temporário / Permanente</td><td>Vazamento de óleo contido / Destruição de manguezal</td></tr>
+                        <tr><td>Plástica</td><td>Reversível / Irreversível</td><td>Poluição do ar / Extinção de espécie</td></tr>
+                    </table>
+                    <p>Essa classificação ajuda a equipe técnica e a sociedade a compreender a gravidade e a abrangência dos efeitos de um empreendimento.</p>
+                </div>
+            </div>`,
+            // Página 7 - Magnitude e importância (imagem 7 direita)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Magnitude e importância dos impactos ambientais</strong></p>
+                    <p>Dois atributos são fundamentais para qualificar um impacto: a <strong>magnitude</strong> e a <strong>importância</strong>.</p>
+                    <ul>
+                        <li><strong>Magnitude</strong> é a grandeza da alteração causada, em termos absolutos. Pode ser expressa numericamente (ex.: quantos ppm de mercúrio foram adicionados à água) ou descritivamente (ex.: perda de 50 hectares de floresta).</li>
+                        <li><strong>Importância</strong> é o peso ou a relevância daquele impacto para o fator ambiental afetado e para a sociedade. Um impacto de pequena magnitude pode ser muito importante se afetar um ecossistema único ou uma comunidade vulnerável.</li>
+                    </ul>
+                    <p>A relação entre os dois atributos pode ser representada pela tabela abaixo:</p>
+                    <table>
+                        <tr><th>Importância \ Magnitude</th><th>Grande</th><th>Média</th><th>Pequena</th></tr>
+                        <tr><td>Grande</td><td>Muito Significativo</td><td>Significativo</td><td>Pouco Significativo</td></tr>
+                        <tr><td>Média</td><td>Significativo</td><td>Pouco Significativo</td><td>Pouco Significativo</td></tr>
+                        <tr><td>Pequena</td><td>Pouco Significativo</td><td>Pouco Significativo</td><td>Pouco Significativo</td></tr>
+                    </table>
+                    <p><em>Exemplo de cálculo de magnitude:</em> Concentração de sílica (SiO₂) em um rio passa de 1 ppm (antes) para 11 ppm (depois da mineração). Magnitude = 10 ppm. Se esse aumento causa assoreamento e prejudica a pesca, a importância é alta. O impacto será classificado como <strong>Muito Significativo</strong>, exigindo medidas mitigadoras urgentes.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.unoeste.br/site/destaques/images/%7B55D25F08-1CBF-41AD-9ACB-9A5B28C640E4%7D_curso_impacto_ambiental.jpg" alt="Estudo de Impacto Ambiental">
+                    <div class="img-caption">Figura 7 – Estudo de Impacto Ambiental (EIA)</div>
+                </div>
+            </div>`,
+            // Página 8 - Conclusão (imagem 8 esquerda)
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://mundoinovacao.com.br/wp-content/uploads/2023/02/Tecnologia-e-meio-ambiente.png" alt="Tecnologia e Meio Ambiente">
+                    <div class="img-caption">Figura 8 – Tecnologia e meio ambiente (monitoramento por satélite)</div>
+                </div>
+                <div class="text-container">
+                    <p><strong>Conclusão: a AIA como ferramenta de gestão</strong></p>
+                    <p>A Avaliação de Impacto Ambiental é um dos instrumentos mais poderosos da gestão ambiental preventiva. Ela não elimina os conflitos entre desenvolvimento e preservação, mas fornece um processo transparente e tecnicamente fundamentado para que a sociedade decida de forma informada.</p>
+                    <p>Desde a triagem até o monitoramento pós‑implantação, a AIA envolve a participação de especialistas, do poder público e da comunidade. Os indicadores ambientais permitem medir o que seria invisível, e a classificação dos impactos ajuda a priorizar ações.</p>
+                    <p>Para o técnico em meio ambiente, dominar os fundamentos da AIA – seus objetivos, etapas, indicadores e tipos de impacto – é essencial. Esse conhecimento permite atuar na elaboração de estudos, na análise de processos de licenciamento e no acompanhamento de empreendimentos, contribuindo para um futuro mais equilibrado entre as atividades humanas e a capacidade de suporte do planeta.</p>
+                </div>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 2;
+        const fontSizes = [14, 18, 22, 26, 30];
+
+        let selectedClass = "", selectedStudent = "";
+        let startTime = null;
+
+        // DOM elements
+        const startScr = document.getElementById('startScreen');
+        const readerScr = document.getElementById('readerScreen');
+        const reportScr = document.getElementById('reportScreen');
+        const congratsScr = document.getElementById('congratsScreen');
+        const classSelect = document.getElementById('classSelect');
+        const studentSelect = document.getElementById('studentSelect');
+        const startBtn = document.getElementById('startReadingBtn');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const closeReportBtn = document.getElementById('closeReportBtn');
+        const reportContentDiv = document.getElementById('reportContent');
+        const finalCloseBtn = document.getElementById('finalCloseBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = false;
+            stopReading();
+            pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === totalPages) {
+                finishReading();
+            }
+        }
+
+        function finishReading() {
+            if (!startTime) return;
+            const endTime = new Date();
+            const duration = Math.round((endTime - startTime) / 60000);
+            reportContentDiv.innerHTML = `
+                <div class="report-line"><strong>👤 Aluno:</strong> ${selectedStudent}</div>
+                <div class="report-line"><strong>📌 Turma:</strong> ${selectedClass}</div>
+                <div class="report-line"><strong>📚 Disciplina:</strong> ARIA</div>
+                <div class="report-line"><strong>⏱️ Início:</strong> ${startTime.toLocaleString('pt-BR')}</div>
+                <div class="report-line"><strong>🏁 Fim:</strong> ${endTime.toLocaleString('pt-BR')}</div>
+                <div class="report-line"><strong>📖 Páginas lidas:</strong> ${totalPages} de ${totalPages}</div>
+                <div class="report-line"><strong>⏳ Duração:</strong> ${duration} minuto(s)</div>
+            `;
+            readerScr.classList.remove('active');
+            reportScr.classList.add('active');
+            stopReading();
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const femaleVoice = getFemaleVoice();
+            if (femaleVoice) currentUtterance.voice = femaleVoice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) {
+                synth.cancel();
+            }
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Eventos
+        classSelect.addEventListener('change', () => {
+            const turma = classSelect.value;
+            studentSelect.innerHTML = '<option value="">Selecione o aluno</option>';
+            if (turma && alunosData[turma]) {
+                alunosData[turma].forEach(aluno => {
+                    const opt = document.createElement('option');
+                    opt.value = aluno;
+                    opt.textContent = aluno;
+                    studentSelect.appendChild(opt);
+                });
+                studentSelect.disabled = false;
+            } else {
+                studentSelect.disabled = true;
+            }
+            startBtn.disabled = !(classSelect.value && studentSelect.value);
+        });
+        studentSelect.addEventListener('change', () => {
+            startBtn.disabled = !(classSelect.value && studentSelect.value);
+        });
+        startBtn.addEventListener('click', () => {
+            selectedClass = classSelect.value;
+            selectedStudent = studentSelect.value;
+            startTime = new Date();
+            startScr.classList.remove('active');
+            readerScr.classList.add('active');
+            currentPage = 0;
+            updateUI();
+        });
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+        closeReportBtn.addEventListener('click', () => {
+            reportScr.classList.remove('active');
+            congratsScr.classList.add('active');
+        });
+        finalCloseBtn.addEventListener('click', () => {
+            window.close();
+            congratsScr.innerHTML = '<div class="congrats-box"><h2>✅ Você pode fechar esta janela.</h2><p>Obrigado por estudar!</p></div>';
+        });
+
+        applyFontSize();
+        if (synth) {
+            synth.getVoices();
+        }
+    })();
+</script>
+</body>
+</html>

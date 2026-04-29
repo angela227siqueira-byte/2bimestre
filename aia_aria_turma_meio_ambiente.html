@@ -72,7 +72,7 @@
             flex-wrap: wrap;
         }
         .img-container {
-            flex: 0 0 360px;
+            flex: 0 0 360px;   /* largura fixa em desktop */
             text-align: center;
         }
         .img-container img {
@@ -314,7 +314,7 @@
             `<div class="img-text-row left-image">
                 <div class="img-container">
                     <img src="https://conhecimentocientifico.r7.com/wp-content/uploads/2019/06/impacto-ambiental.jpg" alt="Impactos Ambientais">
-                    <div class="img-caption">Figura 6 – Exemplo de impacto negativo (desmatamento)</div>
+                    <div class="img-caption">Figura 6 – Exemplo de impacto negativo</div>
                 </div>
                 <div class="text-container">
                     <p><strong>Tipos de impactos ambientais – classificação qualitativa</strong></p>
@@ -376,9 +376,8 @@
 
         let selectedClass = "", selectedStudent = "";
         let startTime = null;
-        let endTime = null;
 
-        // Elementos
+        // DOM elements
         const startScr = document.getElementById('startScreen');
         const readerScr = document.getElementById('readerScreen');
         const reportScr = document.getElementById('reportScreen');
@@ -404,9 +403,6 @@
         let synth = window.speechSynthesis;
         let currentUtterance = null;
         let isSpeaking = false;
-
-        // URL do Google Apps Script (fornecida por Fabrício)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7-dUgW_Jr7hfJzuzzgLigxC0mX7Fv8Rb5iYUqRVjlBpU04KRb0olGX3LHVUuVgXk0BQ/exec";
 
         function getFemaleVoice() {
             const voices = synth.getVoices();
@@ -447,7 +443,7 @@
 
         function finishReading() {
             if (!startTime) return;
-            endTime = new Date();
+            const endTime = new Date();
             const duration = Math.round((endTime - startTime) / 60000);
             reportContentDiv.innerHTML = `
                 <div class="report-line"><strong>👤 Aluno:</strong> ${selectedStudent}</div>
@@ -497,31 +493,6 @@
             }
             isSpeaking = false;
             speakBtn.textContent = '🔊';
-        }
-
-        // Função para enviar dados para a planilha
-        function enviarParaPlanilha() {
-            if (!selectedStudent || !selectedClass) {
-                console.warn("Dados do aluno não disponíveis");
-                return;
-            }
-            const dados = {
-                aluno: selectedStudent,
-                turma: selectedClass,
-                disciplina: "ARIA",
-                atividade: "Leitura - Avaliação de Impacto Ambiental (AIA)",
-                bimestre: "1º",
-                tentativas: 1,
-                nota: 10,
-                acertos: "",
-                total: ""
-            };
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors", // silencioso, sem resposta
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dados)
-            }).catch(erro => console.warn("Erro no envio (ignorado):", erro));
         }
 
         // Eventos
@@ -574,8 +545,6 @@
             }
         });
         closeReportBtn.addEventListener('click', () => {
-            // Envia os dados para a planilha antes de mostrar os parabéns
-            enviarParaPlanilha();
             reportScr.classList.remove('active');
             congratsScr.classList.add('active');
         });

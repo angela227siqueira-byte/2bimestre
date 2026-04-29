@@ -79,7 +79,9 @@
             margin: 0 2px;
             scroll-behavior: smooth;
         }
-        .text-content p { margin-bottom: 1em; }
+        .text-content p {
+            margin-bottom: 1em;
+        }
         .text-content h2, .text-content h3, .text-content h4 {
             margin: 1.2em 0 0.3em;
             color: #154e3a;
@@ -95,22 +97,26 @@
             flex-wrap: wrap;
         }
         .img-container {
-            flex: 0 0 280px;
-            max-width: 280px;
+            flex: 0 0 auto;
+            max-width: 35vw;
             text-align: center;
         }
         .img-container img {
-            width: 280px;
-            height: 200px;
-            object-fit: fill;   /* distorce para preencher o espaço, conforme solicitado */
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .img-caption {
-            font-size: 0.85rem;
-            color: #5a7a6a;
-            margin-top: 8px;
-            font-style: italic;
+        .img-container iframe {
+            width: 100%;
+            height: 50vh;
+            max-height: 400px;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .text-container {
             flex: 1;
@@ -120,11 +126,6 @@
         .right-image .img-container { order: 2; }
         .left-image .text-container { order: 2; }
         .left-image .img-container { order: 1; }
-
-        /* Para páginas sem imagem (texto puro) */
-        .text-only {
-            width: 100%;
-        }
 
         .toolbar-single {
             display: flex;
@@ -177,8 +178,8 @@
             .reader-wrapper { max-width: 98%; padding: 15px; }
             .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
             .img-text-row { flex-direction: column; }
-            .img-container { flex-basis: auto; max-width: 100%; }
-            .img-container img { width: 100%; height: auto; object-fit: contain; } /* em mobile, não distorce */
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img, .img-container iframe { height: auto; max-height: 300px; width: auto; max-width: 90%; }
             .right-image .text-container, .right-image .img-container,
             .left-image .text-container, .left-image .img-container { order: unset; }
             .capa h1 { font-size: 28px; }
@@ -194,7 +195,7 @@
             <h1>Indivíduo e sociedade · Perspectivas sociológicas</h1>
             <div class="progress-row">
                 <span id="pageXofY">Página 1 de 13</span>
-                <span id="progressPercent">7%</span>
+                <span id="progressPercent">8%</span>
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
@@ -221,166 +222,142 @@
 
 <script>
     (function(){
-        // ---------- PÁGINAS (capa + índice + conteúdo + congratulações) ----------
+        // ---------- CONTEÚDO DAS PÁGINAS ----------
         const pageContents = [
-            // ---- PÁGINA 0 - CAPA ----
+            // PÁGINA 0 - CAPA
             `<div class="capa">
                 <h1>A relação entre indivíduo e sociedade</h1>
                 <h2>Perspectivas sociológicas</h2>
                 <p>Professora Angela Siqueira</p>
             </div>`,
-            // ---- PÁGINA 1 - ÍNDICE ----
+            // PÁGINA 1 - ÍNDICE NUMERADO (conforme edição manual de Fabrício)
             `<div class="text-container" style="max-width:100%;">
-                <h3>📌 Conteúdo</h3>
+                <h3>📌 Índice</h3>
                 <ol>
-                    <li>Três matrizes clássicas da relação indivíduo‑sociedade</li>
-                    <li>O objeto da sociologia e os fatos sociais (Durkheim)</li>
-                    <li>Max Weber e a ação social</li>
-                    <li>Tipologia da ação social</li>
-                    <li>Karl Marx e a perspectiva materialista histórica</li>
-                    <li>Anthony Giddens e a reflexividade</li>
-                    <li>Pierre Bourdieu e o habitus</li>
-                    <li>Heleieth Saffioti – gênero, raça e classe</li>
-                    <li>Charles Wright Mills – imaginação sociológica</li>
+                    <li>1. Introdução – três matrizes clássicas</li>
+                    <li>2. O objeto de estudo da sociologia</li>
+                    <li>3. Fatos sociais (Durkheim)</li>
+                    <li>4. Ação social (Max Weber)</li>
+                    <li>5. Tipologia da ação social (Weber)</li>
+                    <li>6. Perspectiva materialista histórica (Marx e Engels)</li>
+                    <li>7. Anthony Giddens e a reflexividade</li>
+                    <li>8. Pierre Bourdieu e o habitus</li>
+                    <li>9. Heleieth Saffioti – mulher na sociedade de classes</li>
+                    <li>10. Charles Wright Mills – imaginação sociológica</li>
                 </ol>
             </div>`,
-            // ---- PÁGINA 2 - Três matrizes (com imagem 1) ----
+            
+            // ----- TÓPICO 1: Três matrizes clássicas -----
             `<div class="img-text-row right-image">
                 <div class="text-container">
-                    <h3>Três matrizes da relação indivíduo‑sociedade</h3>
-                    <p>No século XIX, três grandes correntes definiram princípios gerais da sociologia:</p>
-                    <ul>
-                        <li><strong>A sociedade molda os indivíduos</strong> (coercitividade dos fatos sociais) – Émile Durkheim</li>
-                        <li><strong>A sociedade é resultado da ação social dos indivíduos</strong> – Max Weber</li>
-                        <li><strong>Sociedade e indivíduos são expressão das contradições de classe</strong> – Karl Marx e Friedrich Engels</li>
-                    </ul>
-                    <p>Essas diferentes abordagens mostram que múltiplas teorias podem explicar as complexas relações entre indivíduo e sociedade. Não representam um esquema evolutivo, mas modos distintos de construir conhecimento sociológico.</p>
+                    <h3>1. Introdução – três matrizes clássicas</h3>
+                    <p>No século XIX, três grandes correntes definiram princípios gerais da sociologia. A primeira, associada a Émile Durkheim, defende que a sociedade molda os indivíduos por meio da coercitividade dos fatos sociais. A segunda, com Max Weber, entende a sociedade como resultado da ação social dos indivíduos. A terceira, formulada por Karl Marx e Friedrich Engels, interpreta sociedade e indivíduos como expressão das contradições de classe. Essas diferentes abordagens mostram que múltiplas teorias podem explicar as complexas relações entre indivíduo e sociedade. Elas não representam um esquema evolutivo, mas modos distintos de construir conhecimento sociológico.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://cafecomsociologia.com/wp-content/uploads/2016/05/individuo_versus_sociedade.png" alt="Indivíduo e Sociedade">
-                    <div class="img-caption">Figura 1 – Indivíduo e Sociedade</div>
+                    <img src="https://cafecomsociologia.com/wp-content/uploads/2016/05/individuo_versus_sociedade.png" alt="" aria-hidden="true">
                 </div>
             </div>`,
-            // ---- PÁGINA 3 - Objeto da sociologia e fatos sociais (imagem 2) ----
+            
+            // ----- TÓPICO 2: Objeto da sociologia -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://adilsoncardoso.com/wp-content/uploads/2023/05/Sociologia.jpg" alt="Objeto de estudo da sociologia">
-                    <div class="img-caption">Figura 2 – Objeto de estudo da sociologia</div>
+                    <img src="https://adilsoncardoso.com/wp-content/uploads/2023/05/Sociologia.jpg" alt="" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>O objeto da sociologia e os fatos sociais (Durkheim)</h3>
-                    <p>Durkheim sistematizou o objeto da sociologia: os <strong>fatos sociais</strong> – formas de pensar, sentir e agir cuja manifestação coletiva constitui a sociedade.</p>
-                    <p><strong>Características dos fatos sociais:</strong></p>
-                    <ul>
-                        <li><strong>Externos</strong> – antecedem os indivíduos e independem de sua vontade.</li>
-                        <li><strong>Coercitivos</strong> – impõem penalidades a quem não os cumpre.</li>
-                        <li><strong>Gerais</strong> – aplicam-se a todos os membros da sociedade.</li>
-                    </ul>
-                    <p><strong>Exemplo:</strong> regras de silêncio numa biblioteca – são exteriores (não dependem de você), coercitivas (podem ser advertido) e gerais (todos devem seguir). Outros exemplos: modo de falar, vestir-se, cumprimentar.</p>
+                    <h3>2. O objeto de estudo da sociologia</h3>
+                    <p>Toda ciência tem um objeto específico: a física estuda a matéria e os fenômenos relacionados a ela no tempo e no espaço; a biologia se ocupa dos organismos vivos. A sociologia, por sua vez, teve seu objeto de estudo sistematizado por Émile Durkheim no século XIX. Para Durkheim, a sociedade é constituída por fenômenos que podem ser compreendidos separadamente da consciência dos indivíduos nos quais se manifestam. Ele denominou esses fenômenos de <strong>fatos sociais</strong>.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 4 - Max Weber (imagem 3) ----
+            
+            // ----- TÓPICO 3: Fatos sociais (Durkheim) – slide -----
             `<div class="img-text-row right-image">
-                <div class="text-container">
-                    <h3>Max Weber e a ação social</h3>
-                    <p>Para Weber, o ponto de partida da análise sociológica é a <strong>ação dos indivíduos e suas intenções</strong> em relação a outras pessoas. A sociedade só pode ser compreendida a partir das relações entre indivíduos racionais.</p>
-                    <p><strong>Ação social</strong> é aquela realizada pelo indivíduo levando em consideração a expectativa da ação de outros. Não é todo comportamento coletivo que é ação social.</p>
-                    <p>Exemplo: abrir guarda-chuva na chuva <strong>não</strong> é ação social (não considera a ação dos outros). Já desviar para evitar colisão ou prestar socorro <strong>é</strong> ação social.</p>
-                </div>
                 <div class="img-container">
-                    <img src="https://cdn.pensador.com/img/authors/ma/xw/max-weber-l.jpg" alt="Max Weber">
-                    <div class="img-caption">Figura 3 – Max Weber</div>
+                    <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTREBD56gNJdNDRbVJkivI7O04QaIP2B_tBvgb3rgNrELergXVz7UUw-EDG608dScm-y8rK9kdg6hLf/pubembed?start=true&loop=false&delayms=3000" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" title="" aria-hidden="true" tabindex="-1"></iframe>
+                </div>
+                <div class="text-container">
+                    <h3>3. Fatos sociais (Durkheim)</h3>
+                    <p><strong>Definição:</strong> fatos sociais são formas de pensar, sentir e agir cuja manifestação coletiva constitui a sociedade. Eles apresentam três características principais: são <strong>externos</strong> aos indivíduos (antecedem e independem da vontade), <strong>coercitivos</strong> (impõem penalidades a quem descumpre) e <strong>gerais</strong> (aplicam-se a todos os integrantes). Um exemplo cotidiano são as regras de silêncio numa biblioteca: elas não dependem de cada indivíduo, punem quem as viola e valem para todos. Outros exemplos incluem o modo de falar, vestir-se e agir em diferentes ambientes (casa, escola, rua). Essas práticas estão ligadas à ideia de <strong>consciência coletiva</strong> – o conjunto de sentimentos e crenças comuns à maioria dos membros da sociedade.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 5 - Tipologia da ação social (apenas uma imagem: Figura 5) ----
+            
+            // ----- TÓPICO 4: Ação social (Weber) – slide -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://blogdoenem.com.br/wp-content/uploads/2017/02/3.jpg" alt="Tipologias de Ação Social">
-                    <div class="img-caption">Figura 4 – Tipologias da ação social (Weber)</div>
+                    <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRzp9B3PPhHDi6aWJwlH5Jo511OO9rxQ5h395nfRnfDfyw14jzvbRJo1xlIiBDdvUkApDiVhwP7IIsw/pubembed?start=true&loop=false&delayms=3000" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" title="" aria-hidden="true" tabindex="-1"></iframe>
                 </div>
                 <div class="text-container">
-                    <h3>Tipologia da ação social (Weber)</h3>
-                    <p>Weber identificou quatro tipos fundamentais:</p>
-                    <ul>
-                        <li><strong>Ação tradicional</strong> – motivada por hábitos ou costumes (ex.: cumprimentar com aperto de mãos).</li>
-                        <li><strong>Ação afetiva</strong> – determinada por sentimentos ou emoções (ex.: gargalhada).</li>
-                        <li><strong>Ação racional orientada a valores</strong> – crença consciente em um valor, independente das consequências (ex.: ativista em manifestação).</li>
-                        <li><strong>Ação racional orientada a fins</strong> – cálculo racional de meios para atingir objetivos (ex.: estratégia para aprovação em vestibular).</li>
-                    </ul>
-                    <p>Essa tipologia permite analisar as motivações por trás das ações cotidianas, desde gestos automáticos até decisões estratégicas complexas. Para Weber, o sentido subjetivo da ação é o que importa para a sociologia.</p>
+                    <h3>4. Ação social (Max Weber)</h3>
+                    <p>Para Weber, o ponto de partida da análise sociológica é a ação dos indivíduos e suas intenções em relação a outras pessoas. A sociedade só pode ser compreendida a partir das relações entre indivíduos racionais. O objeto da sociologia é o <strong>sentido da ação social</strong>. É importante distinguir ação social de comportamento coletivo: por exemplo, abrir o guarda‑chuva na chuva não é ação social (não considera a ação dos outros), mas desviar para evitar uma colisão ou prestar socorro já é ação social. Outros exemplos incluem obedecer à ordem de um policial, um pai agindo em defesa do filho ou um fiel que jejua por orientação religiosa.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 6 - Karl Marx e Engels (imagem 5) ----
+            
+            // ----- TÓPICO 5: Tipologia da ação social -----
             `<div class="img-text-row right-image">
-                <div class="text-container">
-                    <h3>Karl Marx e a perspectiva materialista histórica</h3>
-                    <p>Para Marx e Engels, a base material (produção) condiciona a vida social, política e cultural. "Os homens fazem a sua própria história; contudo, não a fazem de livre e espontânea vontade, pois não são eles quem escolhem as circunstâncias sob as quais ela é feita."</p>
-                    <p>A posição social é definida pela relação com os <strong>meios de produção</strong> (terras, fábricas, máquinas). Isso divide a sociedade em <strong>classes sociais</strong> com interesses antagônicos (burguesia × proletariado).</p>
-                    <p>A greve é uma expressão da contradição entre classes. Marx criticou o capitalismo e defendeu uma sociedade sem classes, com propriedade coletiva dos meios de produção.</p>
-                </div>
                 <div class="img-container">
-                    <img src="https://static.todamateria.com.br/upload/ma/te/materialismo-historico-og.jpg" alt="Karl Marx e Friedrich Engels">
-                    <div class="img-caption">Figura 5 – Karl Marx e Friedrich Engels</div>
+                    <img src="https://blogdoenem.com.br/wp-content/uploads/2017/02/3.jpg" alt="" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>5. Tipologia da ação social (Weber)</h3>
+                    <p>Weber identificou quatro tipos fundamentais de ação social. A <strong>ação tradicional</strong> é motivada por hábitos ou costumes, como cumprimentar alguém com um aperto de mãos. A <strong>ação afetiva</strong> é determinada por sentimentos ou estados emocionais, como uma gargalhada espontânea. A <strong>ação racional orientada a valores</strong> baseia-se na crença consciente em um valor, independentemente das consequências – por exemplo, um ativista que participa de uma manifestação mesmo correndo risco de repressão. Por fim, a <strong>ação racional orientada a fins</strong> é aquela determinada por um cálculo racional de meios para alcançar objetivos específicos, como a estratégia de um estudante para ser aprovado no vestibular.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 7 - Reflexividade (Giddens) (imagem 6) ----
+            
+            // ----- TÓPICO 6: Marx e Engels -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://fernandonogueiracosta.wordpress.com/wp-content/uploads/2018/10/reflexividade.jpg" alt="Teoria da reflexividade">
-                    <div class="img-caption">Figura 6 – Teoria da reflexividade (Giddens)</div>
+                    <img src="https://static.todamateria.com.br/upload/ma/te/materialismo-historico-og.jpg" alt="" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>Anthony Giddens e a reflexividade</h3>
-                    <p>Giddens propõe que os agentes são influenciados pelas estruturas sociais, mas ao mesmo tempo as recriam por meio da <strong>reflexividade</strong> – o processo de interpretar as estruturas e agir sobre elas.</p>
-                    <p>Na modernidade tardia, ocorre uma <strong>radicalização da reflexividade</strong>: as mudanças são mais rápidas, gerando incertezas e riscos globais (pandemias, atentados). Os indivíduos reexaminam constantemente suas práticas, o que lhes confere alguma autonomia.</p>
+                    <h3>6. Perspectiva materialista histórica (Karl Marx e Friedrich Engels)</h3>
+                    <p>Para Marx e Engels, a base material (a produção) condiciona a vida social, política e cultural. Eles afirmam que "os homens fazem a sua própria história; contudo, não a fazem de livre e espontânea vontade, pois não são eles quem escolhem as circunstâncias sob as quais ela é feita". A posição social de cada indivíduo é definida por sua relação com os <strong>meios de produção</strong> (terras, fábricas, máquinas). Isso divide a sociedade em <strong>classes sociais</strong> com interesses antagônicos: a burguesia (proprietária dos meios de produção) e o proletariado (trabalhadores). A propriedade privada é a causa da dominação. A greve é uma expressão da contradição entre classes. Para Marx, a classe social é a unidade de análise sociológica.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 8 - Bourdieu e habitus (imagem 7) ----
+            
+            // ----- TÓPICO 7: Giddens -----
             `<div class="img-text-row right-image">
-                <div class="text-container">
-                    <h3>Pierre Bourdieu e o habitus</h3>
-                    <p>Bourdieu rompe com a dicotomia indivíduo vs. sociedade. O <strong>habitus</strong> é um sistema de disposições incorporadas que orienta o pensar, sentir e agir – um "estilo de vida" condicionado pela posição social.</p>
-                    <p>O habitus se expressa em gostos, práticas alimentares, lazer, etc. Ele evidencia a <strong>relação dialética</strong> (interação dinâmica e contraditória) entre indivíduo e sociedade.</p>
-                    <p>Bourdieu também identificou diferentes formas de capital:</p>
-                    <ul>
-                        <li><strong>Econômico</strong> (renda, salário)</li>
-                        <li><strong>Simbólico</strong> (prestígio, reconhecimento)</li>
-                        <li><strong>Cultural</strong> (acesso à educação formal)</li>
-                        <li><strong>Social</strong> (redes de relações)</li>
-                    </ul>
-                </div>
                 <div class="img-container">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Pierre_Bourdieu_%281%29.jpg/960px-Pierre_Bourdieu_%281%29.jpg" alt="Pierre Bourdieu">
-                    <div class="img-caption">Figura 7 – Pierre Bourdieu</div>
+                    <img src="https://fernandonogueiracosta.wordpress.com/wp-content/uploads/2018/10/reflexividade.jpg" alt="" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>7. Anthony Giddens e a reflexividade</h3>
+                    <p>O sociólogo britânico Anthony Giddens fez uma releitura das teorias clássicas, propondo que os agentes são influenciados pelas estruturas sociais e, ao mesmo tempo, as recriam por meio da <strong>reflexividade</strong> – o processo de interpretar as estruturas e agir sobre elas (por exemplo, cumprir leis e, ao mesmo tempo, adaptá-las à realidade). Na modernidade tardia, ocorre uma radicalização da reflexividade: as mudanças são mais rápidas, geram incertezas e riscos globais, como pandemias e atentados terroristas.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 9 - Heleieth Saffioti (imagem 8) ----
+            
+            // ----- TÓPICO 8: Bourdieu -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://memoriafeminista.com.br/wp-content/uploads/2023/09/SAFFIOTI-Heleieth-Foto-3.jpg" alt="Heleieth Saffioti">
-                    <div class="img-caption">Figura 8 – Heleieth Saffioti</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Pierre_Bourdieu_%281%29.jpg/960px-Pierre_Bourdieu_%281%29.jpg" alt="" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>Heleieth Saffioti – mulher na sociedade de classes</h3>
-                    <p>Saffioti analisou as desigualdades e a violência de gênero, evidenciando a importância de considerar <strong>conjuntamente gênero, raça/etnia e classe social</strong> (interseccionalidade).</p>
-                    <p>Inspirada também por Lélia Gonzalez, Saffioti mostrou que as mulheres negras trabalhadoras ocupam a base da pirâmide social, marcadas e silenciadas, mas capazes de mover estruturas por meio da contestação.</p>
-                    <p>A vida social está inserida em uma trama complexa de relações de poder. A análise sociológica precisa dar conta dessa pluralidade de opressões.</p>
+                    <h3>8. Pierre Bourdieu e o habitus</h3>
+                    <p>Bourdieu rompe com a dicotomia indivíduo vs. sociedade. Ele introduz o conceito de <strong>habitus</strong>: um sistema de disposições incorporadas que orienta o pensar, sentir e agir – um "estilo de vida" condicionado pela posição social. O habitus evidencia a <strong>relação dialética</strong> (interação dinâmica, conflitiva e contraditória) entre indivíduo e sociedade. Bourdieu também identificou diferentes formas de capital: <strong>econômico</strong> (renda, salário), <strong>simbólico</strong> (prestígio, reconhecimento), <strong>cultural</strong> (acesso à educação formal) e <strong>social</strong> (redes de relações). Um exemplo concreto são as diferenças nos hábitos alimentares, que funcionam como marcadores de distinção social.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 10 - Charles Wright Mills (imagem 9) ----
+            
+            // ----- TÓPICO 9: Saffioti -----
             `<div class="img-text-row right-image">
-                <div class="text-container">
-                    <h3>Charles Wright Mills – imaginação sociológica</h3>
-                    <p><strong>Imaginação sociológica</strong> é a capacidade de compreender que questões aparentemente individuais são na verdade problemas coletivos. Nossas experiências pessoais não estão isoladas – fazem parte de uma estrutura social mais ampla.</p>
-                    <p><strong>Exemplo:</strong> o assassinato de George Floyd (2020) e o movimento Black Lives Matter. O que parecia um ato policial isolado se revelou como expressão do racismo estrutural, gerando protestos em todo o mundo.</p>
-                    <p>A imaginação sociológica nos ajuda a conectar a biografia à história, transformando "dores pessoais" em "questões públicas".</p>
-                </div>
                 <div class="img-container">
-                    <img src="https://3.bp.blogspot.com/-U1xQ95bzvBg/UDzqY-feCSI/AAAAAAAABj0/jMKmKivCoFk/s1600/mills.jpg" alt="Charles Wright Mills">
-                    <div class="img-caption">Figura 9 – Charles Wright Mills</div>
+                    <img src="https://memoriafeminista.com.br/wp-content/uploads/2023/09/SAFFIOTI-Heleieth-Foto-3.jpg" alt="" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>9. Heleieth Saffioti – mulher na sociedade de classes</h3>
+                    <p>A socióloga brasileira Heleieth Saffioti analisou as desigualdades e a violência de gênero, evidenciando a importância de considerar conjuntamente <strong>gênero, raça/etnia e classe social</strong> (interseccionalidade). A vida social está inserida em uma trama complexa de relações de poder. Saffioti, assim como Lélia Gonzalez, mostrou que as mulheres negras trabalhadoras ocupam a base da pirâmide social, são marcadas e silenciadas, mas são capazes de mover estruturas por meio da contestação das diferentes formas de hierarquização.</p>
                 </div>
             </div>`,
-            // ---- PÁGINA 11 - Fechamento / congratulações ----
+            
+            // ----- TÓPICO 10: Mills -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://3.bp.blogspot.com/-U1xQ95bzvBg/UDzqY-feCSI/AAAAAAAABj0/jMKmKivCoFk/s1600/mills.jpg" alt="" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Charles Wright Mills – imaginação sociológica</h3>
+                    <p>Charles Wright Mills desenvolveu o conceito de <strong>imaginação sociológica</strong>: a capacidade de compreender que questões aparentemente individuais são, na verdade, problemas coletivos. Nossas experiências pessoais não estão isoladas – fazem parte de experiências coletivas. Um exemplo emblemático é o assassinato de George Floyd (2020) e o movimento Black Lives Matter. O que parecia um ato policial isolado revelou‑se como expressão do racismo estrutural, gerando protestos em todo o mundo. A imaginação sociológica nos ajuda a conectar a biografia à história, transformando "dores pessoais" em "questões públicas".</p>
+                </div>
+            </div>`,
+            
+            // PÁGINA FINAL - CONGRATULAÇÕES
             `<div class="congrats-page">
                 <h2>🎉 Parabéns!</h2>
                 <p>Você concluiu o estudo sobre a relação entre indivíduo e sociedade.</p>
@@ -391,7 +368,7 @@
 
         const totalPages = pageContents.length;
         let currentPage = 0;
-        let fontSizeIndex = 4;  // começa em 18px (índice 4)
+        let fontSizeIndex = 4;
         const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
 
         const pageContentDiv = document.getElementById('pageContent');

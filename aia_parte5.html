@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Parte 5 - Estudo de caso detalhado (tinturaria)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .text-content h2 { border-left: 5px solid #1a7a58; padding-left: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: inherit;
+        }
+        th, td {
+            border: 1px solid #b3cdbf;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #ecf3ef;
+            font-weight: 600;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Estudo de caso detalhado – Indústria têxtil</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 8</span>
+                <span id="progressPercent">12%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- Páginas da Parte 5 (estudo de caso detalhado e outros) -----
+        const pages = [
+            // PÁGINA 1 - Introdução do caso, problema, legislação
+            `<div>
+                <h2>🧪 Estudo de caso 1 – Indústria de tingimento têxtil (Americana‑SP)</h2>
+                <p><strong>Contexto:</strong> A indústria possui Licença de Operação (LO) condicionada ao tratamento de seus efluentes. A CETESB recebeu denúncias anônimas de que a empresa estaria lançando efluentes brutos diretamente na galeria pluvial, que deságua em um córrego próximo.</p>
+                <p><strong>Legislação aplicável:</strong></p>
+                <ul>
+                    <li>Resolução CONAMA 430/2011 – condições e padrões de lançamento de efluentes.</li>
+                    <li>Decreto Estadual 8.468/76 (SP) – padrões de qualidade das águas.</li>
+                    <li>Lei 9.605/98 – crimes ambientais.</li>
+                </ul>
+                <p><strong>Exigência da autoridade:</strong> Realizar vistoria in loco, coletar amostras de efluente na saída do processo e em pontos da galeria pluvial, analisar parâmetros físico‑químicos e comparar com os limites legais. Caso comprovada irregularidade, determinar medidas corretivas e mitigadoras.</p>
+            </div>`,
+            // PÁGINA 2 - Planejamento (preparação)
+            `<div>
+                <h2>🔧 Fase 1 – Planejamento (preparação)</h2>
+                <p>O técnico deve agir como um padeiro que separa todos os ingredientes e utensílios antes de começar.</p>
+                <p><strong>1. Estudo da legislação e dos limites exigidos:</strong> Consultar os anexos da CONAMA 430/2011 e do Decreto 8.468/76 para saber quais parâmetros analisar e os respectivos valores máximos permitidos.</p>
+                <p><strong>2. Definição dos pontos de amostragem:</strong></p>
+                <ul>
+                    <li>Ponto 1: saída do tanque de equalização (efluente bruto – para conhecimento).</li>
+                    <li>Ponto 2: poço de visita da galeria pluvial da empresa (onde a denúncia indicou lançamento).</li>
+                    <li>Ponto 3: a montante do córrego (referência de qualidade natural do corpo receptor).</li>
+                </ul>
+                <p><strong>3. Ferramentas e EPIs necessários:</strong> Amostradores (garrafas de fundo, baldes), frascos de vidro e plástico, caixa de isopor para transporte, gelo, parâmetros de campo (pHmetro, oxímetro, turbidímetro), EPIs: luvas de nitrila, óculos de proteção, jaleco, botas impermeáveis, máscara.</p>
+                <p><strong>4. Caderneta de campo, etiquetas, caneta permanente</strong> – para identificar cada amostra com data, hora, ponto e operador.</p>
+                <p><strong>5. Verificação do acondicionamento e envio ao laboratório:</strong> Contratar laboratório acreditado (ex.: rede metrológica estadual) e agendar a coleta para que as amostras cheguem dentro do prazo de validade.</p>
+            </div>`,
+            // PÁGINA 3 - Execução (coleta e análise)
+            `<div>
+                <h2>🔬 Fase 2 – Execução (coleta de dados e análises)</h2>
+                <p><strong>Procedimento de campo:</strong> No dia da vistoria, a equipe identificou visualmente manchas oleosas e coloração anormal no córrego a jusante da empresa. Coletou‑se as amostras nos pontos definidos, seguindo as normas técnicas (ABNT NBR ISO 5667). As amostras foram preservadas em temperatura controlada (4°C).</p>
+                <p><strong>Parâmetros analisados (laboratório):</strong> Cor (mg/L Pt‑Co), surfactantes (MBAS), DBO, DQO, zinco, temperatura, pH.</p>
+                <p><strong>Resultados obtidos (média de 3 coletas):</strong></p>
+                <tr>
+                    <thead><tr><th>Parâmetro</th><th>Unidade</th><th>Ponto 1 (efluente bruto)</th><th>Ponto 2 (galeria pluvial)</th><th>Ponto 3 (córrego montante)</th><th>Limite legal (para lançamento)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cor</td><td>mg/L Pt‑Co</td><td>450</td><td>320</td><td>15</td><td>≤ 75</td></tr>
+                        <tr><td>Surfactantes</td><td>mg/L</td><td>6,2</td><td>4,5</td><td>0,1</td><td>≤ 2,0</td></tr>
+                        <tr><td>Zinco</td><td>mg/L</td><td>2,1</td><td>1,8</td><td>0,05</td><td>≤ 5,0</td></tr>
+                        <tr><td>DQO</td><td>mg/L</td><td>850</td><td>530</td><td>10</td><td>≤ 180</td></tr>
+                    </tbody>
+                </table>
+                <p><strong>Cálculo de magnitude (exemplo para cor):</strong> Valor final (Ponto 2) – Valor natural (Ponto 3) = 320 – 15 = <strong>305 mg/L Pt‑Co</strong>. Essa magnitude está muito acima do padrão e indica grave degradação.</p>
+                <p><strong>Evidência de vazamento ilegal:</strong> Os altos valores de cor e surfactantes no Ponto 2 (galeria pluvial) confirmam que a empresa está lançando efluentes não tratados diretamente no sistema de drenagem pluvial, sem passar pela estação de tratamento.</p>
+            </div>`,
+            // PÁGINA 4 - Conclusão (resultados, correção, mitigação)
+            `<div>
+                <h2>✅ Fase 3 – Conclusão e ações</h2>
+                <p><strong>Resultado da análise técnica:</strong> A empresa descumpriu os padrões de lançamento da CONAMA 430/2011 e do Decreto 8.468/76, infringindo a Lei de Crimes Ambientais (art. 54). O órgão ambiental instaurou processo administrativo, aplicando multa diária até a regularização.</p>
+                <p><strong>Ação corretiva (resolver o problema imediato):</strong></p>
+                <ul>
+                    <li>Identificar e obstruir a ligação clandestina da linha de efluente bruto com a galeria pluvial.</li>
+                    <li>Reparar o sistema de bombeamento e encaminhar todo o efluente para a Estação de Tratamento de Efluentes (ETE).</li>
+                </ul>
+                <p><strong>Ações mitigadoras (evitar recorrência e reduzir impactos futuros):</strong></p>
+                <ul>
+                    <li>Instalar um tratamento terciário adicional na ETE (carvão ativado + flotação) para remover cor e surfactantes.</li>
+                    <li>Implantar programa de monitoramento quinzenal do efluente tratado e do córrego receptor durante 6 meses.</li>
+                    <li>Adotar um sistema de gestão ambiental (NBR ISO 14001) e registrar um plano de emergência para vazamentos.</li>
+                </ul>
+                <p><strong>Medidas socioambientais:</strong> A empresa deve apresentar um Plano de Recuperação de Área Degradada (PRAD) para o trecho do córrego afetado e compensar a comunidade por meio de projetos ambientais.</p>
+            </div>`,
+            // PÁGINA 5 - Estudo de caso 2 (oficina mecânica – simplificado)
+            `<div>
+                <h2>🛢️ Estudo de caso 2 – Oficina mecânica (óleo lubrificante)</h2>
+                <p><strong>Problema:</strong> Vazamento de óleo usado em solo, sem contenção. Detectado por inspeção da prefeitura.</p>
+                <p><strong>Planejamento:</strong> Norma técnica ABNT NBR 16725, Resolução CONAMA 362/2005. Coleta de amostras de solo e água subterrânea.</p>
+                <p><strong>Execução:</strong> Solo com hidrocarbonetos totais de petróleo (HTP) = 800 mg/kg (limite 200 mg/kg). Magnitude = 600 mg/kg.</p>
+                <p><strong>Conclusão:</strong> Correção: remoção do solo contaminado e coprocessamento. Mitigação: bacia de contenção, contratação de empresa licenciada para coleta de óleo usado. Monitoramento semestral durante 2 anos.</p>
+            </div>`,
+            // PÁGINA 6 - Estudo de caso 3 (posto de combustível)
+            `<div>
+                <h2>⛽ Estudo de caso 3 – Posto de combustível (vazamento em tanque)</h2>
+                <p><strong>Problema:</strong> Detecção de benzeno na água subterrânea durante teste de estanqueidade. Resolução CONAMA 273/2000.</p>
+                <p><strong>Planejamento:</strong> Instalação de poços de monitoramento a jusante. Parâmetros: benzeno, tolueno, etilbenzeno, xilenos (BTEX).</p>
+                <p><strong>Execução:</strong> Benzeno = 50 µg/L (padrão potabilidade 5 µg/L). Magnitude = 45 µg/L. Importância altíssima (cancerígeno).</p>
+                <p><strong>Conclusão:</strong> Correção: remoção do tanque e instalação de barreira hidráulica (bombeamento). Mitigação: tratamento air stripping; monitoramento semestral por 3 anos; elaboração de Plano de Gerenciamento de Risco (PGR).</p>
+            </div>`,
+            // PÁGINA 7 - Dicas para o técnico e encerramento
+            `<div>
+                <h2>📌 Resumo e dicas para o técnico ambiental</h2>
+                <p>Nunca pule a fase de planejamento. Consulte as normas antes de ir a campo. Documente cada passo com fotos e caderneta de campo. Mantenha a cadeia de custódia das amostras. Sempre proponha ações corretivas (resolver o problema atual) e mitigadoras (evitar que se repita).</p>
+                <p>Um bom relatório de impacto deve conter: diagnóstico ambiental, previsão da magnitude, interpretação da importância, medidas propostas e plano de monitoramento.</p>
+                <p>Lembre‑se: <strong>quem polui paga</strong> (artigo 14 da Lei 6.938/81) e <strong>quem protege, lucra</strong>.</p>
+            </div>`
+        ];
+
+        const totalPages = pages.length;
+        let currentPage = 0;
+        let currentFontSize = 18;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateUI() {
+            document.getElementById('pageContent').innerHTML = pages[currentPage];
+            const num = currentPage + 1;
+            document.getElementById('pageXofY').textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === -1) {
+                window.location.href = 'indice.html';
+            } else if (newPage === totalPages) {
+                window.location.href = 'aia_parte6.html';
+            }
+        }
+
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+
+        // Acessibilidade
+        const pageContentDiv = document.getElementById('pageContent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        function setFontSize(size) {
+            pageContentDiv.style.fontSize = size + 'px';
+            currentFontSize = size;
+        }
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function startReading() {
+            if (!synth) { alert('Navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (currentFontSize > 12) setFontSize(currentFontSize-2); });
+        fontPlus.addEventListener('click', () => { if (currentFontSize < 36) setFontSize(currentFontSize+2); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        setFontSize(18);
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

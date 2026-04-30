@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Parte 4 - Critérios e etapas da AIA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .text-content h2 { border-left: 5px solid #1a7a58; padding-left: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: inherit;
+        }
+        th, td {
+            border: 1px solid #b3cdbf;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #ecf3ef;
+            font-weight: 600;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Métodos de Avaliação de Impactos Ambientais</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 3</span>
+                <span id="progressPercent">33%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- Páginas da Parte 4 (sem imagens, apenas texto e tabelas) -----
+        const pages = [
+            // Página 1 - Critérios para escolha do método (com tabela)
+            `<div>
+                <h2>3. Critérios para escolha do método apropriado</h2>
+                <p>O técnico em meio ambiente deve saber selecionar o método mais adequado antes de iniciar um estudo de impacto. Os principais critérios são:</p>
+                <table>
+                    <thead><tr><th>Critério</th><th>Exemplo de decisão</th></tr></thead>
+                    <tbody>
+                        <tr><td>Tipo e porte do empreendimento</td><td>Rodovia → Overlays; indústria pequena → Check-list.</td></tr>
+                        <tr><td>Disponibilidade de dados</td><td>Dados escassos → Ad Hoc; dados abundantes → modelos de simulação.</td></tr>
+                        <tr><td>Recursos financeiros e tempo</td><td>Curto prazo → Check-list; longo prazo → matriz ou redes.</td></tr>
+                        <tr><td>Experiência da equipe</td><td>Domínio de SIG → Overlays digitais.</td></tr>
+                        <tr><td>Exigência legal</td><td>CONAMA 001/86 exige identificação, previsão da magnitude e interpretação da importância (qualquer método que atenda isso é válido).</td></tr>
+                        <tr><td>Participação pública</td><td>Métodos visuais (matrizes coloridas, mapas) comunicam melhor.</td></tr>
+                    </tbody>
+                </table>
+                <p>O técnico também deve considerar se o método escolhido permite identificar impactos cumulativos e sinérgicos, algo essencial para empreendimentos de grande porte. Em projetos lineares (dutos, rodovias), os overlays são frequentemente exigidos pelos órgãos ambientais. Em empreendimentos de mineração, a Matriz de Leopold combinada com redes de interação é uma prática comum.</p>
+            </div>`,
+            // Página 2 - As três grandes etapas da AIA (planejamento)
+            `<div>
+                <h2>4.1 Planejamento – a base de tudo</h2>
+                <p>O planejamento é a fase mais crítica, pois define todo o direcionamento do estudo. Inclui:</p>
+                <ul>
+                    <li><strong>Levantamento da legislação aplicável</strong> – identificar resoluções CONAMA (ex.: 001/86, 237/97), leis estaduais (ex.: Decreto 8.468/76 em SP), decretos e normas técnicas (NBR ISO 14001). O desconhecimento da legislação pode invalidar todo o estudo.</li>
+                    <li><strong>Definição do escopo</strong> – delimitar a área de influência direta e indireta, os fatores ambientais a serem analisados (físicos: ar, água, solo; bióticos: flora, fauna; socioeconômicos: renda, emprego, saúde).</li>
+                    <li><strong>Elaboração do Termo de Referência (TR)</strong> – documento que orienta a execução, contendo cronograma, metodologias, parâmetros de amostragem e responsáveis técnicos. O TR deve ser aprovado pelo órgão ambiental (ex.: CETESB, INEA, SEMAD).</li>
+                    <li><strong>Diagnóstico ambiental de base</strong> – coleta de dados primários (campo) ou secundários (bibliografia, dados de órgãos públicos) para caracterizar a situação ambiental anterior ao empreendimento. Ex.: qualidade da água, níveis de ruído, cobertura vegetal.</li>
+                </ul>
+                <p>Um bom planejamento evita que o estudo seja superficial ou omita impactos relevantes. Por exemplo, se o técnico não coletar dados de qualidade da água em todas as estações do ano, pode subestimar a poluição em períodos de estiagem.</p>
+            </div>`,
+            // Página 3 - Execução e Conclusão (detalhadas)
+            `<div>
+                <h2>4.2 Execução e Conclusão</h2>
+                <p><strong>Execução:</strong> consiste em aplicar o método escolhido. Envolve:</p>
+                <ul>
+                    <li><strong>Amostragem de campo:</strong> seguir os pontos e frequências definidos no TR. Coletar amostras de água, solo, ar, ruído, etc., utilizando técnicas acreditadas (ex.: ABNT).</li>
+                    <li><strong>Análises laboratoriais:</strong> contratar laboratório com acreditação (ex.: rede metrológica estadual) para garantir a confiabilidade dos resultados.</li>
+                    <li><strong>Cálculo da magnitude:</strong> diferença entre o valor final e o valor inicial do parâmetro (ex.: aumento da DBO de 5 mg/L para 42 mg/L → magnitude = +37 mg/L).</li>
+                    <li><strong>Interpretação da importância:</strong> peso do impacto para o fator ambiental. Ex.: contaminação de aquífero que abastece uma cidade → importância alta.</li>
+                    <li><strong>Classificação dos impactos:</strong> usar a tabela de relação Magnitude × Importância para classificar como Muito Significativo (MS), Significativo (S) ou Pouco Significativo (PS).</li>
+                </ul>
+                <p><strong>Conclusão:</strong> elaboração do relatório técnico (EIA) e da versão em linguagem acessível (RIMA). Inclui:</p>
+                <ul>
+                    <li><strong>Proposição de medidas mitigadoras:</strong> ações para reduzir, compensar ou eliminar os impactos negativos. Exemplos: instalação de estação de tratamento de efluentes (ETE), replantio de vegetação nativa, instalação de barreiras acústicas.</li>
+                    <li><strong>Plano de monitoramento:</strong> definir parâmetros, frequência de amostragem (ex.: mensal, trimestral), pontos de coleta, responsáveis e custos. O monitoramento deve verificar a eficácia das medidas mitigadoras e alertar para necessidade de correções.</li>
+                    <li><strong>Audiência pública:</strong> (se exigida) apresentar o RIMA à comunidade, responder perguntas e incorporar sugestões quando pertinentes.</li>
+                    <li><strong>Encaminhamento ao órgão ambiental:</strong> para emissão das licenças: Licença Prévia (LP), Licença de Instalação (LI) e Licença de Operação (LO).</li>
+                </ul>
+                <p>Sem uma conclusão bem estruturada, todo o esforço de campo e análise pode não resultar em medidas práticas de proteção ambiental. Por exemplo, um estudo que apenas descreve a poluição do rio, mas não propõe um sistema de tratamento, é incompleto e pode ser rejeitado pelo órgão ambiental.</p>
+            </div>`
+        ];
+
+        const totalPages = pages.length;
+        let currentPage = 0;
+        let currentFontSize = 18;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateUI() {
+            document.getElementById('pageContent').innerHTML = pages[currentPage];
+            const num = currentPage + 1;
+            document.getElementById('pageXofY').textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === -1) {
+                window.location.href = 'indice.html';
+            } else if (newPage === totalPages) {
+                window.location.href = 'aia_parte5.html';
+            }
+        }
+
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+
+        // Controles de acessibilidade
+        const pageContentDiv = document.getElementById('pageContent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        function setFontSize(size) {
+            pageContentDiv.style.fontSize = size + 'px';
+            currentFontSize = size;
+        }
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (currentFontSize > 12) setFontSize(currentFontSize-2); });
+        fontPlus.addEventListener('click', () => { if (currentFontSize < 36) setFontSize(currentFontSize+2); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        setFontSize(18);
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

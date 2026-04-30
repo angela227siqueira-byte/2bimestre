@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Parte 6 - Exercícios complementares (AIA)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .text-content h2 { border-left: 5px solid #1a7a58; padding-left: 15px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: inherit;
+        }
+        th, td {
+            border: 1px solid #b3cdbf;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #ecf3ef;
+            font-weight: 600;
+        }
+
+        .exercise-box {
+            background: #f9f9f0;
+            border-left: 6px solid #2a7f5e;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Exercícios complementares – Métodos de AIA</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 5</span>
+                <span id="progressPercent">20%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- Páginas da Parte 6 (exercícios + gabarito) -----
+        const pages = [
+            // PÁGINA 1 – Exercício 1: Impacto visual (construção turística)
+            `<div class="exercise-box">
+                <h2>📝 Exercício 1 – Impacto visual de construção turística</h2>
+                <p>No complexo de Pedra Caída (Carolina‑MA), um hotel foi construído em meio à vegetação nativa. Onze moradores (incluindo você) deram notas de 0 a 4 para a qualidade paisagística antes e depois da obra (0 = péssimo, 4 = excelente). Dados:</p>
+                <table>
+                    <thead><tr><th>Pessoa</th><th>Antes</th><th>Depois</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>4</td><td>1</td></tr>
+                        <tr><td>2</td><td>3</td><td>2</td></tr>
+                        <tr><td>3</td><td>1</td><td>3</td></tr>
+                        <tr><td>4</td><td>4</td><td>2</td></tr>
+                        <tr><td>5</td><td>0</td><td>3</td></tr>
+                        <tr><td>6</td><td>4</td><td>2</td></tr>
+                        <tr><td>7</td><td>2</td><td>3</td></tr>
+                        <tr><td>8</td><td>3</td><td>1</td></tr>
+                        <tr><td>9</td><td>4</td><td>0</td></tr>
+                        <tr><td>10</td><td>3</td><td>1</td></tr>
+                        <tr><td>11 (você)</td><td>4</td><td>2</td></tr>
+                    </tbody>
+                </table>
+                <p><strong>Perguntas:</strong></p>
+                <ol>
+                    <li>Calcule a nota média antes e depois (incluindo sua nota).</li>
+                    <li>Determine a magnitude (Depois – Antes). O impacto foi positivo ou negativo?</li>
+                    <li>Indique duas medidas mitigadoras para reduzir o impacto visual.</li>
+                    <li>Em qual fase da AIA (planejamento, execução ou conclusão) você teria sugerido essas medidas?</li>
+                </ol>
+                <p><em>Respostas esperadas no gabarito (página 5).</em></p>
+            </div>`,
+            // PÁGINA 2 – Exercício 2: Mineração com mercúrio e sílica
+            `<div class="exercise-box">
+                <h2>📝 Exercício 2 – Mineração de ouro e contaminação</h2>
+                <p>Uma empresa mineradora utiliza dragas no leito de um rio e emprega mercúrio para separar o ouro. Antes da atividade, as concentrações eram: SiO₂ = 1 ppm, Hg = 1 ppm. Após a atividade: SiO₂ = 11 ppm, Hg = 3 ppm.</p>
+                <p><strong>Perguntas:</strong></p>
+                <ol>
+                    <li>Calcule a magnitude para sílica e para mercúrio (depois – antes).</li>
+                    <li>Interprete a importância de cada impacto usando os seguintes critérios: <em>&lt;&lt; desprezível, &lt; não importante, &gt; importante, &gt;&gt; muito importante</em>.</li>
+                    <li>Explique por que o mercúrio, mesmo com magnitude aparentemente pequena, é considerado muito mais perigoso que a sílica.</li>
+                    <li>Proponha um plano de monitoramento para o mercúrio (parâmetros, frequência, pontos de coleta).</li>
+                </ol>
+                <p><em>Respostas esperadas no gabarito (página 5).</em></p>
+            </div>`,
+            // PÁGINA 3 – Exercício 3: Eucaliptocultura
+            `<div class="exercise-box">
+                <h2>📝 Exercício 3 – Plantação de eucalipto para celulose</h2>
+                <p>Uma empresa planeja plantar 500 ha de eucalipto em área de Cerrado. As atividades previstas: aquisição de terra, supressão vegetal, preparo do solo (aração, gradagem), plantio e colheita rotativa (a cada 7 anos). Fatores ambientais a considerar: ar, água superficial, água subterrânea, solo, flora, fauna, renda, infraestrutura.</p>
+                <p><strong>Perguntas:</strong></p>
+                <ol>
+                    <li>Preencha uma matriz de Leopold simplificada (atividades × fatores) com os sinais + (positivo), – (negativo) ou 0 (neutro).</li>
+                    <li>Identifique qual atividade gera o impacto negativo mais irreversível sobre a flora e justifique.</li>
+                    <li>Proponha medidas mitigadoras para minimizar os impactos negativos sobre a água subterrânea e sobre a fauna (ex.: corredores ecológicos).</li>
+                    <li>Elabore um plano de monitoramento pós‑plantio (frequência, indicadores, responsáveis).</li>
+                </ol>
+                <p><em>Respostas esperadas no gabarito (página 5).</em></p>
+            </div>`,
+            // PÁGINA 4 – Exercício 4 (bônus): Escolha do método
+            `<div class="exercise-box">
+                <h2>📝 Exercício 4 – Escolha do método de AIA</h2>
+                <p>Suponha que você é o técnico contratado para avaliar o impacto ambiental de um novo gasoduto que atravessará três municípios. O projeto tem 120 km de extensão, passará por áreas de proteção ambiental e por zonas urbanas. Você dispõe de 8 meses e uma equipe com experiência em geoprocessamento.</p>
+                <p><strong>Perguntas:</strong></p>
+                <ol>
+                    <li>Qual método de AIA você recomendaria? Justifique com base nos critérios estudados (tipo de empreendimento, dados disponíveis, tempo, equipe).</li>
+                    <li>Descreva as etapas de execução desse método para o caso do gasoduto.</li>
+                    <li>Quais fatores ambientais você priorizaria na análise?</li>
+                </ol>
+                <p><em>Respostas esperadas no gabarito (página 5).</em></p>
+            </div>`,
+            // PÁGINA 5 – Gabarito comentado (respostas dos exercícios)
+            `<div>
+                <h2>✅ Gabarito comentado</h2>
+                <h3>Exercício 1 – Impacto visual</h3>
+                <p><strong>Médias:</strong> Antes = (4+3+1+4+0+4+2+3+4+3+4)/11 = 32/11 ≈ 2,91. Depois = (1+2+3+2+3+2+3+1+0+1+2)/11 = 20/11 ≈ 1,82. <strong>Magnitude:</strong> 1,82 – 2,91 = –1,09 (negativo). <strong>Medidas mitigadoras:</strong> plantar cortina vegetal de árvores nativas; pintar a edificação com cores que se integrem à paisagem. <strong>Fase:</strong> conclusão (as medidas são propostas após a análise).</p>
+                <h3>Exercício 2 – Mineração</h3>
+                <p><strong>Magnitude SiO₂:</strong> 11–1 = 10 ppm. <strong>Magnitude Hg:</strong> 3–1 = 2 ppm. <strong>Importância:</strong> sílica: >> (aumenta turbidez, prejudica aquática). Mercúrio: >>> (extremamente tóxico, bioacumulativo). <strong>Plano de monitoramento do Hg:</strong> coletar amostras de água a montante e jusante da mineração a cada 15 dias; analisar mercúrio total por espectrofotometria de absorção atômica; responsável: laboratório acreditado.</p>
+                <h3>Exercício 3 – Eucaliptocultura</h3>
+                <p><strong>Matriz resumida (exemplo):</strong> supressão vegetal: – para flora, – para fauna, – para solo; plantio: – para água subterrânea (consumo), + para renda; colheita: – para ar (poeira). <strong>Atividade mais irreversível:</strong> supressão vegetal, pois remove permanentemente a vegetação nativa. <strong>Medidas mitigadoras:</strong> manter 20% da área como reserva legal; construir bacias de retenção para evitar contaminação da água subterrânea; criar corredores ecológicos entre fragmentos. <strong>Monitoramento:</strong> a cada 6 meses, medir nível do lençol freático em poços de observação; contar espécies de aves e mamíferos em transectos.</p>
+                <h3>Exercício 4 – Gasoduto</h3>
+                <p><strong>Método recomendado:</strong> Mapas de superposição (Overlays) com auxílio de SIG, combinado com Matriz de Leopold para os trechos mais sensíveis. Justificativa: gasoduto é linear (ideal para overlays), equipe com experiência em geoprocessamento, dados cartográficos disponíveis. <strong>Etapas:</strong> sobrepor cartas de geologia, solos, vegetação, unidades de conservação, áreas urbanas; identificar traçado de menor fragilidade; depois aplicar matriz nos pontos críticos. <strong>Fatores prioritários:</strong> fragmentação da flora, risco de vazamento em aquíferos, interferência em comunidades tradicionais.</p>
+            </div>`
+        ];
+
+        const totalPages = pages.length;
+        let currentPage = 0;
+        let currentFontSize = 18;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateUI() {
+            document.getElementById('pageContent').innerHTML = pages[currentPage];
+            const num = currentPage + 1;
+            document.getElementById('pageXofY').textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === -1) {
+                window.location.href = 'indice.html';
+            } else if (newPage === totalPages) {
+                window.location.href = 'aia_parte7.html'; // se houver parte 7, ou encerrar
+            }
+        }
+
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+
+        // Acessibilidade
+        const pageContentDiv = document.getElementById('pageContent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        function setFontSize(size) {
+            pageContentDiv.style.fontSize = size + 'px';
+            currentFontSize = size;
+        }
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function startReading() {
+            if (!synth) { alert('Navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (currentFontSize > 12) setFontSize(currentFontSize-2); });
+        fontPlus.addEventListener('click', () => { if (currentFontSize < 36) setFontSize(currentFontSize+2); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        setFontSize(18);
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

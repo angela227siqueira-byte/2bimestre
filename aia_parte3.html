@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Parte 3 - Principais métodos de AIA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .text-content h2 { border-left: 5px solid #1a7a58; padding-left: 15px; }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            width: 100%;
+            height: 50vh;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; }
+            .img-container img { height: auto; max-height: 300px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Métodos de Avaliação de Impactos Ambientais</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 6</span>
+                <span id="progressPercent">17%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ----- Páginas internas da Parte 3 (com imagens atualizadas) -----
+        const pages = [
+            // Página 1 - Método Ad Hoc
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.1 Método Ad Hoc</h2>
+                    <p>O método Ad Hoc (expressão latina que significa “para esta finalidade”) surgiu da necessidade de tomada de decisões rápidas, considerando o parecer de especialistas. Consiste na formação de grupos de trabalho multidisciplinares (engenheiros, biólogos, sociólogos, etc.) que, com base em sua experiência, elaboram um relatório dissertativo listando os possíveis impactos.</p>
+                    <p><strong>Vantagens:</strong> rapidez, baixo custo, facilidade de compreensão pelo público. <strong>Desvantagens:</strong> alto grau de subjetividade, não quantifica impactos, depende muito da qualidade dos especialistas convidados.</p>
+                    <p><strong>Quando usar:</strong> estudos preliminares, escassez de dados, prazos curtos. Exemplo: avaliação inicial de um pequeno empreendimento para decidir se será necessário EIA completo.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.questionpro.com/blog/wp-content/uploads/2023/01/pesquisa-ad-hoc.jpg" alt="Método Ad Hoc">
+                </div>
+            </div>`,
+            // Página 2 - Método Check-list
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.2 Método Check‑list (listagem)</h2>
+                    <p>Consiste em uma lista de fatores ambientais (ar, água, solo, flora, fauna, socioeconomia) que podem ser afetados pelo projeto. As variantes incluem: simples (apenas enumeração), descritiva (com orientações de medição), escalar (valores subjetivos) e escalar ponderada (com pesos relativos).</p>
+                    <p><strong>Vantagens:</strong> fácil aplicação, emprego imediato em estudos preliminares, baixo custo. <strong>Desvantagens:</strong> não mostra interações entre impactos, não permite projeções temporais.</p>
+                    <p><strong>Exemplo:</strong> na triagem (screening) de um posto de combustível, o técnico usa uma check-list para verificar se o empreendimento se enquadra nas exigências de EIA.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://letras.biblioteca.ufrj.br/wp-content/uploads/2017/01/Checklist-2.jpg" alt="Check-list ambiental">
+                </div>
+            </div>`,
+            // Página 3 - Matriz de Leopold
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.3 Matriz de Leopold</h2>
+                    <p>Desenvolvida em 1971, é uma matriz bidimensional que relaciona 100 ações do projeto (colunas) com 88 fatores ambientais (linhas). Cada célula recebe dois valores: magnitude (1 a 10) e importância (1 a 10). Permite visualizar de forma integrada os impactos diretos.</p>
+                    <p><strong>Vantagens:</strong> fácil compreensão, aborda fatores físicos e sociais, acomoda dados qualitativos e quantitativos. <strong>Desvantagens:</strong> não considera impactos indiretos, não trata da dimensão temporal, pode haver dupla contagem.</p>
+                    <p><strong>Quando usar:</strong> projetos de médio a grande porte que exigem uma visão global dos impactos diretos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.ytimg.com/vi/jKurqtxqHqU/maxresdefault.jpg" alt="Matriz de Leopold">
+                </div>
+            </div>`,
+            // Página 4 - Redes de interação (imagem atualizada)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.4 Redes de interação (Networks)</h2>
+                    <p>Estabelecem relações de causa‑condição‑efeito por meio de diagramas, mostrando impactos primários, secundários e terciários. A abordagem mais conhecida é a de Sorensen (1971).</p>
+                    <p><strong>Vantagens:</strong> identifica impactos em cascata (segunda ordem), permite inserir parâmetros probabilísticos. <strong>Desvantagens:</strong> construção demorada, redes muito detalhadas podem ser difíceis de produzir.</p>
+                    <p><strong>Exemplo:</strong> desmatamento → erosão do solo → assoreamento de rio → morte de peixes → perda de renda da pesca.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://somaconcursos.com.br/wp-content/uploads/2024/08/redes-de-interacao-1024x576.jpg" alt="Rede de interação">
+                </div>
+            </div>`,
+            // Página 5 - Modelos de simulação e Overlays (imagem atualizada)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.5 Modelos de simulação e Overlays</h2>
+                    <p><strong>Modelos de simulação:</strong> utilizam equações matemáticas e computadores para simular a dispersão de poluentes ou a qualidade da água. Exigem muitos dados e equipe especializada.</p>
+                    <p><strong>Mapas de superposição (Overlays):</strong> sobrepõem cartas temáticas (geologia, solos, vegetação) para identificar áreas mais frágeis. Muito usado em projetos lineares (rodovias, dutos) e com SIG.</p>
+                    <p><strong>Vantagens dos modelos:</strong> permitem projeções temporais e comparação de cenários. <strong>Limitações dos overlays:</strong> dependem de bases cartográficas detalhadas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://waterservicestech.com/wp-content/uploads/2023/12/curso-gratuito-modelagem-1024x683.png" alt="Modelagem ambiental">
+                </div>
+            </div>`,
+            // Página 6 - Outros métodos (imagem atualizada)
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h2>2.6 Outros métodos (análise benefício‑custo, multiobjetivo, projeção de cenários)</h2>
+                    <p><strong>Análise benefício‑custo:</strong> tenta monetizar os impactos ambientais, mas enfrenta dificuldade para valorar bens sem mercado (biodiversidade, ar puro).</p>
+                    <p><strong>Análise multiobjetivo:</strong> estrutura o problema em hierarquia (meta → objetivos → atributos) e compara alternativas por meio de matriz de decisão. Muito usada em planejamento de recursos hídricos.</p>
+                    <p><strong>Projeção de cenários:</strong> constrói situações futuras (tendenciais e alternativas) para orientar decisões de longo prazo. Útil em planos diretores e políticas públicas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://blogambiental.com.br/wp-content/uploads/2026/02/cenarios-cidade-1b.jpg" alt="Projeção de cenários">
+                </div>
+            </div>`
+        ];
+
+        const totalPages = pages.length;
+        let currentPage = 0;
+        let currentFontSize = 18;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateUI() {
+            document.getElementById('pageContent').innerHTML = pages[currentPage];
+            const num = currentPage + 1;
+            document.getElementById('pageXofY').textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === -1) {
+                window.location.href = 'indice.html';
+            } else if (newPage === totalPages) {
+                window.location.href = 'aia_parte4.html';
+            }
+        }
+
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+
+        // --- Acessibilidade ---
+        const pageContentDiv = document.getElementById('pageContent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        function setFontSize(size) {
+            pageContentDiv.style.fontSize = size + 'px';
+            currentFontSize = size;
+        }
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (currentFontSize > 12) setFontSize(currentFontSize-2); });
+        fontPlus.addEventListener('click', () => { if (currentFontSize < 36) setFontSize(currentFontSize+2); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        setFontSize(18);
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Parte 7 - Créditos e encerramento</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .text-content h2 { border-left: 5px solid #1a7a58; padding-left: 15px; }
+
+        .credits-box {
+            background: #f0f7f3;
+            border-radius: 28px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        .btn-index {
+            background: #e6f0ea;
+            border: 1px solid #a2bfb1;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 60px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #1a4e3a;
+            font-weight: bold;
+        }
+        .btn-index:hover {
+            background: #cde0d6;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Créditos e encerramento</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 2</span>
+                <span id="progressPercent">50%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent">
+            <div class="credits-box">
+                <h2>🎓 Créditos</h2>
+                <p><strong>Conteúdo e organização:</strong> Professora Angela Siqueira</p>
+                <p><strong>Materiais de referência:</strong><br>
+                Apostila “Avaliação de Impacto Ambiental” – Prof. Murillo Barros de Carvalho (IFMA, 2018)<br>
+                “Análise de Impacto Ambiental” – Simone Caterina Kapusta, Maria Teresa Monica Raya Rodriguez (IFRS, 2009)<br>
+                Resoluções CONAMA 001/86, 237/97, 362/2005, 430/2011 e outras.</p>
+                <p><strong>Desenvolvimento do material digital:</strong> Ana Mnemosine (assistente de criação)</p>
+                <p><strong>Público-alvo:</strong> 3º ano do curso Técnico em Meio Ambiente</p>
+            </div>
+            <div class="credits-box">
+                <h2>💚 Mensagem final</h2>
+                <p>O técnico em meio ambiente é uma peça essencial na construção de um futuro mais equilibrado. O conhecimento dos métodos de Avaliação de Impacto Ambiental – desde a escolha da ferramenta certa até a proposição de planos de monitoramento – é o que transforma a intenção em ação concreta.</p>
+                <p>Lembre‑se sempre: a prevenção é mais barata e eficaz que a correção. Cada laudo, cada coleta de amostra, cada medida mitigadora proposta pode evitar danos irreversíveis ao planeta.</p>
+                <p><strong>Continue estudando, continue praticando e nunca subestime o poder da sua profissão.</strong></p>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="aia_parte1.html" class="btn-index">📖 Voltar ao índice</a>
+            </div>
+            <p style="text-align: center; margin-top: 30px;">✅ Trabalho concluído – você pode fechar esta janela.</p>
+        </div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // Duas páginas: créditos+mensagem (pág.1) e dicas finais (pág.2)
+        const pages = [
+            `<div>
+                <div class="credits-box">
+                    <h2>🎓 Créditos</h2>
+                    <p><strong>Conteúdo e organização:</strong> Professora Angela Siqueira</p>
+                    <p><strong>Materiais de referência:</strong><br>
+                    Apostila “Avaliação de Impacto Ambiental” – Prof. Murillo Barros de Carvalho (IFMA, 2018)<br>
+                    “Análise de Impacto Ambiental” – Simone Caterina Kapusta, Maria Teresa Monica Raya Rodriguez (IFRS, 2009)<br>
+                    Resoluções CONAMA 001/86, 237/97, 362/2005, 430/2011 e outras.</p>
+                    <p><strong>Desenvolvimento do material digital:</strong> Ana Mnemosine (assistente de criação)</p>
+                    <p><strong>Público-alvo:</strong> 3º ano do curso Técnico em Meio Ambiente</p>
+                </div>
+                <div class="credits-box">
+                    <h2>💚 Mensagem final</h2>
+                    <p>O técnico em meio ambiente é uma peça essencial na construção de um futuro mais equilibrado. O conhecimento dos métodos de Avaliação de Impacto Ambiental – desde a escolha da ferramenta certa até a proposição de planos de monitoramento – é o que transforma a intenção em ação concreta.</p>
+                    <p>Lembre‑se sempre: a prevenção é mais barata e eficaz que a correção. Cada laudo, cada coleta de amostra, cada medida mitigadora proposta pode evitar danos irreversíveis ao planeta.</p>
+                    <p><strong>Continue estudando, continue praticando e nunca subestime o poder da sua profissão.</strong></p>
+                </div>
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="aia_parte1.html" class="btn-index">📖 Voltar ao índice</a>
+                </div>
+            </div>`,
+            `<div>
+                <div class="credits-box">
+                    <h2>🔍 Dicas para o técnico ambiental</h2>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>Sempre consulte as normas e resoluções antes de planejar uma coleta.</li>
+                        <li>Registre todas as etapas (fotos, caderneta de campo, cadeia de custódia).</li>
+                        <li>Escolha o método de AIA mais adequado ao porte e à complexidade do empreendimento.</li>
+                        <li>Proponha ações corretivas (resolvem o problema imediato) e mitigadoras (evitam recorrência).</li>
+                        <li>Mantenha um plano de monitoramento claro, com indicadores, frequência e responsáveis.</li>
+                        <li>Participe de audiências públicas e saiba comunicar os resultados em linguagem acessível.</li>
+                    </ul>
+                </div>
+                <div class="credits-box">
+                    <h2>📚 Continue estudando</h2>
+                    <p>Visite os sites oficiais do <strong>IBAMA</strong>, da <strong>CETESB</strong> (SP), do <strong>INEA</strong> (RJ) e da <strong>SEMAD</strong> (MG) para acessar legislações atualizadas e estudos de caso reais.</p>
+                    <p>Consulte também o acervo da <strong>ANA</strong> (Agência Nacional de Águas) e do <strong>MMA</strong> (Ministério do Meio Ambiente).</p>
+                </div>
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="aia_parte1.html" class="btn-index">📖 Voltar ao índice</a>
+                </div>
+                <p style="text-align: center; margin-top: 30px;">✅ Trabalho concluído – você pode fechar esta janela.</p>
+            </div>`
+        ];
+
+        let currentPage = 0;
+        const totalPages = pages.length;
+        let currentFontSize = 18;
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function updateUI() {
+            document.getElementById('pageContent').innerHTML = pages[currentPage];
+            document.getElementById('pageXofY').textContent = `Página ${currentPage+1} de ${totalPages}`;
+            const pct = ((currentPage+1)/totalPages)*100;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+            document.getElementById('prevBtnInline').disabled = (currentPage === 0);
+            document.getElementById('nextBtnInline').disabled = (currentPage === totalPages-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            } else if (newPage === -1) {
+                window.location.href = 'aia_parte1.html';
+            }
+        }
+
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+
+        // Controles de acessibilidade
+        const pageContentDiv = document.getElementById('pageContent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        function setFontSize(size) {
+            pageContentDiv.style.fontSize = size + 'px';
+            currentFontSize = size;
+        }
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function startReading() {
+            if (!synth) { alert('Navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = () => {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (currentFontSize > 12) setFontSize(currentFontSize-2); });
+        fontPlus.addEventListener('click', () => { if (currentFontSize < 36) setFontSize(currentFontSize+2); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        setFontSize(18);
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

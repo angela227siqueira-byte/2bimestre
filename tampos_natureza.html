@@ -212,27 +212,44 @@
             border-radius: 12px;
         }
 
-        /* Estilos para tabelas */
+        /* Estilos aprimorados para tabelas com grades e cores de fundo */
         .table-slide table {
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
             font-size: 0.9rem;
+            border: 2px solid #154e3a; /* Borda externa mais escura */
         }
         .table-slide th {
-            background-color: #154e3a;
+            background-color: #1a5e44; /* Fundo verde escuro para cabeçalho */
             color: white;
-            padding: 8px;
+            padding: 10px 8px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
+            border: 2px solid #0f3d2e; /* Grade no cabeçalho */
+            font-size: 1rem;
         }
         .table-slide td {
-            border: 1px solid #dde5e0;
-            padding: 8px;
+            border: 1.5px solid #b3cdbf; /* Grade verde clara para células */
+            padding: 10px 8px;
             vertical-align: top;
+            background-color: #ffffff; /* Fundo branco padrão */
         }
-        .table-slide tr:nth-child(even) {
-            background-color: #f5f7f6;
+        /* Cores alternadas para linhas - tons suaves de verde */
+        .table-slide tr:nth-child(even) td {
+            background-color: #ecf5f0; /* Fundo verde muito claro para linhas pares */
+        }
+        .table-slide tr:nth-child(odd) td {
+            background-color: #f9fcfb; /* Fundo quase branco para linhas ímpares */
+        }
+        /* Destaque sutil ao passar o mouse */
+        .table-slide tr:hover td {
+            background-color: #d4e8de; /* Fundo verde suave no hover */
+            transition: background-color 0.2s ease;
+        }
+        /* Estilo para o texto em negrito nas células */
+        .table-slide td strong {
+            color: #0f3d2e;
         }
 
         @media (max-width: 700px) {
@@ -249,6 +266,8 @@
             .congrats-image img {
                 transform: scale(1.1);
             }
+            .table-slide table { font-size: 0.8rem; }
+            .table-slide th, .table-slide td { padding: 6px 4px; }
         }
     </style>
 </head>
@@ -259,8 +278,8 @@
         <div class="fixed-header">
             <h1>Geografia · Tempos da Natureza e Ação Humana</h1>
             <div class="progress-row">
-                <span id="pageXofY">Página 1 de 19</span>
-                <span id="progressPercent">5%</span>
+                <span id="pageXofY">Página 1 de 18</span>
+                <span id="progressPercent">6%</span>
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
@@ -299,7 +318,7 @@
                 </div>
             </div>`,
             
-            // Página 1 - A Circulação Geral da Atmosfera
+            // Página 1 - A Circulação Geral da Atmosfera (Slide 1)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>A Circulação Geral da Atmosfera</strong></p>
@@ -311,7 +330,7 @@
                 </div>
             </div>`,
 
-            // Página 2 - Monções, Brisas e Fenômenos Oceânicos
+            // Página 2 - Monções, Brisas e Fenômenos Oceânicos (Slide 2)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Monções, Brisas e Fenômenos Oceânicos</strong></p>
@@ -323,7 +342,7 @@
                 </div>
             </div>`,
 
-            // Página 3 - Massas de Ar e Climas do Brasil
+            // Página 3 - Massas de Ar e Climas do Brasil (Slide 3)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Massas de Ar e Climas do Brasil</strong></p>
@@ -335,16 +354,18 @@
                 </div>
             </div>`,
 
-            // Página 4 - Tabela - Climas do Brasil (Parte 1)
+            // Página 4 - Tabela - Climas do Brasil (Parte 1) (Slide 4)
             `<div class="img-text-row">
                 <div class="text-container">
                     <h3>Climas do Brasil (Parte 1)</h3>
-                    <table>
-                        <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
-                        <tr><td><strong>Equatorial Úmido</strong></td><td>Maior parte da Amazônia</td><td>Temperaturas elevadas e chuvas abundantes. Baixa amplitude térmica anual.</td></tr>
-                        <tr><td><strong>Tropical</strong></td><td>Centro-Oeste, Sudeste e Nordeste</td><td>Temperaturas altas. Estação seca (inverno) e chuvosa (verão) bem definidas.</td></tr>
-                        <tr><td><strong>Tropical Semiárido</strong></td><td>Sertão nordestino e norte de MG</td><td>Chuvas escassas e irregulares. Temperaturas altas, provocando longas secas.</td></tr>
-                    </table>
+                    <div class="table-slide">
+                        <table>
+                            <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                            <tr><td><strong>Equatorial Úmido</strong></td><td>Maior parte da Amazônia</td><td>Temperaturas elevadas e chuvas abundantes. Baixa amplitude térmica anual.</td></tr>
+                            <tr><td><strong>Tropical</strong></td><td>Centro-Oeste, Sudeste e Nordeste</td><td>Temperaturas altas. Estação seca (inverno) e chuvosa (verão) bem definidas.</td></tr>
+                            <tr><td><strong>Tropical Semiárido</strong></td><td>Sertão nordestino e norte de MG</td><td>Chuvas escassas e irregulares. Temperaturas altas, provocando longas secas.</td></tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="img-container">
                     <img src="https://i.imgur.com/X6mT1OO.png" alt="Climas do Brasil">
@@ -352,16 +373,18 @@
                 </div>
             </div>`,
 
-            // Página 5 - Tabela - Climas do Brasil (Parte 2)
+            // Página 5 - Tabela - Climas do Brasil (Parte 2) (Slide 5)
             `<div class="img-text-row">
                 <div class="text-container">
                     <h3>Climas do Brasil (Parte 2)</h3>
-                    <table>
-                        <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
-                        <tr><td><strong>Litorâneo Úmido</strong></td><td>Faixa litorânea do Sudeste ao NE</td><td>Altas temperaturas e alta pluviosidade. Sofre ação de massas de ar oceânicas.</td></tr>
-                        <tr><td><strong>Tropical de Altitude</strong></td><td>Terras altas do Sudeste</td><td>Invernos mais rigorosos e verões mais brandos. Temperatura média entre 15°C e 21°C.</td></tr>
-                        <tr><td><strong>Subtropical Úmido</strong></td><td>Região Sul e sul de SP/MS</td><td>Estações do ano bem definidas. Invernos frios, com possibilidade de geada e neve.</td></tr>
-                    </table>
+                    <div class="table-slide">
+                        <table>
+                            <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                            <tr><td><strong>Litorâneo Úmido</strong></td><td>Faixa litorânea do Sudeste ao NE</td><td>Altas temperaturas e alta pluviosidade. Sofre ação de massas de ar oceânicas.</td></tr>
+                            <tr><td><strong>Tropical de Altitude</strong></td><td>Terras altas do Sudeste</td><td>Invernos mais rigorosos e verões mais brandos. Temperatura média entre 15°C e 21°C.</td></tr>
+                            <tr><td><strong>Subtropical Úmido</strong></td><td>Região Sul e sul de SP/MS</td><td>Estações do ano bem definidas. Invernos frios, com possibilidade de geada e neve.</td></tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="img-container">
                     <img src="https://i.imgur.com/2urCvZT.png" alt="Climas do Brasil">
@@ -369,7 +392,7 @@
                 </div>
             </div>`,
 
-            // Página 6 - Os "Rios Voadores"
+            // Página 6 - Os "Rios Voadores" (Slide 6)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Os "Rios Voadores"</strong></p>
@@ -381,19 +404,19 @@
                 </div>
             </div>`,
 
-            // Página 7 - Ciclo Hidrológico e Distribuição da Água
+            // Página 7 - Ciclo Hidrológico e Distribuição da Água (Slide 7)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Ciclo Hidrológico e Distribuição da Água</strong></p>
                     <p><strong>Ciclo hidrológico:</strong> movimento contínuo da água pelo planeta.<br>Impulsionado pela energia solar e pela gravidade.<br>A distribuição de água doce no planeta é muito desigual.<br>O <strong>estresse hídrico</strong> mede a pressão entre consumo e disponibilidade.<br>Cerca de 46% da população global não tinha saneamento adequado em 2023.<br>80% das águas residuais industriais são despejadas sem tratamento.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://static.mundoeducacao.uol.com.br/mundoeducacao/conteudo_legenda/25dc1d89deee6f1227841782e5dce32d.jpg" alt="Ciclo hidrológico">
+                    <img src="https://s3.static.brasilescola.uol.com.br/be/2022/03/esquema-ciclo-hidrologico.jpg" alt="Ciclo hidrológico">
                     <div class="img-caption">O ciclo da água</div>
                 </div>
             </div>`,
 
-            // Página 8 - Desafios e Conflitos pela Água
+            // Página 8 - Desafios e Conflitos pela Água (Slide 8)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Desafios e Conflitos pela Água</strong></p>
@@ -401,11 +424,11 @@
                 </div>
                 <div class="img-container">
                     <img src="https://www.bbc.com/staticarchive/2d6cffa6531c5c95531163d6377eed08ee187e7d.gif" alt="Desastre de Mariana">
-                    <div class="img-caption">Lama tóxica no Rio Doce</div>
+                    <div class="img-caption">Oferta de Água</div>
                 </div>
             </div>`,
 
-            // Página 9 - A Biosfera e os Biomas
+            // Página 9 - A Biosfera e os Biomas (Slide 9)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>A Biosfera e os Biomas</strong></p>
@@ -417,50 +440,56 @@
                 </div>
             </div>`,
 
-            // Página 10 - Tabela - Formações Arbóreas
+            // Página 10 - Tabela - Formações Arbóreas (Slide 10)
             `<div class="img-text-row">
                 <div class="text-container">
                     <h3>Formações Arbóreas</h3>
-                    <table>
-                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                        <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Tropicais/Equatoriais</strong></td><td>Regiões quentes e úmidas; vegetação exuberante, latifoliada e perene (ex.: Amazônia).</td></tr>
-                        <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Temperadas</strong></td><td>Clima temperado; árvores caducifólias (perdem as folhas no outono/inverno), como carvalhos.</td></tr>
-                        <tr><td><strong>Arbórea</strong></td><td><strong>Floresta Boreal (Taiga)</strong></td><td>Latitudes mais ao norte; temperaturas muito baixas; predomínio de coníferas (pinheiros).</td></tr>
-                    </table>
+                    <div class="table-slide">
+                        <table>
+                            <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                            <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Tropicais/Equatoriais</strong></td><td>Regiões quentes e úmidas; vegetação exuberante, latifoliada e perene (ex.: Amazônia).</td></tr>
+                            <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Temperadas</strong></td><td>Clima temperado; árvores caducifólias (perdem as folhas no outono/inverno), como carvalhos.</td></tr>
+                            <tr><td><strong>Arbórea</strong></td><td><strong>Floresta Boreal (Taiga)</strong></td><td>Latitudes mais ao norte; temperaturas muito baixas; predomínio de coníferas (pinheiros).</td></tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="img-container">
-                    <img src="https://clebinho.pro.br/wp/wp-content/uploads/2016/10/21-0.jpg" alt="Floresta Amazônica">
+                    <img src="https://clebinho.pro.br/wp/wp-content/uploads/2016/10/21-0.jpg" alt="Floresta Temperada">
                     <div class="img-caption">Floresta Amazônica</div>
                 </div>
             </div>`,
 
-            // Página 11 - Tabela - Formações Arbustivas e Herbáceas (Parte 1)
+            // Página 11 - Tabela - Formações Arbustivas e Herbáceas (Parte 1) (Slide 11)
             `<div class="img-text-row">
                 <div class="text-container">
                     <h3>Formações Arbustivas e Herbáceas (Parte 1)</h3>
-                    <table>
-                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                        <tr><td><strong>Herbácea</strong></td><td><strong>Tundra</strong></td><td>Próximo ao Ártico; vegetação rasteira (liquens, musgos); solo congelado (permafrost).</td></tr>
-                        <tr><td><strong>Herbácea</strong></td><td><strong>Pradarias</strong></td><td>Clima temperado; vegetação de gramíneas em solos ricos. Bastante usada para pecuária.</td></tr>
-                        <tr><td><strong>Herbácea / Arbustiva</strong></td><td><strong>Estepes</strong></td><td>Proximidades de desertos; vegetação mais baixa e esparsa que as pradarias (arbustos e tufos).</td></tr>
-                    </table>
+                    <div class="table-slide">
+                        <table>
+                            <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                            <tr><td><strong>Herbácea</strong></td><td><strong>Tundra</strong></td><td>Próximo ao Ártico; vegetação rasteira (liquens, musgos); solo congelado (permafrost).</td></tr>
+                            <tr><td><strong>Herbácea</strong></td><td><strong>Pradarias</strong></td><td>Clima temperado; vegetação de gramíneas em solos ricos. Bastante usada para pecuária.</td></tr>
+                            <tr><td><strong>Herbácea / Arbustiva</strong></td><td><strong>Estepes</strong></td><td>Proximidades de desertos; vegetação mais baixa e esparsa que as pradarias (arbustos e tufos).</td></tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="img-container">
-                    <img src="https://i.ytimg.com/vi/dvxreWsJans/maxresdefault.jpg" alt="Vegetação de tundra">
+                    <img src="https://i.ytimg.com/vi/dvxreWsJans/maxresdefault.jpg" alt="Bioma Pradaria">
                     <div class="img-caption">Vegetação de tundra</div>
                 </div>
             </div>`,
 
-            // Página 12 - Tabela - Formações Arbustivas e Herbáceas (Parte 2)
+            // Página 12 - Tabela - Formações Arbustivas e Herbáceas (Parte 2) (Slide 12)
             `<div class="img-text-row">
                 <div class="text-container">
                     <h3>Formações Arbustivas e Herbáceas (Parte 2)</h3>
-                    <table>
-                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                        <tr><td><strong>Complexa (rasteira + árvores)</strong></td><td><strong>Savanas</strong></td><td>Clima tropical com estação seca; árvores de raízes profundas e vegetação rasteira (ex.: Cerrado).</td></tr>
-                        <tr><td><strong>Arbustiva</strong></td><td><strong>Vegetação Mediterrânea</strong></td><td>Clima com verões secos; vegetação xerófila (adaptada à aridez), com arbustos densos.</td></tr>
-                        <tr><td><strong>Arbustiva / Herbácea</strong></td><td><strong>Desertos</strong></td><td>Extrema aridez; plantas xerófilas como cactos e arbustos espinhosos de raízes profundas.</td></tr>
-                    </table>
+                    <div class="table-slide">
+                        <table>
+                            <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                            <tr><td><strong>Complexa (rasteira + árvores)</strong></td><td><strong>Savanas</strong></td><td>Clima tropical com estação seca; árvores de raízes profundas e vegetação rasteira (ex.: Cerrado).</td></tr>
+                            <tr><td><strong>Arbustiva</strong></td><td><strong>Vegetação Mediterrânea</strong></td><td>Clima com verões secos; vegetação xerófila (adaptada à aridez), com arbustos densos.</td></tr>
+                            <tr><td><strong>Arbustiva / Herbácea</strong></td><td><strong>Desertos</strong></td><td>Extrema aridez; plantas xerófilas como cactos e arbustos espinhosos de raízes profundas.</td></tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="img-container">
                     <img src="https://123ecos.com.br/wp-content/uploads/2024/09/Savanas.jpg" alt="Vegetação de savana">
@@ -468,7 +497,7 @@
                 </div>
             </div>`,
 
-            // Página 13 - Domínios Morfoclimáticos do Brasil
+            // Página 13 - Domínios Morfoclimáticos do Brasil (Slide 13)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios Morfoclimáticos do Brasil</strong></p>
@@ -480,7 +509,7 @@
                 </div>
             </div>`,
 
-            // Página 14 - Domínios Amazônico e da Caatinga
+            // Página 14 - Domínios Amazônico e da Caatinga (Slide 14)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios Amazônico e da Caatinga</strong></p>
@@ -488,11 +517,11 @@
                 </div>
                 <div class="img-container">
                     <img src="https://i.imgur.com/onnNCXq.png" alt="Domínios Amazônico e Caatinga">
-                    <div class="img-caption">Amazônia e Caatinga</div>
+                    <div class="img-caption">Caatinga</div>
                 </div>
             </div>`,
 
-            // Página 15 - Domínios do Cerrado e Mares de Morros
+            // Página 15 - Domínios do Cerrado e Mares de Morros (Slide 15)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios do Cerrado e Mares de Morros</strong></p>
@@ -500,11 +529,11 @@
                 </div>
                 <div class="img-container">
                     <img src="https://i.imgur.com/aGQW1So.png" alt="Domínios Cerrado e Mares de Morros">
-                    <div class="img-caption">Cerrado e Mares de Morros</div>
+                    <div class="img-caption">Mares de Morros</div>
                 </div>
             </div>`,
 
-            // Página 16 - Domínio das Araucárias, Pradarias e Conclusão
+            // Página 16 - Domínio das Araucárias, Pradarias e Conclusão (Slide 16)
             `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínio das Araucárias, Pradarias e Conclusão</strong></p>
@@ -512,7 +541,7 @@
                 </div>
                 <div class="img-container">
                     <img src="https://i.imgur.com/khRaKlC.png" alt="Domínios das Araucárias e Pradarias">
-                    <div class="img-caption">Araucárias e Pradarias</div>
+                    <div class="img-caption">Araucárias</div>
                 </div>
             </div>`,
 

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 História - O Povoamento do Continente Americano</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        /* Flexbox para imagens à DIREITA do texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        /* Layout padrão: texto à esquerda, imagem à direita */
+        .img-text-row .text-container { order: 1; }
+        .img-text-row .img-container { order: 2; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-text-row .text-container,
+            .img-text-row .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA DE LEITURA (única tela, sem identificação) -->
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>História · O Povoamento do Continente Americano</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 18</span>
+                <span id="progressPercent">6%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CONTEÚDO DAS PÁGINAS ----------
+        const pageContents = [
+            // Página 0 - Capa (Slide 1 - sem imagem)
+            `<div class="capa">
+                <h1>O Povoamento do Continente Americano e os Recursos Naturais</h1>
+                <h2>História – Capítulo 2</h2>
+                <p>Professora Angela Siqueira</p>
+            </div>`,
+
+            // Página 1 - Slide 2: A Chegada dos Seres Humanos ao Continente Americano
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>A Chegada dos Seres Humanos ao Continente Americano</strong></p>
+                    <p>A espécie humana se originou na África e se espalhou pelo planeta.<br>Até povoar a América, os seres humanos percorreram uma longa jornada de milhares de anos.<br>Os grupos se dispersaram do Alasca, no norte, à Patagônia, no sul.<br>Consenso científico: os primeiros povoadores não tiveram origem na América.<br>Hipóteses mais aceitas: ondas migratórias sucessivas entraram pelo extremo norte.<br>Grupos nômades migravam quando os recursos se tornavam insuficientes para alimentar a todos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/ZpOYvEt.png" alt="Mapa do povoamento da América">
+                </div>
+            </div>`,
+
+            // Página 2 - Slide 3: Teorias sobre o Povoamento da América
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Teorias sobre o Povoamento da América</strong></p>
+                    <p><strong>Teoria de Clóvis primeiro:</strong> artefatos de 11.500 anos encontrados no Novo México (EUA).<br>Afirmava que houve apenas uma onda migratória após a última grande glaciação.<br>A glaciação baixou o nível dos oceanos, formando um corredor entre a Sibéria e o Alasca.<br>O modelo tornou-se insuficiente: sítios arqueológicos mais antigos foram descobertos.<br>No Chile, vestígios de 12.500 anos; no Texas (EUA), artefatos de 15.500 anos.<br>No Parque Nacional Serra da Capivara (Piauí), vestígios com possíveis 25 mil anos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://pt.goodsalt.com/media/catalog/product/cache/72eeda554d65337da0ae7df201fead63/t/h/the-first-family-working-together-GoodSalt-lfwas1365.jpg" alt="Primeiros habitantes">
+                </div>
+            </div>`,
+
+            // Página 3 - Slide 4: Os Impactos na Megafauna
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Os Impactos na Megafauna</strong></p>
+                    <p>Os primeiros <em>Homo sapiens</em> encontraram uma <strong>megafauna</strong> na América.<br>Animais de grandes proporções: mamutes, mastodontes, preguiças-gigantes e tigres-dentes-de-sabre.<br>Alguns milênios depois, a maioria dessas espécies havia sido extinta.<br>Causas prováveis: mudanças climáticas e ação humana.<br>Consequência: redução do raio de dispersão de sementes grandes.<br>Plantas como o pequi e o abacateiro perderam seus dispersores naturais.<br>A baixa variabilidade genética pode diminuir chances de sobrevivência das plantas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/w0YQBC9.png" alt="Megafauna">
+                </div>
+            </div>`,
+
+            // Página 4 - Slide 5: A América Indígena – Primeiros Habitantes
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>A América Indígena – Primeiros Habitantes</strong></p>
+                    <p>Os <strong>paleoíndios</strong> são os ancestrais dos povos indígenas do continente.<br>Deram origem a diversas etnias, com línguas, costumes e organizações sociais diferentes.<br>Em geral, formavam pequenos grupos nômades (caça, pesca e coleta).<br>Trocavam conhecimentos: técnicas para artefatos de pedra, ossos, madeira e fibras.<br>O processo de <strong>sedentarização</strong> esteve relacionado à domesticação de animais e à agricultura.<br>Primeiros cultivos: feijão, abóbora, tomate, algodão, milho, batata e mandioca.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/aSp3wbX.png" alt="Primeiros habitantes">
+                </div>
+            </div>`,
+
+            // Página 5 - Slide 6: Organizações Sociais na América Indígena
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Organizações Sociais na América Indígena</strong></p>
+                    <p>Maioria das sociedades da <strong>Mesoamérica e Andes</strong>: organização <strong>hierarquizada</strong>.<br>Estrutura com divisões sociais: minoria concentrava riqueza, terras e administração.<br>Realizaram construções monumentais: centros cerimoniais, pirâmides e aquedutos.<br>No atual território brasileiro: maioria das sociedades com tendências <strong>igualitárias</strong>.<br>Organização baseada em escolha coletiva de lideranças e distribuição igualitária.<br>A monumentalidade não é fator identificador de desenvolvimento ou superioridade.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/hO71kRT.png" alt="Lideranças indígenas">
+                </div>
+            </div>`,
+
+            // Página 6 - Slide 7: Sociedades Hierarquizadas – Mesoamérica
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Sociedades Hierarquizadas – Mesoamérica</strong></p>
+                    <p>Primeiras sociedades hierarquizadas se formaram na Mesoamérica e região andina.<br><strong>Mesoamérica:</strong> engloba partes do atual México e América Central.<br>Características culturais comuns: escrita pictoglífica, calendários e pirâmides escalonadas.<br>Base alimentar: milho.<br><strong>Olmecas:</strong> vestígios de aproximadamente 1300 a.C. próximos ao Golfo do México.<br>La Venta: um dos principais centros cerimoniais, considerada uma das primeiras cidades.<br>Declínio a partir de 700 a.C.: conflitos com outros povos e fatores ambientais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/16pr7ki.png" alt="Mesoamérica">
+                </div>
+            </div>`,
+
+            // Página 7 - Slide 8: Zapotecas e Sociedades Andinas
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Zapotecas e Sociedades Andinas</strong></p>
+                    <p>Após o enfraquecimento olmeca, os <strong>zapotecas</strong> se estabeleceram na região do Pacífico.<br><strong>Monte Albán:</strong> centro cerimonial mais importante, chegou a 35 mil habitantes.<br>Organização espacial revelava hierarquização da sociedade.<br>Capital de um Estado que controlava comunidades e cobrava tributos.<br>Abandono iniciado por volta de 850 d.C., por razões ainda desconhecidas.<br><strong>Região andina:</strong> Cordilheira dos Andes, da Venezuela ao sul da Argentina e Chile.<br><strong>Canal (Peru):</strong> primeiras sociedades hierarquizadas, com aquedutos para irrigação.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg90QdrVs1Xba2Lubuq6n6xaE1e6VkX17zrkugMP8MP5PDdX7YEuCzVfw7-iRvmRjE_anaBnCcXt9GSMyJE07DwMRfuq4z0Yb4GrQkxJdD1hMlJWnw9MCP9vuueYMk5GFmPt7pWMCs_PdfO/s1600/MAPA+DE+CULTURAS.jpg" alt="Mapa de culturas">
+                </div>
+            </div>`,
+
+            // Página 8 - Slide 9: Cultura Chavín e Nazca
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Cultura Chavín e Nazca</strong></p>
+                    <p><strong>Cultura Chavín:</strong> formou-se no norte do atual Peru, entre os séculos VII a.C. e I a.C.<br>Reuniu diversas comunidades em um Estado centralizado (centro: Chavín de Huantar).<br>Desenvolveram agricultura irrigada de milho, cerâmica, tecelagem e ourivesaria.<br><strong>Nazca:</strong> sociedade desenvolvida mais ao sul, entre 200 a.C. e 600 d.C.<br>Produziram <strong>geoglifos</strong>: grandes figuras desenhadas no chão com função ritual.<br>Construíram os <strong>puquios</strong>, aquedutos de forma espiral para evitar erosão dos solos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/e7rAJzE.png" alt="Geoglifos de Nazca">
+                </div>
+            </div>`,
+
+            // Página 9 - Slide 10: Os Incas
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Os Incas</strong></p>
+                    <p>Ocuparam o planalto andino por volta do ano 1400.<br>De tradição guerreira, formaram um império (Quito, no Equador, até Santiago, no Chile).<br>Grande parte do território era conectada por estradas pavimentadas.<br>Governados pelo <strong>Sapa Inca</strong> (imperador), que concentrava poder militar, civil e religioso.<br>Considerado a encarnação do deus-Sol, <strong>Apu Inti</strong>.<br>Capital do império: <strong>Cuzco</strong>; povos dominados deviam adotar o quéchua e pagar tributos.<br><strong>Mita:</strong> trabalho periódico obrigatório como forma de tributo.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/ce2o9ZX.png" alt="Império Inca">
+                </div>
+            </div>`,
+
+            // Página 10 - Slide 11: Técnicas e Organização Inca
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Técnicas e Organização Inca</strong></p>
+                    <p>Desenvolveram técnicas de cultivo em <strong>terraços</strong> nas encostas das montanhas.<br>Construíram rede de aquedutos para irrigação.<br>Trabalho agrícola coordenado pelo Estado; não havia propriedade privada da terra.<br>Produção coletiva pelas comunidades familiares chamadas <strong>ayllu</strong>.<br>Terras divididas em três partes: deus-Sol, Sapa Inca e comunidade.<br>Criavam lhamas e alpacas para transporte e extração de lã.<br>Usavam <strong>quipos</strong>: cordas com nós para contabilizar e registrar dados.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/k8TgxfQ.png" alt="Terraços incas">
+                </div>
+            </div>`,
+
+            // Página 11 - Slide 12: Os Maias – Formação e Organização
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Os Maias – Formação e Organização</strong></p>
+                    <p>Descendentes de povos caçadores-coletores nômades.<br>Começaram a formar vilas na Península de Yucatã por volta de 1000 a.C.<br>Importantes cidades: Tikal, Palenque e Chichén Itzá.<br>Não formavam um império unificado: cada cidade mantinha governo independente (<strong>cidades-Estado</strong>).<br>Períodos de guerra e alianças se alternavam.<br>Base econômica: agricultura (milho, cacau, algodão, tomate, abóbora, feijão).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.todamateria.com.br/upload/ec/on/economiamaia.jpg" alt="Economia maia">
+                </div>
+            </div>`,
+
+            // Página 12 - Slide 13: Conhecimentos e Declínio Maia
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Conhecimentos e Declínio Maia</strong></p>
+                    <p>Compreenderam os ciclos do Sol, da Lua e de Vênus; eclipses solares e lunares.<br>Desenvolveram calendário solar (365 dias) e calendário astrológico (260 dias).<br>Politeístas, praticavam sacrifícios humanos como dever sagrado ao Sol.<br>Declínio das cidades: esgotamento dos recursos naturais e guerras internas.<br>Fragilidade dos solos tropicais, explosão demográfica e desastres ecológicos.<br>Fragmentação política gerava conflitos permanentes e competição entre cidades.<br>Entre os séculos X e XIV, abandonaram os grandes centros urbanos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://mega.ibxk.com.br/2018/08/10/10121717712040.jpg" alt="Calendário maia">
+                </div>
+            </div>`,
+
+            // Página 13 - Slide 14: Os Astecas – Origem e Fundação
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Os Astecas – Origem e Fundação</strong></p>
+                    <p><strong>Astecas</strong> (mexicas) desenvolveram sua civilização séculos depois do declínio maia.<br>Habitaram entre o centro e o norte da Mesoamérica.<br>De acordo com seus relatos, migraram de Aztlán até a região central do México.<br>Estabeleceram-se em ilha no centro do Lago Texcoco.<br><strong>Tenochtitlán:</strong> fundada seguindo a profecia do deus Huitzilopochtli (águia sobre cacto).<br>Por volta de 1500, era uma das maiores cidades do mundo (500 mil a 1 milhão de habitantes).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/H0AW80H.png" alt="Fundação de Tenochtitlán">
+                </div>
+            </div>`,
+
+            // Página 14 - Slide 15: O Império Asteca
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>O Império Asteca</strong></p>
+                    <p>Tenochtitlán tornou-se capital da Confederação Mexica (Império Asteca).<br>Governados por um <strong>tlatoani</strong> ("aquele que fala").<br>Povos submetidos pagavam tributos: penas raras, metais preciosos, produtos agrícolas.<br>Realizavam sacrifícios humanos em rituais religiosos.<br>Acreditavam que os deuses se sacrificaram para que o Sol se movimentasse.<br>Ser sacrificado era considerado honra; prisioneiros eram bem tratados antes do ritual.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.historiadomundo.com.br/imagens/asteca_mapa.jpg" alt="Mapa do Império Asteca">
+                </div>
+            </div>`,
+
+            // Página 15 - Slide 16: Conhecimentos Astecas
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <p><strong>Conhecimentos Astecas</strong></p>
+                    <p>Alimentação: milho, feijão, abóbora, pimenta, frutas, peixes, crustáceos e insetos aquáticos.<br>Construíram aquedutos para irrigar plantações em vales e encostas.<br>Sistema de cultivo em <strong>chinampas</strong>: "canteiros flutuantes" construídos sobre lagos.<br>Calendário solar de 365 dias; <strong>Tonalponalli</strong> com 13 números e 20 signos.<br><strong>Guerra florida:</strong> objetivo de capturar oponentes com vida para sacrifício.<br>Xochimilco: distrito que preserva as chinampas, patrimônio cultural da humanidade (Unesco).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.ytimg.com/vi/xyydQcc_mD8/maxresdefault.jpg" alt="Chinampas">
+                </div>
+            </div>`,
+
+            // Página 16 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu a leitura sobre o Povoamento do Continente Americano e os Recursos Naturais.</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Professora Angela Siqueira</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

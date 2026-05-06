@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Exercício - Tempos da Natureza e Ação Humana</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        /* Flexbox para imagens à DIREITA do texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        /* Layout padrão: texto à esquerda, imagem à direita */
+        .img-text-row .text-container { order: 1; }
+        .img-text-row .img-container { order: 2; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+        .capa-image {
+            margin-top: 20px;
+        }
+        .capa-image img {
+            max-width: 70%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        /* Destaques para questões */
+        .question-box {
+            margin-bottom: 30px;
+        }
+        .question-box strong {
+            color: #0f3d2e;
+            font-size: 1.1rem;
+        }
+        .alternatives {
+            margin: 12px 0 0 20px;
+        }
+        .alternatives p {
+            margin-bottom: 6px;
+        }
+        .correct-answer {
+            background: #d4edda;
+            border-left: 5px solid #1a7a58;
+            padding: 12px 16px;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+        .correct-answer strong {
+            color: #0f3d2e;
+        }
+        .justificativa {
+            background: #f0f8ff;
+            border-left: 5px solid #4682b4;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-style: italic;
+        }
+        .section-divider {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a5e44, #154e3a);
+            color: white;
+            border-radius: 16px;
+        }
+        .section-divider h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-text-row .text-container,
+            .img-text-row .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA DE LEITURA (única tela, sem identificação) -->
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>📝 Exercício · Tempos da Natureza e Ação Humana</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 23</span>
+                <span id="progressPercent">4%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CONTEÚDO DAS PÁGINAS ----------
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>📝 Exercício de Fixação</h1>
+                <h2>Tempos da Natureza e Ação Humana</h2>
+                <p>Professora Angela Siqueira</p>
+                <p style="margin-top: 30px; font-size: 18px;">Dinâmica Atmosférica · Climas · Hidrosfera · Biomas · Domínios Morfoclimáticos</p>
+                <div class="capa-image">
+                    <img src="https://www.tudogeo.com.br/wp-content/uploads/2020/06/Dominios-morfoclimaticos.jpg" alt="Domínios morfoclimáticos">
+                </div>
+            </div>`,
+
+            // ============ PARTE 1: QUESTÕES SEM RESPOSTA ============
+            // Página 1 - Seção: Questões (1-10)
+            `<div class="section-divider">
+                <h2>📋 Parte 1 — Questões Objetivas</h2>
+                <p style="margin-top: 8px; font-size: 1rem;">Leia atentamente cada questão e escolha a alternativa correta.</p>
+            </div>`,
+
+            // Página 2 - Questões 1 e 2
+            `<div>
+                <div class="question-box">
+                    <p><strong>Questão 1</strong> — Os ventos alísios são importantes para a dinâmica climática global. Sobre eles, é correto afirmar que:</p>
+                    <div class="alternatives">
+                        <p>a) Sopram das áreas de alta pressão nos polos em direção ao Equador, provocando secas.</p>
+                        <p>b) Originam-se nas áreas de alta pressão próximas aos trópicos e sopram em direção ao Equador, levando umidade.</p>
+                        <p>c) São ventos periódicos que ocorrem apenas durante o verão no Hemisfério Sul.</p>
+                        <p>d) Sopram exclusivamente sobre os oceanos, não influenciando o clima dos continentes.</p>
+                    </div>
+                </div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 2</strong> — Os fenômenos El Niño e La Niña representam alterações na temperatura das águas do Oceano Pacífico. Assinale a alternativa que descreve corretamente seus efeitos:</p>
+                            <div class="alternatives">
+                                <p>a) O El Niño provoca o resfriamento do Pacífico Equatorial, causando secas no Sul do Brasil.</p>
+                                <p>b) A La Niña é caracterizada pelo aquecimento anormal do Pacífico, provocando chuvas intensas no Nordeste brasileiro.</p>
+                                <p>c) O El Niño aquece as águas do Pacífico Equatorial, podendo causar secas no Nordeste e chuvas torrenciais no Sul do Brasil.</p>
+                                <p>d) Ambos os fenômenos têm impacto restrito à costa oeste da América do Sul.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://i.imgur.com/B6yKsEU.png" alt="El Niño e La Niña">
+                        <div class="img-caption">El Niño e La Niña</div>
+                    </div>
+                </div>
+            </div>`,
+
+            // Página 3 - Questões 3 e 4
+            `<div>
+                <div class="question-box">
+                    <p><strong>Questão 3</strong> — Observe as massas de ar que atuam no Brasil:</p>
+                    <p style="margin-left: 20px;">I. Massa Tropical atlântica<br>II. Massa Equatorial continental<br>III. Massa Polar atlântica<br>IV. Massa Tropical continental</p>
+                    <p><strong>Dessas massas de ar, são quentes e úmidas:</strong></p>
+                    <div class="alternatives">
+                        <p>a) I e II, apenas.</p>
+                        <p>b) I e III, apenas.</p>
+                        <p>c) II e IV, apenas.</p>
+                        <p>d) III e IV, apenas.</p>
+                    </div>
+                </div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 4</strong> — Um estudante de Geografia está analisando o clima de uma região brasileira com as seguintes características: temperaturas elevadas durante todo o ano, chuvas abundantes e bem distribuídas, e baixa amplitude térmica anual. <strong>Trata-se do clima:</strong></p>
+                            <div class="alternatives">
+                                <p>a) Tropical de Altitude.</p>
+                                <p>b) Subtropical Úmido.</p>
+                                <p>c) Equatorial Úmido.</p>
+                                <p>d) Tropical Semiárido.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://i.imgur.com/X6mT1OO.png" alt="Climas do Brasil">
+                        <div class="img-caption">Climas do Brasil</div>
+                    </div>
+                </div>
+            </div>`,
+
+            // Página 4 - Questões 5 e 6
+            `<div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 5</strong> — Os "rios voadores" são um fenômeno climático importante para a América do Sul. Sobre esse fenômeno, é <strong>INCORRETO</strong> afirmar:</p>
+                            <div class="alternatives">
+                                <p>a) A umidade transportada pelos "rios voadores" tem origem na transpiração da Floresta Amazônica.</p>
+                                <p>b) A Cordilheira dos Andes funciona como barreira, desviando a umidade para o Sul e Sudeste do Brasil.</p>
+                                <p>c) O fenômeno é responsável pelas chuvas na Região Sul do Brasil principalmente durante o inverno.</p>
+                                <p>d) A manutenção da Floresta Amazônica é fundamental para o abastecimento hídrico de grande parte do continente.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://i.imgur.com/25VjQaD.png" alt="Rios voadores">
+                        <div class="img-caption">Dinâmica dos "rios voadores"</div>
+                    </div>
+                </div>
+                <div class="question-box">
+                    <p><strong>Questão 6</strong> — Sobre o ciclo hidrológico e a distribuição de água no planeta, é correto afirmar:</p>
+                    <div class="alternatives">
+                        <p>a) Cerca de 80% das águas residuais industriais e municipais são tratadas antes de serem devolvidas ao meio ambiente.</p>
+                        <p>b) O estresse hídrico mede a relação entre o total de água consumida e o abastecimento renovável disponível.</p>
+                        <p>c) A distribuição de água doce no planeta é equilibrada, com todas as regiões tendo acesso semelhante aos recursos hídricos.</p>
+                        <p>d) O Brasil não enfrenta problemas de escassez hídrica em nenhuma região de seu território.</p>
+                    </div>
+                </div>
+            </div>`,
+
+            // Página 5 - Questões 7 e 8
+            `<div>
+                <div class="question-box">
+                    <p><strong>Questão 7</strong> — Considere as afirmações sobre os biomas terrestres:</p>
+                    <p style="margin-left: 20px;">I. As florestas tropicais e equatoriais são formações arbóreas com vegetação latifoliada e perene.<br>II. A tundra é uma formação arbustiva encontrada nas proximidades do Círculo Polar Ártico.<br>III. As savanas são formações complexas que combinam vegetação rasteira com árvores e arbustos esparsos.<br>IV. A taiga é uma formação arbórea caracterizada pelo predomínio de árvores caducifólias.</p>
+                    <p><strong>Estão corretas apenas as afirmações:</strong></p>
+                    <div class="alternatives">
+                        <p>a) I e II.</p>
+                        <p>b) I e III.</p>
+                        <p>c) II e IV.</p>
+                        <p>d) III e IV.</p>
+                    </div>
+                </div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 8</strong> — Os domínios morfoclimáticos brasileiros foram propostos pelo geógrafo Aziz Ab'Sáber. Assinale a alternativa que apresenta corretamente a correspondência entre o domínio e sua característica predominante:</p>
+                            <div class="alternatives">
+                                <p>a) Domínio Amazônico – clima semiárido, vegetação de Caatinga.</p>
+                                <p>b) Domínio do Cerrado – planaltos e chapadas, vegetação de savana.</p>
+                                <p>c) Domínio dos Mares de Morros – planícies com vegetação herbácea.</p>
+                                <p>d) Domínio das Pradarias – terras baixas com clima equatorial.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://www.tudogeo.com.br/wp-content/uploads/2020/06/Dominios-morfoclimaticos.jpg" alt="Domínios morfoclimáticos">
+                        <div class="img-caption">Domínios Morfoclimáticos (Aziz Ab'Sáber)</div>
+                    </div>
+                </div>
+            </div>`,
+
+            // Página 6 - Questões 9 e 10
+            `<div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 9</strong> — Sobre o Domínio da Caatinga, é correto afirmar:</p>
+                            <div class="alternatives">
+                                <p>a) Apresenta predomínio de planícies e clima equatorial, com chuvas abundantes o ano todo.</p>
+                                <p>b) Localiza-se no extremo sul do Brasil, com relevo de colinas suaves e vegetação herbácea.</p>
+                                <p>c) Caracteriza-se por depressões e planaltos, com clima semiárido e solo pedregoso.</p>
+                                <p>d) É marcado por morros arredondados e cobertura original de Mata Atlântica.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://i.imgur.com/onnNCXq.png" alt="Domínios Amazônico e Caatinga">
+                        <div class="img-caption">Amazônia e Caatinga</div>
+                    </div>
+                </div>
+                <div class="img-text-row">
+                    <div class="text-container">
+                        <div class="question-box">
+                            <p><strong>Questão 10</strong> — Analise as afirmativas sobre os desafios hídricos e ambientais:</p>
+                            <p style="margin-left: 20px;">I. O rompimento de barragens em Mariana (2015) e Brumadinho (2019) contaminou importantes bacias hidrográficas brasileiras.<br>II. A dessalinização da água do mar é uma tecnologia que não apresenta nenhum impacto ambiental.<br>III. Cerca de 46% da população mundial não tinha acesso a saneamento adequado em 2023.</p>
+                            <p><strong>Está(ão) correta(s):</strong></p>
+                            <div class="alternatives">
+                                <p>a) Apenas I.</p>
+                                <p>b) Apenas II.</p>
+                                <p>c) Apenas I e III.</p>
+                                <p>d) I, II e III.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img-container">
+                        <img src="https://www.bbc.com/staticarchive/2d6cffa6531c5c95531163d6377eed08ee187e7d.gif" alt="Desastre de Mariana">
+                        <div class="img-caption">Lama tóxica no Rio Doce</div>
+                    </div>
+                </div>
+            </div>`,
+
+            // ============ PARTE 2: GABARITO COMENTADO ============
+            // Página 7 - Seção: Gabarito Comentado
+            `<div class="section-divider">
+                <h2>✅ Parte 2 — Gabarito Comentado</h2>
+                <p style="margin-top: 8px; font-size: 1rem;">Confira a resposta correta e a justificativa de cada questão.</p>
+            </div>`,
+
+            // Página 8 - Gabarito Questão 1
+            `<div class="question-box">
+                <p><strong>Questão 1</strong> — Os ventos alísios são importantes para a dinâmica climática global. Sobre eles, é correto afirmar que:</p>
+                <div class="alternatives">
+                    <p>a) Sopram das áreas de alta pressão nos polos em direção ao Equador, provocando secas.</p>
+                    <p>b) Originam-se nas áreas de alta pressão próximas aos trópicos e sopram em direção ao Equador, levando umidade.</p>
+                    <p>c) São ventos periódicos que ocorrem apenas durante o verão no Hemisfério Sul.</p>
+                    <p>d) Sopram exclusivamente sobre os oceanos, não influenciando o clima dos continentes.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> Os ventos alísios são correntes de ar que sopram das áreas de alta pressão subtropical (próximas aos trópicos) em direção à zona de baixa pressão equatorial. Eles transportam umidade, provocando chuvas nas áreas equatoriais. As demais alternativas estão incorretas porque: (a) descreve ventos polares; (c) confunde com monções; (d) os ventos alísios influenciam diretamente o clima dos continentes.
+                </div>
+            </div>`,
+
+            // Página 9 - Gabarito Questão 2
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 2</strong> — Os fenômenos El Niño e La Niña representam alterações na temperatura das águas do Oceano Pacífico. Assinale a alternativa que descreve corretamente seus efeitos:</p>
+                        <div class="alternatives">
+                            <p>a) O El Niño provoca o resfriamento do Pacífico Equatorial, causando secas no Sul do Brasil.</p>
+                            <p>b) A La Niña é caracterizada pelo aquecimento anormal do Pacífico, provocando chuvas intensas no Nordeste brasileiro.</p>
+                            <p>c) O El Niño aquece as águas do Pacífico Equatorial, podendo causar secas no Nordeste e chuvas torrenciais no Sul do Brasil.</p>
+                            <p>d) Ambos os fenômenos têm impacto restrito à costa oeste da América do Sul.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa C</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> O El Niño é caracterizado pelo aquecimento anormal das águas do Pacífico Equatorial, alterando padrões climáticos globais. No Brasil, causa secas no Nordeste e chuvas intensas no Sul. As alternativas (a) e (b) invertem os fenômenos, e (d) é incorreta, pois os impactos são globais.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/B6yKsEU.png" alt="El Niño e La Niña">
+                    <div class="img-caption">El Niño e La Niña</div>
+                </div>
+            </div>`,
+
+            // Página 10 - Gabarito Questão 3
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 3</strong> — Observe as massas de ar que atuam no Brasil: I. Massa Tropical atlântica / II. Massa Equatorial continental / III. Massa Polar atlântica / IV. Massa Tropical continental. <strong>Dessas massas de ar, são quentes e úmidas:</strong></p>
+                        <div class="alternatives">
+                            <p>a) I e II, apenas.</p>
+                            <p>b) I e III, apenas.</p>
+                            <p>c) II e IV, apenas.</p>
+                            <p>d) III e IV, apenas.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa A</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> A Massa Tropical atlântica (I) é quente e úmida, formando-se sobre o oceano. A Massa Equatorial continental (II) também é quente e úmida, originando-se na Amazônia. A Massa Polar atlântica (III) é fria, e a Massa Tropical continental (IV) é quente e seca.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/C3wCZy6.png" alt="Massas de ar no Brasil">
+                    <div class="img-caption">Massas de ar no Brasil</div>
+                </div>
+            </div>`,
+
+            // Página 11 - Gabarito Questão 4
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 4</strong> — Um estudante de Geografia está analisando o clima de uma região brasileira com as seguintes características: temperaturas elevadas durante todo o ano, chuvas abundantes e bem distribuídas, e baixa amplitude térmica anual. <strong>Trata-se do clima:</strong></p>
+                        <div class="alternatives">
+                            <p>a) Tropical de Altitude.</p>
+                            <p>b) Subtropical Úmido.</p>
+                            <p>c) Equatorial Úmido.</p>
+                            <p>d) Tropical Semiárido.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa C</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> O clima Equatorial Úmido, que abrange a maior parte da Amazônia, apresenta temperaturas elevadas (24°C a 28°C), chuvas abundantes e bem distribuídas durante o ano, e baixa amplitude térmica anual (inferior a 3°C).
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/X6mT1OO.png" alt="Climas do Brasil">
+                    <div class="img-caption">Climas do Brasil</div>
+                </div>
+            </div>`,
+
+            // Página 12 - Gabarito Questão 5
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 5</strong> — Os "rios voadores" são um fenômeno climático importante para a América do Sul. Sobre esse fenômeno, é <strong>INCORRETO</strong> afirmar:</p>
+                        <div class="alternatives">
+                            <p>a) A umidade transportada pelos "rios voadores" tem origem na transpiração da Floresta Amazônica.</p>
+                            <p>b) A Cordilheira dos Andes funciona como barreira, desviando a umidade para o Sul e Sudeste do Brasil.</p>
+                            <p>c) O fenômeno é responsável pelas chuvas na Região Sul do Brasil principalmente durante o inverno.</p>
+                            <p>d) A manutenção da Floresta Amazônica é fundamental para o abastecimento hídrico de grande parte do continente.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa C</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> A afirmativa (c) é incorreta porque as chuvas provenientes dos "rios voadores" ocorrem principalmente no verão, e não no inverno. As demais alternativas descrevem corretamente o fenômeno.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/25VjQaD.png" alt="Rios voadores">
+                    <div class="img-caption">Dinâmica dos "rios voadores"</div>
+                </div>
+            </div>`,
+
+            // Página 13 - Gabarito Questão 6
+            `<div class="question-box">
+                <p><strong>Questão 6</strong> — Sobre o ciclo hidrológico e a distribuição de água no planeta, é correto afirmar:</p>
+                <div class="alternatives">
+                    <p>a) Cerca de 80% das águas residuais industriais e municipais são tratadas antes de serem devolvidas ao meio ambiente.</p>
+                    <p>b) O estresse hídrico mede a relação entre o total de água consumida e o abastecimento renovável disponível.</p>
+                    <p>c) A distribuição de água doce no planeta é equilibrada, com todas as regiões tendo acesso semelhante aos recursos hídricos.</p>
+                    <p>d) O Brasil não enfrenta problemas de escassez hídrica em nenhuma região de seu território.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> O estresse hídrico é justamente a medida da pressão sobre os recursos hídricos, calculando a relação entre o total de água retirada e o abastecimento renovável disponível. A alternativa (a) está incorreta porque 80% das águas residuais são despejadas sem tratamento. O Semiárido brasileiro enfrenta escassez, invalidando (d).
+                </div>
+            </div>`,
+
+            // Página 14 - Gabarito Questão 7
+            `<div class="question-box">
+                <p><strong>Questão 7</strong> — Considere as afirmações sobre os biomas terrestres: I. As florestas tropicais e equatoriais são formações arbóreas com vegetação latifoliada e perene. / II. A tundra é uma formação arbustiva encontrada nas proximidades do Círculo Polar Ártico. / III. As savanas são formações complexas que combinam vegetação rasteira com árvores e arbustos esparsos. / IV. A taiga é uma formação arbórea caracterizada pelo predomínio de árvores caducifólias. <strong>Estão corretas apenas as afirmações:</strong></p>
+                <div class="alternatives">
+                    <p>a) I e II.</p>
+                    <p>b) I e III.</p>
+                    <p>c) II e IV.</p>
+                    <p>d) III e IV.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> As afirmações I e III estão corretas. A afirmação II é incorreta porque a tundra é uma formação herbácea, não arbustiva. A afirmação IV é incorreta porque a taiga (floresta boreal) é composta por coníferas (acidulofiladas), e não por árvores caducifólias (que perdem as folhas).
+                </div>
+            </div>`,
+
+            // Página 15 - Gabarito Questão 8
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 8</strong> — Os domínios morfoclimáticos brasileiros foram propostos pelo geógrafo Aziz Ab'Sáber. Assinale a alternativa que apresenta corretamente a correspondência entre o domínio e sua característica predominante:</p>
+                        <div class="alternatives">
+                            <p>a) Domínio Amazônico – clima semiárido, vegetação de Caatinga.</p>
+                            <p>b) Domínio do Cerrado – planaltos e chapadas, vegetação de savana.</p>
+                            <p>c) Domínio dos Mares de Morros – planícies com vegetação herbácea.</p>
+                            <p>d) Domínio das Pradarias – terras baixas com clima equatorial.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa B</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> O Domínio do Cerrado é caracterizado por extensos planaltos e chapadas sedimentares, com vegetação de savana. As demais alternativas invertem características: Amazônico tem clima equatorial; Mares de Morros tem planaltos e serras com Mata Atlântica; Pradarias tem clima subtropical com vegetação herbácea.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.tudogeo.com.br/wp-content/uploads/2020/06/Dominios-morfoclimaticos.jpg" alt="Domínios morfoclimáticos">
+                    <div class="img-caption">Domínios Morfoclimáticos</div>
+                </div>
+            </div>`,
+
+            // Página 16 - Gabarito Questão 9
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 9</strong> — Sobre o Domínio da Caatinga, é correto afirmar:</p>
+                        <div class="alternatives">
+                            <p>a) Apresenta predomínio de planícies e clima equatorial, com chuvas abundantes o ano todo.</p>
+                            <p>b) Localiza-se no extremo sul do Brasil, com relevo de colinas suaves e vegetação herbácea.</p>
+                            <p>c) Caracteriza-se por depressões e planaltos, com clima semiárido e solo pedregoso.</p>
+                            <p>d) É marcado por morros arredondados e cobertura original de Mata Atlântica.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa C</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> O Domínio da Caatinga apresenta relevo com planaltos (bacias do Parnaíba e da Borborema) e depressões (Sertaneja e do São Francisco), com predomínio de clima semiárido e solos pedregosos, pobres em matéria orgânica. A alternativa (a) descreve o Domínio Amazônico; (b) descreve o Domínio das Pradarias; (d) descreve o Domínio dos Mares de Morros.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/onnNCXq.png" alt="Caatinga">
+                    <div class="img-caption">Domínio da Caatinga</div>
+                </div>
+            </div>`,
+
+            // Página 17 - Gabarito Questão 10
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <div class="question-box">
+                        <p><strong>Questão 10</strong> — Analise as afirmativas sobre os desafios hídricos e ambientais: I. O rompimento de barragens em Mariana (2015) e Brumadinho (2019) contaminou importantes bacias hidrográficas brasileiras. / II. A dessalinização da água do mar é uma tecnologia que não apresenta nenhum impacto ambiental. / III. Cerca de 46% da população mundial não tinha acesso a saneamento adequado em 2023. <strong>Está(ão) correta(s):</strong></p>
+                        <div class="alternatives">
+                            <p>a) Apenas I.</p>
+                            <p>b) Apenas II.</p>
+                            <p>c) Apenas I e III.</p>
+                            <p>d) I, II e III.</p>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>✅ Gabarito: Alternativa C</strong>
+                        </div>
+                        <div class="justificativa">
+                            <strong>Justificativa:</strong> As afirmativas I e III estão corretas. A afirmativa II é incorreta porque a dessalinização apresenta impactos ambientais, como o alto custo energético e o descarte de salmoura concentrada, que pode afetar ecossistemas marinhos.
+                        </div>
+                    </div>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.bbc.com/staticarchive/2d6cffa6531c5c95531163d6377eed08ee187e7d.gif" alt="Desastre ambiental">
+                    <div class="img-caption">Impactos ambientais</div>
+                </div>
+            </div>`,
+
+            // Página 18 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu o exercício sobre os Tempos da Natureza e a Ação Humana.</p>
+                <p style="margin-top: 10px; font-size: 1.1rem;">Revise o conteúdo e bons estudos!</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Professora Angela Siqueira</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

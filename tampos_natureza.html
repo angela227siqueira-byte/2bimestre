@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Geografia - Tempos da Natureza e Ação Humana</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        /* Flexbox para imagens ao lado do texto */
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+        .capa-image {
+            margin-top: 20px;
+        }
+        .capa-image img {
+            max-width: 70%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        /* Estilos para tabelas */
+        .table-slide table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        .table-slide th {
+            background-color: #154e3a;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table-slide td {
+            border: 1px solid #dde5e0;
+            padding: 8px;
+            vertical-align: top;
+        }
+        .table-slide tr:nth-child(even) {
+            background-color: #f5f7f6;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <!-- TELA DE LEITURA (única tela, sem identificação) -->
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Geografia · Tempos da Natureza e Ação Humana</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 19</span>
+                <span id="progressPercent">5%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CONTEÚDO DAS PÁGINAS ----------
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>Natureza em Transformação</h1>
+                <h2>Dinâmica Atmosférica, Climas, Hidrosfera e Biomas</h2>
+                <p>Professora Angela Siqueira</p>
+                <div class="capa-image">
+                    <img src="https://static.mundoeducacao.uol.com.br/mundoeducacao/conteudo_legenda/25dc1d89deee6f1227841782e5dce32d.jpg" alt="Natureza em transformação">
+                </div>
+            </div>`,
+            
+            // Página 1 - A Circulação Geral da Atmosfera
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A Circulação Geral da Atmosfera</strong></p>
+                    <p>A atmosfera está em constante movimento.<br>Diferenças de temperatura e pressão geram os ventos.<br>Ventos sopram de áreas de alta para baixa pressão.<br><strong>Ventos Alísios:</strong> dos trópicos ao Equador, levam umidade e chuvas.<br><strong>Ventos Contra-Alísios:</strong> descem secos nas latitudes de 30°.<br>A descida de ventos secos forma desertos como o Saara.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/puXRCu3.png" alt="Circulação geral da atmosfera">
+                    <div class="img-caption">Circulação geral da atmosfera</div>
+                </div>
+            </div>`,
+
+            // Página 2 - Monções, Brisas e Fenômenos Oceânicos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Monções, Brisas e Fenômenos Oceânicos</strong></p>
+                    <p><strong>Monções:</strong> ventos periódicos de verão (úmidos) e inverno (secos).<br>Causados pelo aquecimento desigual entre continentes e oceanos.<br><strong>Brisas:</strong> ventos diários; do mar para a terra de dia, e o inverso à noite.<br><strong>El Niño:</strong> aquecimento anormal do Pacífico Equatorial.<br><strong>La Niña:</strong> resfriamento anormal do Pacífico Equatorial.<br>Causam secas no Nordeste, chuvas no Sul e impactos climáticos globais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/B6yKsEU.png" alt="El Niño e La Niña">
+                    <div class="img-caption">El Niño e La Niña</div>
+                </div>
+            </div>`,
+
+            // Página 3 - Massas de Ar e Climas do Brasil
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Massas de Ar e Climas do Brasil</strong></p>
+                    <p><strong>Massa de ar:</strong> extensa porção de ar com características próprias.<br>Transportam temperatura e umidade da região de origem.<br>No Brasil, cinco massas de ar definem os tipos climáticos:<br>• <strong>Massa Tropical atlântica:</strong> quente e úmida, atua no litoral.<br>• <strong>Massa Tropical continental:</strong> quente e seca, atua no interior.<br>• <strong>Massa Equatorial atlântica:</strong> quente e úmida, atua no litoral norte.<br>• <strong>Massa Equatorial continental:</strong> quente, úmida e instável (Amazônia).<br>• <strong>Massa Polar atlântica:</strong> fria e úmida, provoca geadas e "friagem".</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/C3wCZy6.png" alt="Massas de ar no Brasil">
+                    <div class="img-caption">Massas de ar no Brasil</div>
+                </div>
+            </div>`,
+
+            // Página 4 - Tabela - Climas do Brasil (Parte 1)
+            `<div class="table-slide">
+                <h3>Climas do Brasil (Parte 1)</h3>
+                <table>
+                    <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                    <tr><td><strong>Equatorial Úmido</strong></td><td>Maior parte da Amazônia</td><td>Temperaturas elevadas e chuvas abundantes. Baixa amplitude térmica anual.</td></tr>
+                    <tr><td><strong>Tropical</strong></td><td>Centro-Oeste, Sudeste e Nordeste</td><td>Temperaturas altas. Estação seca (inverno) e chuvosa (verão) bem definidas.</td></tr>
+                    <tr><td><strong>Tropical Semiárido</strong></td><td>Sertão nordestino e norte de MG</td><td>Chuvas escassas e irregulares. Temperaturas altas, provocando longas secas.</td></tr>
+                </table>
+                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+                    <img src="https://i.imgur.com/X6mT1OO.png" alt="Climas do Brasil">
+                </div>
+            </div>`,
+
+            // Página 5 - Tabela - Climas do Brasil (Parte 2)
+            `<div class="table-slide">
+                <h3>Climas do Brasil (Parte 2)</h3>
+                <table>
+                    <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                    <tr><td><strong>Litorâneo Úmido</strong></td><td>Faixa litorânea do Sudeste ao NE</td><td>Altas temperaturas e alta pluviosidade. Sofre ação de massas de ar oceânicas.</td></tr>
+                    <tr><td><strong>Tropical de Altitude</strong></td><td>Terras altas do Sudeste</td><td>Invernos mais rigorosos e verões mais brandos. Temperatura média entre 15°C e 21°C.</td></tr>
+                    <tr><td><strong>Subtropical Úmido</strong></td><td>Região Sul e sul de SP/MS</td><td>Estações do ano bem definidas. Invernos frios, com possibilidade de geada e neve.</td></tr>
+                </table>
+                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+                    <img src="https://i.imgur.com/2urCvZT.png" alt="Climas do Brasil">
+                </div>
+            </div>`,
+
+            // Página 6 - Os "Rios Voadores"
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Os "Rios Voadores"</strong></p>
+                    <p>Fenômeno que conecta clima e vegetação na América do Sul.<br>Correntes de ar carregadas de umidade da Floresta Amazônica.<br>A transpiração da floresta abastece esses "rios" de vapor.<br>A umidade viaja e encontra a barreira da Cordilheira dos Andes.<br>A massa de ar se desvia e se precipita como chuva no Sul e Sudeste.<br>A preservação da Amazônia é vital para o equilíbrio hídrico do continente.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/25VjQaD.png" alt="Rios voadores">
+                    <div class="img-caption">Dinâmica dos "rios voadores"</div>
+                </div>
+            </div>`,
+
+            // Página 7 - Ciclo Hidrológico e Distribuição da Água
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Ciclo Hidrológico e Distribuição da Água</strong></p>
+                    <p><strong>Ciclo hidrológico:</strong> movimento contínuo da água pelo planeta.<br>Impulsionado pela energia solar e pela gravidade.<br>A distribuição de água doce no planeta é muito desigual.<br>O <strong>estresse hídrico</strong> mede a pressão entre consumo e disponibilidade.<br>Cerca de 46% da população global não tinha saneamento adequado em 2023.<br>80% das águas residuais industriais são despejadas sem tratamento.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.mundoeducacao.uol.com.br/mundoeducacao/conteudo_legenda/25dc1d89deee6f1227841782e5dce32d.jpg" alt="Ciclo hidrológico">
+                    <div class="img-caption">O ciclo da água</div>
+                </div>
+            </div>`,
+
+            // Página 8 - Desafios e Conflitos pela Água
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Desafios e Conflitos pela Água</strong></p>
+                    <p>A escassez e poluição da água podem gerar conflitos entre países.<br>Acidentes como Mariana (2015) e Brumadinho (2019) são exemplos críticos.<br>O rompimento de barragens contaminou as bacias do Rio Doce e Paraopeba.<br>Causou destruição de ecossistemas e afetou o abastecimento humano.<br>Soluções incluem a gestão compartilhada de bacias transfronteiriças.<br>Tecnologias como a <strong>dessalinização</strong> e o <strong>reúso</strong> de água são cada vez mais debatidas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.bbc.com/staticarchive/2d6cffa6531c5c95531163d6377eed08ee187e7d.gif" alt="Desastre de Mariana">
+                    <div class="img-caption">Lama tóxica no Rio Doce</div>
+                </div>
+            </div>`,
+
+            // Página 9 - A Biosfera e os Biomas
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A Biosfera e os Biomas</strong></p>
+                    <p><strong>Biosfera:</strong> a parte do sistema terrestre que contém todas as formas de vida.<br>A distribuição da vegetação depende de clima, solo, altitude e latitude.<br><strong>Bioma:</strong> grande unidade biogeográfica regional (ex.: Amazônia, Cerrado).<br>Composto por diversos ecossistemas com estruturas semelhantes.<br>Biomas terrestres são classificados conforme a vegetação dominante.<br>Principais tipos: formações <strong>arbóreas</strong>, <strong>arbustivas</strong> e <strong>herbáceas</strong>.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/NrodZmF.png" alt="Biomas terrestres">
+                    <div class="img-caption">Distribuição dos biomas no mundo</div>
+                </div>
+            </div>`,
+
+            // Página 10 - Tabela - Formações Arbóreas
+            `<div class="table-slide">
+                <h3>Formações Arbóreas</h3>
+                <table>
+                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                    <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Tropicais/Equatoriais</strong></td><td>Regiões quentes e úmidas; vegetação exuberante, latifoliada e perene (ex.: Amazônia).</td></tr>
+                    <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Temperadas</strong></td><td>Clima temperado; árvores caducifólias (perdem as folhas no outono/inverno), como carvalhos.</td></tr>
+                    <tr><td><strong>Arbórea</strong></td><td><strong>Floresta Boreal (Taiga)</strong></td><td>Latitudes mais ao norte; temperaturas muito baixas; predomínio de coníferas (pinheiros).</td></tr>
+                </table>
+                <div class="img-container" style="max-width: 70%; margin: 10px auto;">
+                    <img src="https://clebinho.pro.br/wp/wp-content/uploads/2016/10/21-0.jpg" alt="Floresta Amazônica">
+                </div>
+            </div>`,
+
+            // Página 11 - Tabela - Formações Arbustivas e Herbáceas (Parte 1)
+            `<div class="table-slide">
+                <h3>Formações Arbustivas e Herbáceas (Parte 1)</h3>
+                <table>
+                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                    <tr><td><strong>Herbácea</strong></td><td><strong>Tundra</strong></td><td>Próximo ao Ártico; vegetação rasteira (liquens, musgos); solo congelado (permafrost).</td></tr>
+                    <tr><td><strong>Herbácea</strong></td><td><strong>Pradarias</strong></td><td>Clima temperado; vegetação de gramíneas em solos ricos. Bastante usada para pecuária.</td></tr>
+                    <tr><td><strong>Herbácea / Arbustiva</strong></td><td><strong>Estepes</strong></td><td>Proximidades de desertos; vegetação mais baixa e esparsa que as pradarias (arbustos e tufos).</td></tr>
+                </table>
+                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+                    <img src="https://i.ytimg.com/vi/dvxreWsJans/maxresdefault.jpg" alt="Vegetação de tundra">
+                </div>
+            </div>`,
+
+            // Página 12 - Tabela - Formações Arbustivas e Herbáceas (Parte 2)
+            `<div class="table-slide">
+                <h3>Formações Arbustivas e Herbáceas (Parte 2)</h3>
+                <table>
+                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                    <tr><td><strong>Complexa (rasteira + árvores)</strong></td><td><strong>Savanas</strong></td><td>Clima tropical com estação seca; árvores de raízes profundas e vegetação rasteira (ex.: Cerrado).</td></tr>
+                    <tr><td><strong>Arbustiva</strong></td><td><strong>Vegetação Mediterrânea</strong></td><td>Clima com verões secos; vegetação xerófila (adaptada à aridez), com arbustos densos.</td></tr>
+                    <tr><td><strong>Arbustiva / Herbácea</strong></td><td><strong>Desertos</strong></td><td>Extrema aridez; plantas xerófilas como cactos e arbustos espinhosos de raízes profundas.</td></tr>
+                </table>
+                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+                    <img src="https://123ecos.com.br/wp-content/uploads/2024/09/Savanas.jpg" alt="Vegetação de savana">
+                </div>
+            </div>`,
+
+            // Página 13 - Domínios Morfoclimáticos do Brasil
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Domínios Morfoclimáticos do Brasil</strong></p>
+                    <p>Propostos pelo geógrafo Aziz Ab'Sáber.<br>Representam uma síntese integrada do meio físico.<br>Combina relevo, clima, solo e vegetação em uma mesma análise.<br>O Brasil é dividido em seis grandes domínios.<br>Entre eles existem faixas de transição com características mistas.<br>A seguir, veremos cada um dos domínios e suas principais marcas.</p>
+                </div>
+                <div class="img-container" style="transform: scale(1.2); margin: 15px auto;">
+                    <img src="https://www.tudogeo.com.br/wp-content/uploads/2020/06/Dominios-morfoclimaticos.jpg" alt="Domínios morfoclimáticos">
+                    <div class="img-caption">Domínios Morfoclimáticos (Aziz Ab'Sáber)</div>
+                </div>
+            </div>`,
+
+            // Página 14 - Domínios Amazônico e da Caatinga
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Domínios Amazônico e da Caatinga</strong></p>
+                    <p><strong>Domínio Amazônico:</strong><br>• Terras baixas (planícies e depressões) e clima equatorial.<br>• Predomínio da Floresta e Bacia Amazônica.<br>• Enfrenta graves ameaças de desmatamento e queimadas.<br><strong>Domínio da Caatinga:</strong><br>• Depressões e planaltos, com clima semiárido.<br>• Solo pedregoso, vegetação de Caatinga e secas prolongadas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/onnNCXq.png" alt="Domínios Amazônico e Caatinga">
+                    <div class="img-caption">Amazônia e Caatinga</div>
+                </div>
+            </div>`,
+
+            // Página 15 - Domínios do Cerrado e Mares de Morros
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Domínios do Cerrado e Mares de Morros</strong></p>
+                    <p><strong>Domínio do Cerrado:</strong><br>• Predomínio de planaltos e chapadas com clima tropical sazonal.<br>• Vegetação de savana com alta biodiversidade.<br>• Sob forte pressão da expansão da fronteira agrícola.<br><strong>Domínio dos Mares de Morros:</strong><br>• Planaltos e serras na porção leste do Brasil.<br>• Clima tropical úmido e morros arredondados ("meias laranjas").<br>• Mata Atlântica original, hoje muito devastada e sujeita a deslizamentos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/aGQW1So.png" alt="Domínios Cerrado e Mares de Morros">
+                    <div class="img-caption">Cerrado e Mares de Morros</div>
+                </div>
+            </div>`,
+
+            // Página 16 - Domínio das Araucárias, Pradarias e Conclusão
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Domínio das Araucárias, Pradarias e Conclusão</strong></p>
+                    <p><strong>Domínio das Matas de Araucária:</strong><br>• Planaltos do Sul, com clima subtropical e presença do pinheiro-do-paraná.<br>• Vegetação quase totalmente devastada pela exploração de madeira.<br><strong>Domínio das Pradarias:</strong><br>• Relevo de colinas suaves (coxilhas) no extremo sul do Brasil.<br>• Vegetação herbácea, área de intensa pecuária e agricultura.<br><strong>Conclusão:</strong> A compreensão desses domínios é chave para o planejamento sustentável.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.imgur.com/khRaKlC.png" alt="Domínios das Araucárias e Pradarias">
+                    <div class="img-caption">Araucárias e Pradarias</div>
+                </div>
+            </div>`,
+
+            // Página 17 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu a leitura sobre os Tempos da Natureza e a Ação Humana.</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Isso é Tudo por Hoje!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

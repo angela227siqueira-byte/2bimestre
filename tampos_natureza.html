@@ -96,7 +96,7 @@
             font-weight: 600;
         }
 
-        /* Flexbox para imagens ao lado do texto */
+        /* Flexbox para imagens à DIREITA do texto/tabela */
         .img-text-row {
             display: flex;
             gap: 20px;
@@ -124,10 +124,9 @@
             flex: 2;
             min-width: 200px;
         }
-        .right-image .text-container { order: 1; }
-        .right-image .img-container { order: 2; }
-        .left-image .text-container { order: 2; }
-        .left-image .img-container { order: 1; }
+        /* Layout padrão: texto à esquerda, imagem à direita */
+        .img-text-row .text-container { order: 1; }
+        .img-text-row .img-container { order: 2; }
 
         .toolbar-single {
             display: flex;
@@ -240,8 +239,8 @@
             .reader-wrapper { max-width: 98%; padding: 15px; }
             .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
             .img-text-row { flex-direction: column; }
-            .right-image .text-container, .right-image .img-container,
-            .left-image .text-container, .left-image .img-container {
+            .img-text-row .text-container,
+            .img-text-row .img-container {
                 order: unset;
             }
             .capa h1 { font-size: 28px; }
@@ -301,7 +300,7 @@
             </div>`,
             
             // Página 1 - A Circulação Geral da Atmosfera
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>A Circulação Geral da Atmosfera</strong></p>
                     <p>A atmosfera está em constante movimento.<br>Diferenças de temperatura e pressão geram os ventos.<br>Ventos sopram de áreas de alta para baixa pressão.<br><strong>Ventos Alísios:</strong> dos trópicos ao Equador, levam umidade e chuvas.<br><strong>Ventos Contra-Alísios:</strong> descem secos nas latitudes de 30°.<br>A descida de ventos secos forma desertos como o Saara.</p>
@@ -313,7 +312,7 @@
             </div>`,
 
             // Página 2 - Monções, Brisas e Fenômenos Oceânicos
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Monções, Brisas e Fenômenos Oceânicos</strong></p>
                     <p><strong>Monções:</strong> ventos periódicos de verão (úmidos) e inverno (secos).<br>Causados pelo aquecimento desigual entre continentes e oceanos.<br><strong>Brisas:</strong> ventos diários; do mar para a terra de dia, e o inverso à noite.<br><strong>El Niño:</strong> aquecimento anormal do Pacífico Equatorial.<br><strong>La Niña:</strong> resfriamento anormal do Pacífico Equatorial.<br>Causam secas no Nordeste, chuvas no Sul e impactos climáticos globais.</p>
@@ -325,7 +324,7 @@
             </div>`,
 
             // Página 3 - Massas de Ar e Climas do Brasil
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Massas de Ar e Climas do Brasil</strong></p>
                     <p><strong>Massa de ar:</strong> extensa porção de ar com características próprias.<br>Transportam temperatura e umidade da região de origem.<br>No Brasil, cinco massas de ar definem os tipos climáticos:<br>• <strong>Massa Tropical atlântica:</strong> quente e úmida, atua no litoral.<br>• <strong>Massa Tropical continental:</strong> quente e seca, atua no interior.<br>• <strong>Massa Equatorial atlântica:</strong> quente e úmida, atua no litoral norte.<br>• <strong>Massa Equatorial continental:</strong> quente, úmida e instável (Amazônia).<br>• <strong>Massa Polar atlântica:</strong> fria e úmida, provoca geadas e "friagem".</p>
@@ -337,35 +336,41 @@
             </div>`,
 
             // Página 4 - Tabela - Climas do Brasil (Parte 1)
-            `<div class="table-slide">
-                <h3>Climas do Brasil (Parte 1)</h3>
-                <table>
-                    <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
-                    <tr><td><strong>Equatorial Úmido</strong></td><td>Maior parte da Amazônia</td><td>Temperaturas elevadas e chuvas abundantes. Baixa amplitude térmica anual.</td></tr>
-                    <tr><td><strong>Tropical</strong></td><td>Centro-Oeste, Sudeste e Nordeste</td><td>Temperaturas altas. Estação seca (inverno) e chuvosa (verão) bem definidas.</td></tr>
-                    <tr><td><strong>Tropical Semiárido</strong></td><td>Sertão nordestino e norte de MG</td><td>Chuvas escassas e irregulares. Temperaturas altas, provocando longas secas.</td></tr>
-                </table>
-                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <h3>Climas do Brasil (Parte 1)</h3>
+                    <table>
+                        <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                        <tr><td><strong>Equatorial Úmido</strong></td><td>Maior parte da Amazônia</td><td>Temperaturas elevadas e chuvas abundantes. Baixa amplitude térmica anual.</td></tr>
+                        <tr><td><strong>Tropical</strong></td><td>Centro-Oeste, Sudeste e Nordeste</td><td>Temperaturas altas. Estação seca (inverno) e chuvosa (verão) bem definidas.</td></tr>
+                        <tr><td><strong>Tropical Semiárido</strong></td><td>Sertão nordestino e norte de MG</td><td>Chuvas escassas e irregulares. Temperaturas altas, provocando longas secas.</td></tr>
+                    </table>
+                </div>
+                <div class="img-container">
                     <img src="https://i.imgur.com/X6mT1OO.png" alt="Climas do Brasil">
+                    <div class="img-caption">Climas do Brasil</div>
                 </div>
             </div>`,
 
             // Página 5 - Tabela - Climas do Brasil (Parte 2)
-            `<div class="table-slide">
-                <h3>Climas do Brasil (Parte 2)</h3>
-                <table>
-                    <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
-                    <tr><td><strong>Litorâneo Úmido</strong></td><td>Faixa litorânea do Sudeste ao NE</td><td>Altas temperaturas e alta pluviosidade. Sofre ação de massas de ar oceânicas.</td></tr>
-                    <tr><td><strong>Tropical de Altitude</strong></td><td>Terras altas do Sudeste</td><td>Invernos mais rigorosos e verões mais brandos. Temperatura média entre 15°C e 21°C.</td></tr>
-                    <tr><td><strong>Subtropical Úmido</strong></td><td>Região Sul e sul de SP/MS</td><td>Estações do ano bem definidas. Invernos frios, com possibilidade de geada e neve.</td></tr>
-                </table>
-                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <h3>Climas do Brasil (Parte 2)</h3>
+                    <table>
+                        <tr><th>Clima</th><th>Localização Predominante</th><th>Características Principais</th></tr>
+                        <tr><td><strong>Litorâneo Úmido</strong></td><td>Faixa litorânea do Sudeste ao NE</td><td>Altas temperaturas e alta pluviosidade. Sofre ação de massas de ar oceânicas.</td></tr>
+                        <tr><td><strong>Tropical de Altitude</strong></td><td>Terras altas do Sudeste</td><td>Invernos mais rigorosos e verões mais brandos. Temperatura média entre 15°C e 21°C.</td></tr>
+                        <tr><td><strong>Subtropical Úmido</strong></td><td>Região Sul e sul de SP/MS</td><td>Estações do ano bem definidas. Invernos frios, com possibilidade de geada e neve.</td></tr>
+                    </table>
+                </div>
+                <div class="img-container">
                     <img src="https://i.imgur.com/2urCvZT.png" alt="Climas do Brasil">
+                    <div class="img-caption">Climas do Brasil</div>
                 </div>
             </div>`,
 
             // Página 6 - Os "Rios Voadores"
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Os "Rios Voadores"</strong></p>
                     <p>Fenômeno que conecta clima e vegetação na América do Sul.<br>Correntes de ar carregadas de umidade da Floresta Amazônica.<br>A transpiração da floresta abastece esses "rios" de vapor.<br>A umidade viaja e encontra a barreira da Cordilheira dos Andes.<br>A massa de ar se desvia e se precipita como chuva no Sul e Sudeste.<br>A preservação da Amazônia é vital para o equilíbrio hídrico do continente.</p>
@@ -377,7 +382,7 @@
             </div>`,
 
             // Página 7 - Ciclo Hidrológico e Distribuição da Água
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Ciclo Hidrológico e Distribuição da Água</strong></p>
                     <p><strong>Ciclo hidrológico:</strong> movimento contínuo da água pelo planeta.<br>Impulsionado pela energia solar e pela gravidade.<br>A distribuição de água doce no planeta é muito desigual.<br>O <strong>estresse hídrico</strong> mede a pressão entre consumo e disponibilidade.<br>Cerca de 46% da população global não tinha saneamento adequado em 2023.<br>80% das águas residuais industriais são despejadas sem tratamento.</p>
@@ -389,7 +394,7 @@
             </div>`,
 
             // Página 8 - Desafios e Conflitos pela Água
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Desafios e Conflitos pela Água</strong></p>
                     <p>A escassez e poluição da água podem gerar conflitos entre países.<br>Acidentes como Mariana (2015) e Brumadinho (2019) são exemplos críticos.<br>O rompimento de barragens contaminou as bacias do Rio Doce e Paraopeba.<br>Causou destruição de ecossistemas e afetou o abastecimento humano.<br>Soluções incluem a gestão compartilhada de bacias transfronteiriças.<br>Tecnologias como a <strong>dessalinização</strong> e o <strong>reúso</strong> de água são cada vez mais debatidas.</p>
@@ -401,7 +406,7 @@
             </div>`,
 
             // Página 9 - A Biosfera e os Biomas
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>A Biosfera e os Biomas</strong></p>
                     <p><strong>Biosfera:</strong> a parte do sistema terrestre que contém todas as formas de vida.<br>A distribuição da vegetação depende de clima, solo, altitude e latitude.<br><strong>Bioma:</strong> grande unidade biogeográfica regional (ex.: Amazônia, Cerrado).<br>Composto por diversos ecossistemas com estruturas semelhantes.<br>Biomas terrestres são classificados conforme a vegetação dominante.<br>Principais tipos: formações <strong>arbóreas</strong>, <strong>arbustivas</strong> e <strong>herbáceas</strong>.</p>
@@ -413,61 +418,70 @@
             </div>`,
 
             // Página 10 - Tabela - Formações Arbóreas
-            `<div class="table-slide">
-                <h3>Formações Arbóreas</h3>
-                <table>
-                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                    <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Tropicais/Equatoriais</strong></td><td>Regiões quentes e úmidas; vegetação exuberante, latifoliada e perene (ex.: Amazônia).</td></tr>
-                    <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Temperadas</strong></td><td>Clima temperado; árvores caducifólias (perdem as folhas no outono/inverno), como carvalhos.</td></tr>
-                    <tr><td><strong>Arbórea</strong></td><td><strong>Floresta Boreal (Taiga)</strong></td><td>Latitudes mais ao norte; temperaturas muito baixas; predomínio de coníferas (pinheiros).</td></tr>
-                </table>
-                <div class="img-container" style="max-width: 70%; margin: 10px auto;">
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <h3>Formações Arbóreas</h3>
+                    <table>
+                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                        <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Tropicais/Equatoriais</strong></td><td>Regiões quentes e úmidas; vegetação exuberante, latifoliada e perene (ex.: Amazônia).</td></tr>
+                        <tr><td><strong>Arbórea</strong></td><td><strong>Florestas Temperadas</strong></td><td>Clima temperado; árvores caducifólias (perdem as folhas no outono/inverno), como carvalhos.</td></tr>
+                        <tr><td><strong>Arbórea</strong></td><td><strong>Floresta Boreal (Taiga)</strong></td><td>Latitudes mais ao norte; temperaturas muito baixas; predomínio de coníferas (pinheiros).</td></tr>
+                    </table>
+                </div>
+                <div class="img-container">
                     <img src="https://clebinho.pro.br/wp/wp-content/uploads/2016/10/21-0.jpg" alt="Floresta Amazônica">
+                    <div class="img-caption">Floresta Amazônica</div>
                 </div>
             </div>`,
 
             // Página 11 - Tabela - Formações Arbustivas e Herbáceas (Parte 1)
-            `<div class="table-slide">
-                <h3>Formações Arbustivas e Herbáceas (Parte 1)</h3>
-                <table>
-                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                    <tr><td><strong>Herbácea</strong></td><td><strong>Tundra</strong></td><td>Próximo ao Ártico; vegetação rasteira (liquens, musgos); solo congelado (permafrost).</td></tr>
-                    <tr><td><strong>Herbácea</strong></td><td><strong>Pradarias</strong></td><td>Clima temperado; vegetação de gramíneas em solos ricos. Bastante usada para pecuária.</td></tr>
-                    <tr><td><strong>Herbácea / Arbustiva</strong></td><td><strong>Estepes</strong></td><td>Proximidades de desertos; vegetação mais baixa e esparsa que as pradarias (arbustos e tufos).</td></tr>
-                </table>
-                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <h3>Formações Arbustivas e Herbáceas (Parte 1)</h3>
+                    <table>
+                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                        <tr><td><strong>Herbácea</strong></td><td><strong>Tundra</strong></td><td>Próximo ao Ártico; vegetação rasteira (liquens, musgos); solo congelado (permafrost).</td></tr>
+                        <tr><td><strong>Herbácea</strong></td><td><strong>Pradarias</strong></td><td>Clima temperado; vegetação de gramíneas em solos ricos. Bastante usada para pecuária.</td></tr>
+                        <tr><td><strong>Herbácea / Arbustiva</strong></td><td><strong>Estepes</strong></td><td>Proximidades de desertos; vegetação mais baixa e esparsa que as pradarias (arbustos e tufos).</td></tr>
+                    </table>
+                </div>
+                <div class="img-container">
                     <img src="https://i.ytimg.com/vi/dvxreWsJans/maxresdefault.jpg" alt="Vegetação de tundra">
+                    <div class="img-caption">Vegetação de tundra</div>
                 </div>
             </div>`,
 
             // Página 12 - Tabela - Formações Arbustivas e Herbáceas (Parte 2)
-            `<div class="table-slide">
-                <h3>Formações Arbustivas e Herbáceas (Parte 2)</h3>
-                <table>
-                    <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
-                    <tr><td><strong>Complexa (rasteira + árvores)</strong></td><td><strong>Savanas</strong></td><td>Clima tropical com estação seca; árvores de raízes profundas e vegetação rasteira (ex.: Cerrado).</td></tr>
-                    <tr><td><strong>Arbustiva</strong></td><td><strong>Vegetação Mediterrânea</strong></td><td>Clima com verões secos; vegetação xerófila (adaptada à aridez), com arbustos densos.</td></tr>
-                    <tr><td><strong>Arbustiva / Herbácea</strong></td><td><strong>Desertos</strong></td><td>Extrema aridez; plantas xerófilas como cactos e arbustos espinhosos de raízes profundas.</td></tr>
-                </table>
-                <div class="img-container" style="max-width: 60%; margin: 10px auto;">
+            `<div class="img-text-row">
+                <div class="text-container">
+                    <h3>Formações Arbustivas e Herbáceas (Parte 2)</h3>
+                    <table>
+                        <tr><th>Tipo de Formação</th><th>Bioma</th><th>Características e Localização</th></tr>
+                        <tr><td><strong>Complexa (rasteira + árvores)</strong></td><td><strong>Savanas</strong></td><td>Clima tropical com estação seca; árvores de raízes profundas e vegetação rasteira (ex.: Cerrado).</td></tr>
+                        <tr><td><strong>Arbustiva</strong></td><td><strong>Vegetação Mediterrânea</strong></td><td>Clima com verões secos; vegetação xerófila (adaptada à aridez), com arbustos densos.</td></tr>
+                        <tr><td><strong>Arbustiva / Herbácea</strong></td><td><strong>Desertos</strong></td><td>Extrema aridez; plantas xerófilas como cactos e arbustos espinhosos de raízes profundas.</td></tr>
+                    </table>
+                </div>
+                <div class="img-container">
                     <img src="https://123ecos.com.br/wp-content/uploads/2024/09/Savanas.jpg" alt="Vegetação de savana">
+                    <div class="img-caption">Vegetação de savana</div>
                 </div>
             </div>`,
 
             // Página 13 - Domínios Morfoclimáticos do Brasil
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios Morfoclimáticos do Brasil</strong></p>
                     <p>Propostos pelo geógrafo Aziz Ab'Sáber.<br>Representam uma síntese integrada do meio físico.<br>Combina relevo, clima, solo e vegetação em uma mesma análise.<br>O Brasil é dividido em seis grandes domínios.<br>Entre eles existem faixas de transição com características mistas.<br>A seguir, veremos cada um dos domínios e suas principais marcas.</p>
                 </div>
-                <div class="img-container" style="transform: scale(1.2); margin: 15px auto;">
+                <div class="img-container">
                     <img src="https://www.tudogeo.com.br/wp-content/uploads/2020/06/Dominios-morfoclimaticos.jpg" alt="Domínios morfoclimáticos">
                     <div class="img-caption">Domínios Morfoclimáticos (Aziz Ab'Sáber)</div>
                 </div>
             </div>`,
 
             // Página 14 - Domínios Amazônico e da Caatinga
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios Amazônico e da Caatinga</strong></p>
                     <p><strong>Domínio Amazônico:</strong><br>• Terras baixas (planícies e depressões) e clima equatorial.<br>• Predomínio da Floresta e Bacia Amazônica.<br>• Enfrenta graves ameaças de desmatamento e queimadas.<br><strong>Domínio da Caatinga:</strong><br>• Depressões e planaltos, com clima semiárido.<br>• Solo pedregoso, vegetação de Caatinga e secas prolongadas.</p>
@@ -479,7 +493,7 @@
             </div>`,
 
             // Página 15 - Domínios do Cerrado e Mares de Morros
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínios do Cerrado e Mares de Morros</strong></p>
                     <p><strong>Domínio do Cerrado:</strong><br>• Predomínio de planaltos e chapadas com clima tropical sazonal.<br>• Vegetação de savana com alta biodiversidade.<br>• Sob forte pressão da expansão da fronteira agrícola.<br><strong>Domínio dos Mares de Morros:</strong><br>• Planaltos e serras na porção leste do Brasil.<br>• Clima tropical úmido e morros arredondados ("meias laranjas").<br>• Mata Atlântica original, hoje muito devastada e sujeita a deslizamentos.</p>
@@ -491,7 +505,7 @@
             </div>`,
 
             // Página 16 - Domínio das Araucárias, Pradarias e Conclusão
-            `<div class="img-text-row right-image">
+            `<div class="img-text-row">
                 <div class="text-container">
                     <p><strong>Domínio das Araucárias, Pradarias e Conclusão</strong></p>
                     <p><strong>Domínio das Matas de Araucária:</strong><br>• Planaltos do Sul, com clima subtropical e presença do pinheiro-do-paraná.<br>• Vegetação quase totalmente devastada pela exploração de madeira.<br><strong>Domínio das Pradarias:</strong><br>• Relevo de colinas suaves (coxilhas) no extremo sul do Brasil.<br>• Vegetação herbácea, área de intensa pecuária e agricultura.<br><strong>Conclusão:</strong> A compreensão desses domínios é chave para o planejamento sustentável.</p>

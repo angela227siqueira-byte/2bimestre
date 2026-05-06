@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Exercício - O Povoamento do Continente Americano</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        .question-box {
+            margin-bottom: 30px;
+        }
+        .question-box strong {
+            color: #0f3d2e;
+            font-size: 1.1rem;
+        }
+        .alternatives {
+            margin: 12px 0 0 20px;
+        }
+        .alternatives p {
+            margin-bottom: 6px;
+        }
+        .correct-answer {
+            background: #d4edda;
+            border-left: 5px solid #1a7a58;
+            padding: 12px 16px;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+        .correct-answer strong {
+            color: #0f3d2e;
+        }
+        .justificativa {
+            background: #f0f8ff;
+            border-left: 5px solid #4682b4;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-style: italic;
+        }
+        .section-divider {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a5e44, #154e3a);
+            color: white;
+            border-radius: 16px;
+        }
+        .section-divider h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .gabarito-destaque {
+            font-weight: 700;
+            color: #1a7a58;
+            background: #d4edda;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>📝 Exercício · O Povoamento do Continente Americano</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 24</span>
+                <span id="progressPercent">4%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>📝 Exercício de Fixação</h1>
+                <h2>O Povoamento do Continente Americano e os Recursos Naturais</h2>
+                <p>Professora Angela Siqueira</p>
+                <p style="margin-top: 30px; font-size: 18px;">História – Capítulo 2</p>
+                <p style="margin-top: 40px; font-size: 16px; color: #5a7a6a;">10 Questões Objetivas com Gabarito Comentado</p>
+            </div>`,
+
+            // ============ PARTE 1: QUESTÕES SEM RESPOSTA ============
+            // Página 1 - Seção
+            `<div class="section-divider">
+                <h2>📋 Parte 1 — Questões Objetivas</h2>
+                <p style="margin-top: 8px; font-size: 1rem;">Leia atentamente cada questão e escolha a alternativa correta.</p>
+            </div>`,
+
+            // Página 2 - Questão 1
+            `<div class="question-box">
+                <p><strong>Questão 1</strong> — Sobre a chegada dos seres humanos ao continente americano, há consenso entre os cientistas de que:</p>
+                <div class="alternatives">
+                    <p>a) Os primeiros povoadores se originaram no próprio continente americano.</p>
+                    <p>b) Os seres humanos chegaram à América em uma única onda migratória.</p>
+                    <p>c) As espécies do gênero Homo anteriores ao Homo sapiens surgiram na América.</p>
+                    <p>d) Os primeiros povoadores não tiveram origem no continente americano.</p>
+                </div>
+            </div>`,
+
+            // Página 3 - Questão 2
+            `<div class="question-box">
+                <p><strong>Questão 2</strong> — A teoria de Clóvis primeiro, que se tornou a principal explicação para o povoamento da América até a década de 1970, sustentava que:</p>
+                <div class="alternatives">
+                    <p>a) Ocorreram múltiplas ondas migratórias para a América ao longo de milhares de anos.</p>
+                    <p>b) Os primeiros grupos humanos chegaram à América navegando pelo Oceano Pacífico.</p>
+                    <p>c) Houve apenas uma onda migratória após a última grande glaciação, por um corredor entre a Sibéria e o Alasca.</p>
+                    <p>d) Os vestígios mais antigos da presença humana na América estão no Brasil.</p>
+                </div>
+            </div>`,
+
+            // Página 4 - Questão 3
+            `<div class="question-box">
+                <p><strong>Questão 3</strong> — Sobre a megafauna americana e sua extinção, é correto afirmar:</p>
+                <div class="alternatives">
+                    <p>a) A extinção da megafauna não causou nenhum impacto ambiental significativo.</p>
+                    <p>b) Mamutes, mastodontes e preguiças-gigantes faziam parte da megafauna encontrada pelos primeiros humanos.</p>
+                    <p>c) A ação humana é a única causa aceita para a extinção da megafauna.</p>
+                    <p>d) A extinção da megafauna aumentou a dispersão de sementes grandes no continente.</p>
+                </div>
+            </div>`,
+
+            // Página 5 - Questão 4
+            `<div class="question-box">
+                <p><strong>Questão 4</strong> — Os paleoíndios, ancestrais dos povos indígenas do continente americano, caracterizavam-se por:</p>
+                <div class="alternatives">
+                    <p>a) Formar grandes impérios centralizados desde sua chegada ao continente.</p>
+                    <p>b) Praticar exclusivamente a agricultura intensiva de milho e feijão.</p>
+                    <p>c) Formar pequenos grupos nômades que praticavam caça, pesca e coleta.</p>
+                    <p>d) Utilizar apenas instrumentos de metal em suas atividades diárias.</p>
+                </div>
+            </div>`,
+
+            // Página 6 - Questão 5
+            `<div class="question-box">
+                <p><strong>Questão 5</strong> — A sedentarização de alguns povos indígenas americanos esteve relacionada:</p>
+                <div class="alternatives">
+                    <p>a) À chegada dos europeus ao continente no século XV.</p>
+                    <p>b) À domesticação de animais e ao desenvolvimento da agricultura.</p>
+                    <p>c) À construção de pirâmides e centros cerimoniais monumentais.</p>
+                    <p>d) Exclusivamente às mudanças climáticas ocorridas na região.</p>
+                </div>
+            </div>`,
+
+            // Página 7 - Questão 6
+            `<div class="question-box">
+                <p><strong>Questão 6</strong> — Sobre as organizações sociais na América indígena, é correto afirmar:</p>
+                <div class="alternatives">
+                    <p>a) Todas as sociedades indígenas americanas eram igualitárias.</p>
+                    <p>b) As sociedades da Mesoamérica e dos Andes tendiam a ser hierarquizadas, enquanto no atual Brasil predominavam tendências igualitárias.</p>
+                    <p>c) A construção de grandes monumentos é o único fator que indica desenvolvimento de uma sociedade.</p>
+                    <p>d) As sociedades igualitárias são inferiores às sociedades hierarquizadas.</p>
+                </div>
+            </div>`,
+
+            // Página 8 - Questão 7
+            `<div class="question-box">
+                <p><strong>Questão 7</strong> — Sobre os olmecas, considere as afirmativas:</p>
+                <p style="margin-left: 20px;">I. Viveram próximos ao Golfo do México.<br>II. La Venta foi um de seus principais centros cerimoniais.<br>III. Desapareceram sem deixar vestígios arqueológicos.<br>IV. É provável que tenham desenvolvido especialização de trabalho.</p>
+                <p><strong>Estão corretas:</strong></p>
+                <div class="alternatives">
+                    <p>a) I e III, apenas.</p>
+                    <p>b) II e III, apenas.</p>
+                    <p>c) I, II e IV, apenas.</p>
+                    <p>d) I, II, III e IV.</p>
+                </div>
+            </div>`,
+
+            // Página 9 - Questão 8
+            `<div class="question-box">
+                <p><strong>Questão 8</strong> — O Império Inca caracterizava-se por:</p>
+                <div class="alternatives">
+                    <p>a) Ser governado por um conselho de anciãos eleitos anualmente.</p>
+                    <p>b) Ter como capital a cidade de Tenochtitlán, no centro do Lago Texcoco.</p>
+                    <p>c) Ser governado pelo Sapa Inca, que concentrava o poder militar, civil e religioso.</p>
+                    <p>d) Não possuir estradas, dificultando a comunicação entre as regiões.</p>
+                </div>
+            </div>`,
+
+            // Página 10 - Questão 9
+            `<div class="question-box">
+                <p><strong>Questão 9</strong> — Sobre a civilização maia, é INCORRETO afirmar:</p>
+                <div class="alternatives">
+                    <p>a) Formavam um império unificado com capital em Chichén Itzá.</p>
+                    <p>b) Desenvolveram calendários solar e astrológico baseados em observações astronômicas.</p>
+                    <p>c) Praticavam o sistema de cultivo de coivara e a técnica da milpa.</p>
+                    <p>d) Múltiplos fatores contribuíram para o declínio de suas cidades.</p>
+                </div>
+            </div>`,
+
+            // Página 11 - Questão 10
+            `<div class="question-box">
+                <p><strong>Questão 10</strong> — As chinampas, desenvolvidas pelos astecas, eram:</p>
+                <div class="alternatives">
+                    <p>a) Instrumentos de corda usados para registrar dados e contabilizar tributos.</p>
+                    <p>b) Aquedutos em forma espiral construídos para evitar a erosão dos solos.</p>
+                    <p>c) "Canteiros flutuantes" construídos sobre lagos para ampliar as áreas de cultivo.</p>
+                    <p>d) Templos religiosos construídos no alto de pirâmides escalonadas.</p>
+                </div>
+            </div>`,
+
+            // ============ PARTE 2: GABARITO COMENTADO ============
+            // Página 12 - Seção Gabarito
+            `<div class="section-divider">
+                <h2>✅ Parte 2 — Gabarito Comentado</h2>
+                <p style="margin-top: 8px; font-size: 1rem;">Confira a resposta correta e a justificativa de cada questão.</p>
+            </div>`,
+
+            // Página 13 - Gabarito Questão 1
+            `<div class="question-box">
+                <p><strong>Questão 1</strong> — Sobre a chegada dos seres humanos ao continente americano, há consenso entre os cientistas de que:</p>
+                <div class="alternatives">
+                    <p>a) Os primeiros povoadores se originaram no próprio continente americano.</p>
+                    <p>b) Os seres humanos chegaram à América em uma única onda migratória.</p>
+                    <p>c) As espécies do gênero Homo anteriores ao Homo sapiens surgiram na América.</p>
+                    <p><span class="gabarito-destaque">d) Os primeiros povoadores não tiveram origem no continente americano.</span></p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa D</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> Há consenso científico de que os primeiros povoadores da América não tiveram origem nesse continente, pois não foram encontrados vestígios arqueológicos de espécies do gênero Homo anteriores ao Homo sapiens na América. As hipóteses mais aceitas indicam que os seres humanos chegaram em sucessivas ondas migratórias pelo extremo norte.
+                </div>
+            </div>`,
+
+            // Página 14 - Gabarito Questão 2
+            `<div class="question-box">
+                <p><strong>Questão 2</strong> — A teoria de Clóvis primeiro, que se tornou a principal explicação para o povoamento da América até a década de 1970, sustentava que:</p>
+                <div class="alternatives">
+                    <p>a) Ocorreram múltiplas ondas migratórias para a América ao longo de milhares de anos.</p>
+                    <p>b) Os primeiros grupos humanos chegaram à América navegando pelo Oceano Pacífico.</p>
+                    <p><span class="gabarito-destaque">c) Houve apenas uma onda migratória após a última grande glaciação, por um corredor entre a Sibéria e o Alasca.</span></p>
+                    <p>d) Os vestígios mais antigos da presença humana na América estão no Brasil.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa C</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> A teoria de Clóvis primeiro defendia que ocorreu apenas uma onda migratória para a América, após a última grande glaciação. A glaciação fez o nível dos oceanos baixar, formando um corredor que ligou a Sibéria ao extremo norte da América (Estreito de Bering), por onde os grupos humanos atravessaram.
+                </div>
+            </div>`,
+
+            // Página 15 - Gabarito Questão 3
+            `<div class="question-box">
+                <p><strong>Questão 3</strong> — Sobre a megafauna americana e sua extinção, é correto afirmar:</p>
+                <div class="alternatives">
+                    <p>a) A extinção da megafauna não causou nenhum impacto ambiental significativo.</p>
+                    <p><span class="gabarito-destaque">b) Mamutes, mastodontes e preguiças-gigantes faziam parte da megafauna encontrada pelos primeiros humanos.</span></p>
+                    <p>c) A ação humana é a única causa aceita para a extinção da megafauna.</p>
+                    <p>d) A extinção da megafauna aumentou a dispersão de sementes grandes no continente.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> A megafauna americana era composta por animais de grandes proporções como mamutes, mastodontes, roedores do tamanho de ursos, leões gigantescos, tigres-dentes-de-sabre, preguiças-gigantes e camelídeos. A alternativa (c) é incorreta porque as causas da extinção ainda são incertas; (d) é incorreta porque a extinção reduziu a dispersão de sementes.
+                </div>
+            </div>`,
+
+            // Página 16 - Gabarito Questão 4
+            `<div class="question-box">
+                <p><strong>Questão 4</strong> — Os paleoíndios, ancestrais dos povos indígenas do continente americano, caracterizavam-se por:</p>
+                <div class="alternatives">
+                    <p>a) Formar grandes impérios centralizados desde sua chegada ao continente.</p>
+                    <p>b) Praticar exclusivamente a agricultura intensiva de milho e feijão.</p>
+                    <p><span class="gabarito-destaque">c) Formar pequenos grupos nômades que praticavam caça, pesca e coleta.</span></p>
+                    <p>d) Utilizar apenas instrumentos de metal em suas atividades diárias.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa C</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> De modo geral, os primeiros habitantes da América formavam pequenos grupos nômades que praticavam a caça, a pesca e a coleta de vegetais e frutos. Eles utilizavam instrumentos de pedra, ossos, pele de animais, madeira e fibras vegetais para construir abrigos e ferramentas de trabalho.
+                </div>
+            </div>`,
+
+            // Página 17 - Gabarito Questão 5
+            `<div class="question-box">
+                <p><strong>Questão 5</strong> — A sedentarização de alguns povos indígenas americanos esteve relacionada:</p>
+                <div class="alternatives">
+                    <p>a) À chegada dos europeus ao continente no século XV.</p>
+                    <p><span class="gabarito-destaque">b) À domesticação de animais e ao desenvolvimento da agricultura.</span></p>
+                    <p>c) À construção de pirâmides e centros cerimoniais monumentais.</p>
+                    <p>d) Exclusivamente às mudanças climáticas ocorridas na região.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> O processo de sedentarização apresentou variações locais, mas esteve relacionado à domesticação de animais e à prática da agricultura. Os primeiros vegetais cultivados na América foram feijão, abóbora, tomate, algodão e, sobretudo, o milho, que se tornou a base alimentar de muitos povos.
+                </div>
+            </div>`,
+
+            // Página 18 - Gabarito Questão 6
+            `<div class="question-box">
+                <p><strong>Questão 6</strong> — Sobre as organizações sociais na América indígena, é correto afirmar:</p>
+                <div class="alternatives">
+                    <p>a) Todas as sociedades indígenas americanas eram igualitárias.</p>
+                    <p><span class="gabarito-destaque">b) As sociedades da Mesoamérica e dos Andes tendiam a ser hierarquizadas, enquanto no atual Brasil predominavam tendências igualitárias.</span></p>
+                    <p>c) A construção de grandes monumentos é o único fator que indica desenvolvimento de uma sociedade.</p>
+                    <p>d) As sociedades igualitárias são inferiores às sociedades hierarquizadas.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa B</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> A maioria das sociedades da região andina e da Mesoamérica se organizava de maneira hierarquizada, com divisões sociais e concentração de riqueza. Já no atual território brasileiro, a maioria apresentava tendências igualitárias, com escolha coletiva de lideranças e distribuição igualitária do trabalho. A monumentalidade não é fator de superioridade.
+                </div>
+            </div>`,
+
+            // Página 19 - Gabarito Questão 7
+            `<div class="question-box">
+                <p><strong>Questão 7</strong> — Sobre os olmecas, considere as afirmativas: I. Viveram próximos ao Golfo do México. / II. La Venta foi um de seus principais centros cerimoniais. / III. Desapareceram sem deixar vestígios arqueológicos. / IV. É provável que tenham desenvolvido especialização de trabalho. <strong>Estão corretas:</strong></p>
+                <div class="alternatives">
+                    <p>a) I e III, apenas.</p>
+                    <p>b) II e III, apenas.</p>
+                    <p><span class="gabarito-destaque">c) I, II e IV, apenas.</span></p>
+                    <p>d) I, II, III e IV.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa C</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> As afirmativas I e II estão corretas: os olmecas viveram próximos ao Golfo do México e La Venta foi um de seus principais centros cerimoniais. A afirmativa III é incorreta porque eles deixaram vestígios arqueológicos. A afirmativa IV é correta: é provável que tenha havido especialização de trabalho (agricultura, artesanato, defesa, comércio, governo).
+                </div>
+            </div>`,
+
+            // Página 20 - Gabarito Questão 8
+            `<div class="question-box">
+                <p><strong>Questão 8</strong> — O Império Inca caracterizava-se por:</p>
+                <div class="alternatives">
+                    <p>a) Ser governado por um conselho de anciãos eleitos anualmente.</p>
+                    <p>b) Ter como capital a cidade de Tenochtitlán, no centro do Lago Texcoco.</p>
+                    <p><span class="gabarito-destaque">c) Ser governado pelo Sapa Inca, que concentrava o poder militar, civil e religioso.</span></p>
+                    <p>d) Não possuir estradas, dificultando a comunicação entre as regiões.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa C</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> Os incas eram governados pelo Sapa Inca (imperador), que concentrava o poder militar, civil e religioso, sendo considerado a encarnação do deus-Sol, Apu Inti. A capital era Cuzco, e não Tenochtitlán (asteca). O império possuía um complexo sistema de estradas que conectava as diferentes partes do território.
+                </div>
+            </div>`,
+
+            // Página 21 - Gabarito Questão 9
+            `<div class="question-box">
+                <p><strong>Questão 9</strong> — Sobre a civilização maia, é INCORRETO afirmar:</p>
+                <div class="alternatives">
+                    <p><span class="gabarito-destaque">a) Formavam um império unificado com capital em Chichén Itzá.</span></p>
+                    <p>b) Desenvolveram calendários solar e astrológico baseados em observações astronômicas.</p>
+                    <p>c) Praticavam o sistema de cultivo de coivara e a técnica da milpa.</p>
+                    <p>d) Múltiplos fatores contribuíram para o declínio de suas cidades.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa A</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> A afirmativa (a) é incorreta porque as cidades maias não formavam um império unificado: cada uma mantinha governo, exército e justiça independentes, sendo consideradas cidades-Estado. As demais alternativas estão corretas, pois os maias desenvolveram calendários, praticavam coivara e milpa, e múltiplos fatores (esgotamento de recursos, guerras) levaram ao declínio.
+                </div>
+            </div>`,
+
+            // Página 22 - Gabarito Questão 10
+            `<div class="question-box">
+                <p><strong>Questão 10</strong> — As chinampas, desenvolvidas pelos astecas, eram:</p>
+                <div class="alternatives">
+                    <p>a) Instrumentos de corda usados para registrar dados e contabilizar tributos.</p>
+                    <p>b) Aquedutos em forma espiral construídos para evitar a erosão dos solos.</p>
+                    <p><span class="gabarito-destaque">c) "Canteiros flutuantes" construídos sobre lagos para ampliar as áreas de cultivo.</span></p>
+                    <p>d) Templos religiosos construídos no alto de pirâmides escalonadas.</p>
+                </div>
+                <div class="correct-answer">
+                    <strong>✅ Gabarito: Alternativa C</strong>
+                </div>
+                <div class="justificativa">
+                    <strong>Justificativa:</strong> As chinampas eram "canteiros flutuantes" construídos sobre lagos. Os astecas demarcavam os locais com estacas e formavam os canteiros com terra, lodo e vegetação aquática. A alternativa (a) descreve os quipos (incas); (b) descreve os puquios (nazcas); (d) descreve templos religiosos em geral.
+                </div>
+            </div>`,
+
+            // Página 23 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu o exercício sobre o Povoamento do Continente Americano e os Recursos Naturais.</p>
+                <p style="margin-top: 10px; font-size: 1.1rem;">Revise o conteúdo e bons estudos!</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Professora Angela Siqueira</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

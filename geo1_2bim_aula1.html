@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🌱 Os Desafios da Sustentabilidade e a Agenda Ambiental</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .right-image .text-container, .right-image .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Os Desafios da Sustentabilidade e a Agenda Ambiental</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 26</span>
+                <span id="progressPercent">4%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>Os Desafios da Sustentabilidade</h1>
+                <h2>e a Agenda Ambiental</h2>
+                <p>Professora Angela Siqueira</p>
+            </div>`,
+
+            // Página 1 - Energia e Meio Ambiente - O Dilema
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia e Meio Ambiente - O Dilema</strong></p>
+                    <p>Produção e consumo de energia são as principais causas de degradação ambiental.</p>
+                    <p>Queima de combustíveis fósseis libera gases de efeito estufa.</p>
+                    <p>Cada fonte energética gera impactos específicos (extração, vazamentos, alagamentos, lixo atômico).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.vecteezy.com/ti/fotos-gratis/t2/39293804-ai-gerado-fumaca-chamines-a-partir-de-industrial-plantas-as-por-do-sol-foto.jpeg" alt="Poluição industrial">
+                </div>
+            </div>`,
+
+            // Página 2 - Energia e Meio Ambiente - Visões
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia e Meio Ambiente - Visões</strong></p>
+                    <p>Anos 1970: corrente "zerista" propunha crescimento econômico zero.</p>
+                    <p>Contraponto: grande parte da população sem acesso a bens e serviços essenciais.</p>
+                    <p>Desafio atual: desenvolvimento sustentável com acesso universal à energia limpa.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://iieb.org.br/wp-content/uploads/2021/09/WhatsApp-Image-2021-09-13-at-13.55.44-e1632770871520.jpeg" alt="Comunidade sem energia">
+                </div>
+            </div>`,
+
+            // Página 3 - Energia e Meio Ambiente - Os Dados
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia e Meio Ambiente - Os Dados</strong></p>
+                    <p>Cerca de 770 milhões de pessoas sem acesso à eletricidade (2022).</p>
+                    <p>Carência limita irrigação, estudo noturno e uso de eletrodomésticos.</p>
+                    <p>ONU: acesso à energia limpa e moderna é um ODS central.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://energiaeambiente.org.br/wp-content/uploads/2021/02/infografico-iema-amazonia.png" alt="Infográfico energia">
+                </div>
+            </div>`,
+
+            // Página 4 - Fontes Energéticas - A Desigualdade
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Fontes Energéticas - A Desigualdade</strong></p>
+                    <p>Recursos energéticos (fósseis e hídricos) são distribuídos de forma desigual.</p>
+                    <p>Concentração de jazidas e potencial hídrico moldam a geopolítica da energia.</p>
+                    <p>Exemplo: Japão importa mais de 90% da energia que consome.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://fernandonogueiracosta.wordpress.com/wp-content/uploads/2016/10/os-10-maiores-produtores-de-petrc3b3leo-do-mundo-2015.png" alt="Maiores produtores de petróleo">
+                </div>
+            </div>`,
+
+            // Página 5 - Fontes Energéticas - Carvão Mineral
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Fontes Energéticas - Carvão Mineral</strong></p>
+                    <p>Formado por decomposição anaeróbia de vegetais no Período Carbonífero.</p>
+                    <p>Maiores produtores: China, Índia e Indonésia.</p>
+                    <p>Fonte barata e abundante, porém altamente poluente.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.magnific.com/fotos-premium/mineracao-de-carvao-em-uma-mina-a-ceu-aberto-com-maquinario-pesado-a-noite_151355-21046.jpg" alt="Mineração de carvão">
+                </div>
+            </div>`,
+
+            // Página 6 - Fontes Energéticas - Petróleo
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Fontes Energéticas - Petróleo</strong></p>
+                    <p>Hidrocarboneto de origem marinha (decomposição de plâncton).</p>
+                    <p>Encontrado em bacias sedimentares (Golfo Pérsico) e em águas profundas (offshore).</p>
+                    <p>Exploração offshore: >25% da produção mundial; >90% da produção brasileira.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.vecteezy.com/ti/fotos-gratis/t2/11834559-plataforma-offshore-de-petroleo-e-plataforma-na-hora-do-por-do-sol-ou-do-nascer-do-sol-construcao-do-processo-de-producao-no-mar-energia-eletrica-do-mundo-foto.jpg" alt="Plataforma de petróleo">
+                </div>
+            </div>`,
+
+            // Página 7 - Fontes Energéticas - Gás Natural
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Fontes Energéticas - Gás Natural</strong></p>
+                    <p>Frequentemente associado a jazidas de petróleo ou em "poços secos".</p>
+                    <p>Destaque geopolítico: região do Mar Cáspio (Cazaquistão e Turcomenistão).</p>
+                    <p>Logística de transporte (gasodutos) é um gargalo estratégico.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s2-g1.glbimg.com/h7s7-9_q2PgmVZlTlACUpPE7dZk=/0x0:1920x1080/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/x/O/Xk7PcoQw6jStUlAKtS9Q/globo-canal-5-20240913-1800-frame-348249.jpeg" alt="Complexo de gás natural">
+                </div>
+            </div>`,
+
+            // Página 8 - Energia Nuclear - Funcionamento
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia Nuclear - Funcionamento</strong></p>
+                    <p>Calor da fissão nuclear do urânio transforma água em vapor que move turbinas.</p>
+                    <p>Alta densidade energética: 1 kg de urânio = 150 toneladas de carvão.</p>
+                    <p>Tecnologia concentrada em países desenvolvidos (EUA, França).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://caldeiradigital.wordpress.com/wp-content/uploads/2011/03/usina.gif" alt="Usina nuclear">
+                </div>
+            </div>`,
+
+            // Página 9 - Energia Nuclear - Riscos e Controvérsias
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia Nuclear - Riscos e Controvérsias</strong></p>
+                    <p>Desafio do lixo atômico: permanece radioativo por milhares de anos.</p>
+                    <p>Acidentes graves: Chernobyl (1986) e Fukushima (2011).</p>
+                    <p>Alemanha e Itália abandonaram; França e EUA mantiveram programas.</p>
+                    <p>2022: Parlamento Europeu classifica nuclear como energia "sustentável".</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s03.video.glbimg.com/640x360/9336634.jpg" alt="Fukushima">
+                </div>
+            </div>`,
+
+            // Página 10 - Energia Hidráulica - Potencial e Viabilidade
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia Hidráulica - Potencial e Viabilidade</strong></p>
+                    <p>Força da água move turbinas para gerar eletricidade.</p>
+                    <p>Viabilidade depende de relevo (planaltos) e volume hídrico.</p>
+                    <p>Rios de planície exigem grandes alagamentos e geram mais impacto.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWEzczVqanpvempsM2hsNW90anptc2l0bzlneHUwaG01cGg2bWI5OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/EcGEZwBjIbUfS/giphy.gif" alt="Hidrelétrica">
+                </div>
+            </div>`,
+
+            // Página 11 - Energia Hidráulica - Impactos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energia Hidráulica - Impactos</strong></p>
+                    <p>Maiores produtores mundiais: China, Canadá e Brasil.</p>
+                    <p>Impactos: alagamento de florestas, deslocamento de populações, emissão de metano.</p>
+                    <p>Exemplo: Usina de Balbina (AM) - grande emissora de gases de efeito estufa.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://arquivos.infra-questoes.grancursosonline.com.br/imagem/prova/72532/questao/2210161-20220209082951000000-0.png" alt="Impactos de hidrelétricas">
+                </div>
+            </div>`,
+
+            // Página 12 - Mudanças na Matriz - Expansão e Contradição
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Mudanças na Matriz - Expansão e Contradição</strong></p>
+                    <p>Expansão do gás natural como alternativa menos poluente ao petróleo.</p>
+                    <p>Contradição: consumo de carvão mineral também segue em alta no mundo.</p>
+                    <p>Setor de transportes: células de combustível (hidrogênio) e carros elétricos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://thumbs.dreamstime.com/b/%C3%B4nibus-el%C3%A9trico-urbano-com-esta%C3%A7%C3%A3o-de-recarga-sobre-fundo-paisagem-urbana-conceito-transporte-verde-e-mobilidade-limpa-266510739.jpg" alt="Ônibus elétrico">
+                </div>
+            </div>`,
+
+            // Página 13 - Mudanças na Matriz - Desafios da Transição
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Mudanças na Matriz - Desafios da Transição</strong></p>
+                    <p>Extração do lítio para baterias gera altos impactos em desertos (Chile, Argentina).</p>
+                    <p>Ampliação dos biocombustíveis (etanol de cana) reduz emissões.</p>
+                    <p>Contraponto: risco de desmatamento e competição com produção de alimentos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://clickpetroleoegas.com.br/wp-content/uploads/2026/02/etanol-acucar.jpg" alt="Etanol e cana-de-açúcar">
+                </div>
+            </div>`,
+
+            // Página 14 - Mudanças na Matriz - Fontes Intermitentes
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Mudanças na Matriz - Fontes Intermitentes</strong></p>
+                    <p>Energias eólica e solar em crescimento, mas juntas < 2% do consumo total.</p>
+                    <p>Vantagem: fontes limpas e não emissoras de carbono.</p>
+                    <p>Desvantagem: intermitência (geração oscila com sol, vento e marés).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://st4.depositphotos.com/9999814/27778/i/1600/depositphotos_277788148-stock-photo-solar-panel-and-wind-turbine.jpg" alt="Energia solar e eólica">
+                </div>
+            </div>`,
+
+            // Página 15 - Setor Energético Brasileiro - Panorama
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - Panorama</strong></p>
+                    <p>Baixa dependência externa de energia (cerca de 18% em 2021).</p>
+                    <p>Matriz energética relativamente equilibrada e diversificada.</p>
+                    <p>Em 2022, ~47,4% da oferta de energia veio de fontes renováveis.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://clickpetroleoegas.com.br/wp-content/uploads/2026/03/energia-eolica-vs-petroleo.jpg" alt="Energia eólica vs petróleo">
+                </div>
+            </div>`,
+
+            // Página 16 - Setor Energético Brasileiro - Eletricidade
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - Eletricidade</strong></p>
+                    <p>Principal fonte de eletricidade: hidrelétrica (61,9% da oferta em 2022).</p>
+                    <p>Fatores favoráveis: altos índices pluviométricos e relevo planáltico.</p>
+                    <p>Sistemas de transmissão interligam produção e consumo no país (SIN).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s2-g1.glbimg.com/UfH5pLKS4B7n0thN37Jy2bl7bno=/0x0:1920x1080/600x0/smart/filters:gifv():strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2023/u/r/Ws0WOBQ6iC4OSAszIHGA/microsoftteams-image-27-.png" alt="Sistema elétrico brasileiro">
+                </div>
+            </div>`,
+
+            // Página 17 - Setor Energético Brasileiro - Diversificação
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - Diversificação</strong></p>
+                    <p>Construção de termelétricas a gás natural, diesel e carvão para diversificar.</p>
+                    <p>Gasoduto Bolívia-Brasil (1999) viabilizou a importação de gás natural.</p>
+                    <p>Biomassa do bagaço de cana também é aproveitada para gerar energia.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.e3seriescenters.com/hs-fs/hubfs/Termoel%C3%A9trica.png?width=778&name=Termoel%C3%A9trica.png" alt="Termelétrica">
+                </div>
+            </div>`,
+
+            // Página 18 - Setor Energético Brasileiro - Nuclear e Petróleo
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - Nuclear e Petróleo</strong></p>
+                    <p>Energia nuclear: usinas de Angra 1 e 2, apenas 1,1% da oferta elétrica.</p>
+                    <p>Petróleo: 34,4% da oferta de energia do país, puxado pelo setor de transportes.</p>
+                    <p>Choques do petróleo (1973/1979) impulsionaram a exploração interna.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://t.ctcdn.com.br/mKDhs5YjORrs65KGgLK3_0fxqkQ=/0x0:1919x1080/1024x576/smart/i379896.jpeg" alt="Angra dos Reis">
+                </div>
+            </div>`,
+
+            // Página 19 - Setor Energético Brasileiro - O Pré-Sal
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - O Pré-Sal</strong></p>
+                    <p>Descoberta em 2006: petróleo abaixo de uma camada de sal de 2 mil metros.</p>
+                    <p>Formado pela matéria orgânica acumulada na separação dos continentes.</p>
+                    <p>Em 2022, respondia por mais de 70% da produção de petróleo do Brasil.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://cristaljr.com/wp-content/uploads/2021/12/image.png" alt="Pré-sal">
+                </div>
+            </div>`,
+
+            // Página 20 - Setor Energético Brasileiro - A Fronteira em Debate
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Setor Energético Brasileiro - A Fronteira em Debate</strong></p>
+                    <p>Debate sobre a exploração na nova fronteira da Margem Equatorial.</p>
+                    <p>Defensores: soberania energética, baixo histórico de acidentes em águas profundas.</p>
+                    <p>Críticos: ameaça a corais, comunidades tradicionais e contradiz emergência climática.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://marsemfim.com.br/wp-content/uploads/2025/03/mapa-da-Margem-Equatorial-.jpg" alt="Margem Equatorial">
+                </div>
+            </div>`,
+
+            // Página 21 - Energias Alternativas - Origens
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energias Alternativas - Origens</strong></p>
+                    <p>Crise do petróleo nos anos 1970 impulsionou a busca por alternativas.</p>
+                    <p>Principal exemplo: Proálcool (biocombustível de cana-de-açúcar) no Brasil.</p>
+                    <p>Expansão no Centro-Sul, mas com impactos de poluição por vinhoto e agrotóxicos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.ytimg.com/vi/Sr_kfowPuhc/maxresdefault.jpg" alt="Proálcool">
+                </div>
+            </div>`,
+
+            // Página 22 - Energias Alternativas - Biodiesel e as Limpas
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energias Alternativas - Biodiesel e as Limpas</strong></p>
+                    <p>Biodiesel é feito de plantas oleaginosas (soja, mamona, dendê).</p>
+                    <p>Brasil adiciona biodiesel ao diesel mineral, incentivando sua produção.</p>
+                    <p>Energias limpas (solar, eólica, maremotriz): não emitem carbono, mas são intermitentes.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://clickpetroleoegas.com.br/wp-content/uploads/2026/03/biodiesel-mistura.jpg" alt="Biodiesel">
+                </div>
+            </div>`,
+
+            // Página 23 - Energias Alternativas - Expansão e Conflitos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energias Alternativas - Expansão e Conflitos</strong></p>
+                    <p>Energia solar cresceu 79,8% e eólica 13% no Brasil entre 2021 e 2022.</p>
+                    <p>Instalação de grandes parques gera conflitos no Nordeste.</p>
+                    <p>Impactos: ocupação de terras, ruído das hélices, ameaça a comunidades tradicionais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://pousadamundodhalua.com.br/uploads/2026/04/16-336176652-comunidade-rural-luta-contra-projeto-de-parque-eolico-que-muda-a-paisagem-com-enormes-turbinas.jpg" alt="Parque eólico e comunidade">
+                </div>
+            </div>`,
+
+            // Página 24 - Energias Alternativas - As Salvaguardas
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Energias Alternativas - As Salvaguardas</strong></p>
+                    <p>Comunidades propõem "Salvaguardas Ambientais para Energia Renovável".</p>
+                    <p>Exigem licenciamento que respeite territórios e segurança alimentar.</p>
+                    <p>Sugerem uso de cartografia social como ferramenta de planejamento dos parques.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://cienciahoje.org.br/wp-content/uploads/2023/04/Demarcacao_sema.jpg" alt="Cartografia social">
+                </div>
+            </div>`,
+
+            // Página 25 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu a leitura sobre os Desafios da Sustentabilidade e a Agenda Ambiental.</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Isso é Tudo por Hoje!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 3; // Começa em 15px (índice 3 do array)
+        const fontSizes = [12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const readerScr = document.getElementById('readerScreen');
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

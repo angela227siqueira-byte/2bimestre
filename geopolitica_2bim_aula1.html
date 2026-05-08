@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🌍 Fronteiras Estratégicas e Disputas Territoriais</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .img-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 2;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #1a5e44;
+        }
+        .capa p {
+            font-size: 22px;
+            color: #2a5e4a;
+        }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 {
+            color: #1a5e44;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .congrats-page p:first-of-type {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .congrats-page p:last-of-type {
+            margin-top: 20px;
+        }
+        .congrats-image {
+            text-align: center;
+            margin: 20px auto;
+        }
+        .congrats-image img {
+            transform: scale(1.3);
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .right-image .text-container, .right-image .img-container {
+                order: unset;
+            }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+            .congrats-image img {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Fronteiras Estratégicas e Disputas Territoriais</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 17</span>
+                <span id="progressPercent">6%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #ecf3ef; border: 1px solid #b3cdbf; padding: 10px 14px;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // Página 0 - Capa
+            `<div class="capa">
+                <h1>Fronteiras Estratégicas</h1>
+                <h2>e Disputas Territoriais</h2>
+                <p>Professora Angela Siqueira</p>
+            </div>`,
+
+            // Página 1 - Fronteiras estratégicas
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>As fronteiras estratégicas</strong></p>
+                    <p>O sistema internacional é formado por unidades geopolíticas soberanas que cooperam ou entram em conflito conforme seus interesses.</p>
+                    <p>Para reduzir a insegurança, os Estados ampliam seu poder protegendo setores econômicos vitais, financiando arsenais e difundindo sua cultura.</p>
+                    <p>A participação em instituições como ONU e OEA cria fronteiras estratégicas que separam os membros dos não membros.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s4.static.brasilescola.uol.com.br/be/2022/08/atuacao-internacional-geopolitica.jpg" alt="Atuação internacional geopolítica">
+                </div>
+            </div>`,
+
+            // Página 2 - A Guerra Fria
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A Guerra Fria</strong></p>
+                    <p>Após a Segunda Guerra, emergiu um sistema bipolar baseado no antagonismo entre Estados Unidos e União Soviética, contrapondo capitalismo e socialismo.</p>
+                    <p>O equilíbrio do terror nuclear impedia o confronto direto, mas as superpotências participaram indiretamente de conflitos como a Guerra da Coreia.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.coladaweb.com/wp-content/uploads/corrida-armamentista.jpg" alt="Corrida armamentista">
+                </div>
+            </div>`,
+
+            // Página 3 - As áreas de influência
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>As áreas de influência</strong></p>
+                    <p>A Europa tornou-se cenário da confrontação entre as superpotências.</p>
+                    <p>As conferências de Yalta e Potsdam (1945) definiram a bipartição do continente em áreas de influência.</p>
+                    <p>A União Soviética instituiu governos aliados no Leste Europeu; as potências ocidentais reorganizaram a Alemanha derrotada.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Yalta_summit_1945_with_Churchill%2C_Roosevelt%2C_Stalin.jpg" alt="Conferência de Yalta">
+                </div>
+            </div>`,
+
+            // Página 4 - O início da Guerra Fria
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>O início da Guerra Fria</strong></p>
+                    <p>A Doutrina Truman (1947) estabeleceu a contenção do expansionismo soviético.</p>
+                    <p>O Plano Marshall reconstruiu a Europa Ocidental, vinculando-a estrategicamente aos Estados Unidos.</p>
+                    <p>Em resposta, a URSS subordinou o Leste Europeu, onde partidos comunistas monopolizaram o poder entre 1947 e 1949.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9ElWW1qc98CjdSvgPfYjOwwUEm7QtiYWF4S5-VwjRINhWrUXLNmPX4WvQebQUAzfGXbAK7Skp40KuTAeLUzCfhjsREnLw26lqMtab8uODRUuGW7CMF4B0jC2SAJWfXU-2xQyvH1_NLViT/s640/6+-+tmp586124784132161540.jpg" alt="Plano Marshall">
+                </div>
+            </div>`,
+
+            // Página 5 - A Cortina de Ferro
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A Cortina de Ferro</strong></p>
+                    <p>Expressão material e simbólica da divisão europeia, a Cortina de Ferro separou dois espaços antagônicos.</p>
+                    <p>De um lado, a Otan (1949) e a Comunidade Europeia; de outro, o Pacto de Varsóvia (1955) e o Comecon (1949).</p>
+                    <p>O Plano Schuman e o Tratado de Roma consolidaram a integração capitalista no ocidente europeu.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://static.historiadomundo.com.br/2023/09/1-mapa-europa-otan-pacto-varsovia.jpg" alt="Mapa Otan e Pacto de Varsóvia">
+                </div>
+            </div>`,
+
+            // Página 6 - A divisão da Alemanha
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A divisão da Alemanha</strong></p>
+                    <p>A Alemanha foi dividida em quatro zonas de ocupação, originando a Alemanha Ocidental (capitalista) e a Oriental (socialista) em 1949.</p>
+                    <p>O Muro de Berlim, construído em 1961 para conter a fuga de cidadãos orientais para o ocidente, tornou-se o símbolo máximo da Guerra Fria.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://ogimg.infoglobo.com.br/in/24070385-327-979/FT1086A/760/85588872_FILES-In-this-file-photo-taken-on-November-11-1989-West-Berliners-crowd-in-front-of-the.jpg" alt="Muro de Berlim">
+                </div>
+            </div>`,
+
+            // Página 7 - A queda do Muro e a reunificação
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A queda do Muro e a reunificação</strong></p>
+                    <p>A queda do Muro de Berlim em 9 de novembro de 1989 marcou o início do processo de reunificação alemã, concluído em 3 de outubro de 1990.</p>
+                    <p>O evento simbolizou a derrocada do socialismo na Europa e o fim da Guerra Fria.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://www.ccba.org.br/wp-content/uploads/2022/07/thefalloftheberlinwall19891.jpg" alt="Queda do Muro de Berlim">
+                </div>
+            </div>`,
+
+            // Página 8 - O espaço europeu depois da Guerra Fria
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>O espaço europeu depois da Guerra Fria</strong></p>
+                    <p>Com o colapso soviético (1991), dissolveu-se o bloco oriental. A Otan expandiu-se sucessivamente para o leste.</p>
+                    <p>Os países ex-socialistas transitaram para o capitalismo com privatizações e liberalização, enfrentando desemprego, pobreza e desigualdade.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://miro.medium.com/v2/resize:fit:1050/1*EanlA6MWa8Yi8Fy407g8kg.jpeg" alt="Expansão da Otan">
+                </div>
+            </div>`,
+
+            // Página 9 - O fim da URSS
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>O fim da União Soviética</strong></p>
+                    <p>A glasnost e a perestroika (1985) promoveram abertura política e reestruturação econômica, mas o sistema já estava em colapso.</p>
+                    <p>A fragmentação da URSS em dezembro de 1991 deu origem a quinze países independentes, com a Rússia como Estado sucessor.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mapa_da_URSS_com_os_nomes_das_RSS.svg/1280px-Mapa_da_URSS_com_os_nomes_das_RSS.svg.png" alt="Mapa da URSS">
+                </div>
+            </div>`,
+
+            // Página 10 - Mundo unipolar
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Mundo unipolar</strong></p>
+                    <p>A hegemonia estadunidense na década de 1990 baseou-se no poderio econômico, militar e cultural (soft power).</p>
+                    <p>Contudo, a ascensão chinesa como potência econômica global e provedora de bens manufaturados tornou ultrapassada a tese da unipolaridade.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/-DHM2hpv_oxc/TW2L9T_8etI/AAAAAAAAA5I/E7mJ-9zD_7E/s1600/bases_eua.gif" alt="Bases militares dos EUA">
+                </div>
+            </div>`,
+
+            // Página 11 - A ascensão dos EUA como potência
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>A ascensão dos Estados Unidos como potência</strong></p>
+                    <p>Os EUA consolidaram-se fornecendo armamentos nas guerras mundiais e expandindo seu capital via Plano Marshall.</p>
+                    <p>Após o 11 de setembro, a Doutrina Bush instaurou intervenções preventivas, resultando nas invasões do Afeganistão (2001) e Iraque (2003).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s2-g1.glbimg.com/SAPfUNYcsf4N9KoEm49l7cgFKh4=/0x0:2000x1303/1008x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/F/G/ETz7pNR6u4xaZoqvgd0g/063-39426114towe-20010919-00124.jpg.jpg" alt="11 de setembro">
+                </div>
+            </div>`,
+
+            // Página 12 - Mudanças na política externa dos EUA
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Mudanças na política externa dos EUA</strong></p>
+                    <p>Obama combinou poder coercitivo com diplomacia, dialogando com Irã e Cuba.</p>
+                    <p>Trump abandonou acordos internacionais e priorizou sanções econômicas.</p>
+                    <p>Biden retomou compromissos ambientais e apoiou militarmente a Ucrânia contra a invasão russa.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Barack_Obama%2C_Donald_Trump%2C_Joe_Biden_at_Inauguration_01-20-17_%28cropped%29.jpg" alt="Obama, Trump e Biden">
+                </div>
+            </div>`,
+
+            // Página 13 - Ascensão da China
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Ascensão da China</strong></p>
+                    <p>A China consolidou-se como a principal economia global em paridade de poder de compra.</p>
+                    <p>Lidera investimentos em infraestrutura na África, Ásia e América Latina por meio da Nova Rota da Seda.</p>
+                    <p>Expandiu sua influência tecnológica com empresas como Huawei e TikTok, rivalizando com as big techs estadunidenses.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://i.ytimg.com/vi/sN8GpnbfLuM/maxresdefault.jpg" alt="Nova Rota da Seda">
+                </div>
+            </div>`,
+
+            // Página 14 - Nova ordem multipolar
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Nova ordem multipolar</strong></p>
+                    <p>A multipolaridade não é mais uma aspiração, mas uma realidade que se impõe.</p>
+                    <p>Enquanto os EUA enfrentam endividamento e polarização interna, a China amplia seu soft power com acordos comerciais e instituições financeiras paralelas ao FMI.</p>
+                    <p>Os Brics e outras coalizões reconfiguram as relações de poder global.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://s2-g1.glbimg.com/7h_jDWQvCnIG_YaTOE4aYqqyJE8=/0x0:796x494/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2024/T/r/nMZ26kT8S2Vpeu2lIA6g/captura-de-tela-2024-10-15-115752.png" alt="Cúpula dos Brics">
+                </div>
+            </div>`,
+
+            // Página 15 - Análise crítica
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <p><strong>Análise crítica</strong></p>
+                    <p>A narrativa do capítulo não captura a profundidade da transformação em curso.</p>
+                    <p>A China não é mais apenas "potência emergente": lidera a Nova Rota da Seda, rivaliza em tecnologia e amplia seu soft power global.</p>
+                    <p>Os EUA enfrentam endividamento, polarização interna e declínio relativo acelerado.</p>
+                    <p>A multipolaridade é uma realidade consolidada, não uma aspiração.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://sme.goiania.go.gov.br/conexaoescola/wp-content/uploads/2022/05/guerra-fria-1.png" alt="Geopolítica mundial">
+                </div>
+            </div>`,
+
+            // Página 16 - Congratulações
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p style="margin-top: 20px;">Você concluiu a leitura sobre Fronteiras Estratégicas e Disputas Territoriais.</p>
+                <div class="congrats-image">
+                    <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns">
+                </div>
+                <p style="margin-top: 20px;">Isso é Tudo por Hoje!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 3; // Começa em 15px (índice 3 do array)
+        const fontSizes = [12, 13, 14, 15, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        // Elementos DOM
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContent.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) {
+                alert('Seu navegador não suporta síntese de voz.');
+                return;
+            }
+            if (isSpeaking) {
+                stopReading();
+                return;
+            }
+            const text = pageContent.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        // Event listeners
+        fontMinus.addEventListener('click', () => {
+            if (fontSizeIndex > 0) fontSizeIndex--;
+            applyFontSize();
+        });
+        fontPlus.addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++;
+            applyFontSize();
+        });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) {
+                currentUtterance.rate = parseFloat(rateSelect.value);
+            }
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>

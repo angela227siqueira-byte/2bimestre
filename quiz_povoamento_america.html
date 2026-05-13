@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Povoamento do Continente Americano</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .question-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected {
+            background: #1a5e44;
+            color: white;
+            border-color: #1a5e44;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 6px solid #28a745;
+        }
+        .feedback.wrong {
+            background: #f8d7da;
+            border-left: 6px solid #dc3545;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 20px 0 10px;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 48px;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+        .progress {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: #1a5e44;
+            text-align: right;
+        }
+        .font-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: flex-end;
+        }
+        .font-btn {
+            background: #e6f0ea;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .result-screen {
+            text-align: center;
+        }
+        .result-layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .result-box {
+            background: #f0f7f3;
+            padding: 20px;
+            border-radius: 28px;
+            margin: 20px 0;
+            flex: 1;
+            min-width: 280px;
+        }
+        .result-image {
+            flex: 0 0 auto;
+            max-width: 250px;
+        }
+        .result-image img {
+            width: 100%;
+            border-radius: 20px;
+        }
+        .restart-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .stats {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .start-screen-layout {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .start-text {
+            flex: 1;
+            min-width: 250px;
+        }
+        .start-image {
+            flex: 0 0 auto;
+            max-width: 200px;
+        }
+        .start-image img {
+            width: 100%;
+            border-radius: 20px;
+        }
+        .init-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.3rem;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        @media (max-width: 640px) {
+            .quiz-wrapper {
+                max-width: 100%;
+                padding: 15px;
+            }
+            .opt-btn {
+                padding: 8px 16px;
+            }
+            .start-screen-layout {
+                flex-direction: column;
+                text-align: center;
+            }
+            .result-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+
+    <!-- TELA INICIAL (CAPA) -->
+    <div id="startScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinusStart">A−</button>
+            <button class="font-btn" id="fontPlusStart">A+</button>
+            <button class="font-btn" id="fullscreenBtnStart">⛶ Tela cheia</button>
+        </div>
+        <div class="start-screen-layout">
+            <div class="start-text">
+                <div class="title">📘 Quiz · Povoamento do Continente Americano</div>
+                <div class="sub">História – Capítulo 2 | 20 questões</div>
+                <p style="text-align: center; color: #1a2e2a; margin-top: 10px;">
+                    Teste seus conhecimentos sobre as rotas de povoamento, os primeiros habitantes e as grandes civilizações pré-colombianas.
+                </p>
+                <p style="text-align: center; color: #2a5e4a; margin-top: 5px;"><strong>Angela Siqueira</strong></p>
+            </div>
+            <div class="start-image">
+                <img src="https://i.imgur.com/ZpOYvEt.png" alt="Mapa do povoamento" onerror="this.style.display='none'">
+            </div>
+        </div>
+        <button class="init-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+    </div>
+
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📘 Quiz · Povoamento do Continente Americano</div>
+        <div class="sub">História – Capítulo 2 | 20 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 20</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Resultado Final</h2>
+        <div class="result-layout">
+            <div class="result-box" id="resultContent"></div>
+            <div class="result-image">
+                <img src="https://media.tenor.com/1Gq9HnEJ5wMAAAAM/shih-tzu-shihtzu.gif" alt="Parabéns" onerror="this.style.display='none'">
+            </div>
+        </div>
+        <p style="margin-top: 10px; font-size: 1.2rem; font-weight: bold; color: #0f3d2e;" id="congratsMsg"></p>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // ========== 20 QUESTÕES – POVOAMENTO DO CONTINENTE AMERICANO ==========
+    // type: "vf" = Verdadeiro/Falso, "mc" = Múltipla escolha (até 3 opções)
+    // theme: "povoamento", "maias", "incas", "astecas" para definir o ícone
+    const questions = [{
+        id: 1,
+        type: "vf",
+        theme: "povoamento",
+        text: "A espécie humana se originou na África e, a partir dali, se espalhou pelo planeta, inclusive para a América.",
+        correct: true,
+        justification: "O consenso científico atual indica que os primeiros grupos humanos surgiram na África e migraram para outros continentes, incluindo a América, em ondas sucessivas."
+    }, {
+        id: 2,
+        type: "mc",
+        theme: "povoamento",
+        text: "Qual das teorias sobre o povoamento da América defendia que houve apenas uma onda migratória após a última grande glaciação, sendo posteriormente questionada por descobertas arqueológicas mais antigas?",
+        options: [
+            "A) Teoria de Clóvis primeiro",
+            "B) Teoria da Costa do Pacífico",
+            "C) Teoria do Povoamento pelo Atlântico"
+        ],
+        correct: 0,
+        justification: "A teoria de Clóvis primeiro, baseada em artefatos de 11.500 anos encontrados no Novo México, sustentava uma única migração pelo corredor entre Sibéria e Alasca, mas foi desafiada por sítios mais antigos na América do Sul e no Texas."
+    }, {
+        id: 3,
+        type: "vf",
+        theme: "povoamento",
+        text: "Os primeiros grupos humanos que chegaram à América encontraram uma megafauna, incluindo mamutes, mastodontes e preguiças-gigantes.",
+        correct: true,
+        justification: "Ao chegarem ao continente, os Homo sapiens de fato conviveram com animais de grande porte como mamutes, mastodontes, preguiças-gigantes e tigres-dentes-de-sabre, muitos dos quais foram extintos nos milênios seguintes."
+    }, {
+        id: 4,
+        type: "mc",
+        theme: "povoamento",
+        text: "Os paleoíndios, ancestrais dos povos indígenas atuais, geralmente organizavam-se em:",
+        options: [
+            "A) Grandes impérios centralizados",
+            "B) Pequenos grupos nômades que praticavam caça, pesca e coleta",
+            "C) Cidades-Estado com hierarquia rígida"
+        ],
+        correct: 1,
+        justification: "Os paleoíndios eram, em sua maioria, grupos nômades de pequeno porte, que viviam da caça, pesca e coleta, deslocando-se quando os recursos escasseavam."
+    }, {
+        id: 5,
+        type: "vf",
+        theme: "povoamento",
+        text: "A extinção da megafauna na América não teve qualquer relação com a ação humana, sendo exclusivamente causada por mudanças climáticas.",
+        correct: false,
+        justification: "Embora as mudanças climáticas tenham contribuído, a ação humana (caça, alteração do habitat) também é apontada como causa provável para a extinção de muitas espécies da megafauna."
+    }, {
+        id: 6,
+        type: "mc",
+        theme: "maias",
+        text: "Os maias organizavam-se politicamente sob a forma de:",
+        options: [
+            "A) Um império unificado governado por um único imperador",
+            "B) Cidades-Estado independentes, com governos próprios",
+            "C) Uma confederação igualitária sem líderes"
+        ],
+        correct: 1,
+        justification: "Os maias não formavam um império centralizado; cada cidade (como Tikal, Palenque e Chichén Itzá) mantinha seu próprio governo, alternando períodos de guerra e alianças."
+    }, {
+        id: 7,
+        type: "vf",
+        theme: "maias",
+        text: "Os maias desenvolveram um calendário solar de 365 dias e um calendário astrológico de 260 dias, demonstrando avançados conhecimentos astronômicos.",
+        correct: true,
+        justification: "De fato, os maias criaram dois calendários complexos — um solar (Haab') e um ritual (Tzolk'in) — e compreendiam os ciclos do Sol, da Lua e de Vênus, além de prever eclipses."
+    }, {
+        id: 8,
+        type: "mc",
+        theme: "maias",
+        text: "Entre as causas apontadas para o declínio das cidades maias estão:",
+        options: [
+            "A) Conquista pelos incas",
+            "B) Esgotamento dos recursos naturais, guerras internas e desastres ecológicos",
+            "C) Epidemias trazidas pelos europeus no século XV"
+        ],
+        correct: 1,
+        justification: "O declínio maia (entre os séculos X e XIV) é atribuído a fatores como esgotamento do solo, explosão demográfica, fragmentação política e conflitos internos, e não à conquista europeia, que ocorreu depois."
+    }, {
+        id: 9,
+        type: "vf",
+        theme: "maias",
+        text: "A base da economia maia era a agricultura, com destaque para o cultivo de milho, cacau, algodão, tomate, abóbora e feijão.",
+        correct: true,
+        justification: "Os maias eram essencialmente agricultores, e o milho ocupava lugar central em sua alimentação. Cultivavam também cacau (usado como moeda), algodão, tomate, abóbora e feijão."
+    }, {
+        id: 10,
+        type: "mc",
+        theme: "maias",
+        text: "Qual das características abaixo NÃO está associada à civilização maia?",
+        options: [
+            "A) Escrita pictoglífica e construção de pirâmides escalonadas",
+            "B) Uso de chinampas (canteiros flutuantes) para agricultura",
+            "C) Prática de sacrifícios humanos como dever sagrado ao Sol"
+        ],
+        correct: 1,
+        justification: "As chinampas são uma técnica agrícola típica dos astecas, não dos maias. Já a escrita pictoglífica, as pirâmides escalonadas e os sacrifícios humanos faziam parte da cultura maia."
+    }, {
+        id: 11,
+        type: "vf",
+        theme: "incas",
+        text: "O império inca era governado pelo Sapa Inca, considerado a encarnação do deus-Sol, Apu Inti, e concentrava poderes militar, civil e religioso.",
+        correct: true,
+        justification: "O Sapa Inca era o imperador máximo, visto como uma divindade viva (filho do Sol). Centralizava o poder político, militar e religioso, governando de Cuzco, a capital do império."
+    }, {
+        id: 12,
+        type: "mc",
+        theme: "incas",
+        text: "A mita, no império inca, era:",
+        options: [
+            "A) Um imposto pago apenas com metais preciosos",
+            "B) Um sistema de trabalho periódico obrigatório como forma de tributo",
+            "C) Uma assembleia de anciãos que elegia o imperador"
+        ],
+        correct: 1,
+        justification: "A mita consistia na obrigação de trabalhar por um período determinado em obras públicas, minas ou terras do Estado, funcionando como principal forma de tributo no império inca."
+    }, {
+        id: 13,
+        type: "vf",
+        theme: "incas",
+        text: "Os incas desenvolveram a técnica de cultivo em terraços nas encostas dos Andes e construíram uma rede de aquedutos para irrigação.",
+        correct: true,
+        justification: "Para aproveitar as montanhas andinas, os incas construíram terraços (andenes) que evitavam a erosão e permitiam a agricultura irrigada por meio de complexos sistemas de aquedutos."
+    }, {
+        id: 14,
+        type: "mc",
+        theme: "incas",
+        text: "Os quipos, utilizados pelos incas, serviam para:",
+        options: [
+            "A) Registrar dados e contabilizar informações por meio de cordas com nós",
+            "B) Escrever textos sagrados em tábuas de argila",
+            "C) Servir como moeda de troca no comércio entre as comunidades"
+        ],
+        correct: 0,
+        justification: "Os quipos eram instrumentos de registro feitos de cordas coloridas com nós, usados para contabilidade, censos e transmissão de informações, já que os incas não desenvolveram um sistema de escrita alfabética."
+    }, {
+        id: 15,
+        type: "vf",
+        theme: "incas",
+        text: "No império inca, a terra era propriedade privada de cada família (ayllu), que podia vendê-la livremente.",
+        correct: false,
+        justification: "A terra no império inca não era propriedade privada. A produção era coletiva, coordenada pelo Estado, e as terras eram divididas em três partes: para o deus-Sol, para o Sapa Inca e para a comunidade."
+    }, {
+        id: 16,
+        type: "mc",
+        theme: "astecas",
+        text: "Segundo a tradição asteca, Tenochtitlán foi fundada no local onde:",
+        options: [
+            "A) Um raio caiu sobre um campo de milho",
+            "B) Uma águia pousou sobre um cacto devorando uma serpente",
+            "C) Um vulcão entrou em erupção, revelando uma cidade submersa"
+        ],
+        correct: 1,
+        justification: "A lenda narra que o deus Huitzilopochtli orientou os astecas a se estabelecerem onde avistassem uma águia sobre um cacto devorando uma serpente, o que ocorreu em uma ilha do Lago Texcoco, onde fundaram Tenochtitlán."
+    }, {
+        id: 17,
+        type: "vf",
+        theme: "astecas",
+        text: "Os astecas construíram chinampas, que eram canteiros flutuantes sobre lagos, para ampliar a área de cultivo.",
+        correct: true,
+        justification: "As chinampas eram plataformas artificiais feitas de lama, raízes e vegetação, construídas sobre as águas rasas dos lagos, permitindo uma agricultura intensiva e sustentável no ambiente lacustre do Vale do México."
+    }, {
+        id: 18,
+        type: "mc",
+        theme: "astecas",
+        text: "O termo 'tlatoani', usado pelos astecas, designava:",
+        options: [
+            "A) O chefe militar que liderava as guerras floridas",
+            "B) O governante máximo, 'aquele que fala', que comandava a Confederação Mexica",
+            "C) O sacerdote responsável pelos sacrifícios humanos"
+        ],
+        correct: 1,
+        justification: "Tlatoani significa 'aquele que fala' ou 'orador', e era o título do governante asteca, que detinha o poder político, militar e religioso sobre a Confederação Mexica."
+    }, {
+        id: 19,
+        type: "vf",
+        theme: "astecas",
+        text: "A 'guerra florida' era um conflito ritual cujo principal objetivo era a conquista de territórios e a anexação de novos povos ao império asteca.",
+        correct: false,
+        justification: "A guerra florida (xochiyaoyotl) tinha como finalidade principal capturar prisioneiros vivos para os sacrifícios religiosos, não a conquista territorial imediata. Era um ritual bélico acordado entre cidades rivais."
+    }, {
+        id: 20,
+        type: "mc",
+        theme: "astecas",
+        text: "O distrito de Xochimilco, na Cidade do México, é considerado patrimônio cultural da humanidade pela Unesco porque preserva:",
+        options: [
+            "A) As pirâmides escalonadas típicas da arquitetura asteca",
+            "B) O sistema de chinampas, técnica agrícola ancestral asteca",
+            "C) Os quipos utilizados para registro contábil"
+        ],
+        correct: 1,
+        justification: "Xochimilco mantém até hoje as chinampas, os antigos canteiros flutuantes astecas, sendo reconhecido pela Unesco como patrimônio cultural da humanidade por preservar essa técnica agrícola milenar."
+    }];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Mapeamento de temas para URLs das imagens
+    const themeImages = {
+        "povoamento": "https://static.historiadomundo.com.br/Chegada%20homem%20Americas%20-%20H%20DO%20MUNDO.jpg",
+        "maias": "https://www.xamanismo.com.br/wp-content/uploads/2018/07/ros1.gif",
+        "incas": "https://media.tenor.com/A8bMwbc63aMAAAAM/inca-mask.gif",
+        "astecas": "https://aventurasnahistoria.com.br/wp-content/uploads/gettyimages-3296923.jpg"
+    };
+
+    // Elementos DOM
+    const startScreen = document.getElementById('startScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const congratsMsg = document.getElementById('congratsMsg');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+
+    // Ajuste de fonte (acessibilidade)
+    let currentFontSize = 16;
+
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .init-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+
+    // Controles de fonte - Tela inicial
+    document.getElementById('fontMinusStart').addEventListener('click', () => setFontSize(Math.max(12, currentFontSize - 2)));
+    document.getElementById('fontPlusStart').addEventListener('click', () => setFontSize(Math.min(36, currentFontSize + 2)));
+    document.getElementById('fullscreenBtnStart').addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+
+    // Controles de fonte - Tela do quiz
+    document.getElementById('fontMinus').addEventListener('click', () => setFontSize(Math.max(12, currentFontSize - 2)));
+    document.getElementById('fontPlus').addEventListener('click', () => setFontSize(Math.min(36, currentFontSize + 2)));
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+
+    // Iniciar quiz
+    startQuizBtn.addEventListener('click', () => {
+        startScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        // Construir HTML da pergunta com ícone temático, se houver
+        let iconHTML = '';
+        if (q.theme && themeImages[q.theme]) {
+            iconHTML = `<img src="${themeImages[q.theme]}" alt="" class="question-icon" onerror="this.style.display='none'">`;
+        }
+        let qText = `${currentIndex+1}. ${q.text}`;
+        if (q.type === "vf") {
+            qText += "\n\n(  ) Certo\n(  ) Errado";
+        }
+        questionText.innerHTML = iconHTML + qText;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+
+        // Gerar botões de opções
+        let optionsHTML = '';
+        if (q.type === "vf") {
+            optionsHTML = `
+                <button class="opt-btn" data-value="true">✅ Certo</button>
+                <button class="opt-btn" data-value="false">❌ Errado</button>
+            `;
+        } else {
+            q.options.forEach((opt, idx) => {
+                optionsHTML +=
+                    `<button class="opt-btn" data-value="${idx}" data-letter="${String.fromCharCode(65+idx)}">${opt}</button>`;
+            });
+        }
+        optionsArea.innerHTML = optionsHTML;
+
+        // Restaurar seleção anterior
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            const btns = document.querySelectorAll('.opt-btn');
+            btns.forEach(btn => {
+                let match = false;
+                if (q.type === "vf") {
+                    match = (btn.getAttribute('data-value') === 'true' && selected === true) ||
+                        (btn.getAttribute('data-value') === 'false' && selected === false);
+                } else {
+                    match = (parseInt(btn.getAttribute('data-value')) === selected);
+                }
+                if (match) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === "vf") ?
+                    (selected === q.correct) :
+                    (selected === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        const q = questions[currentIndex];
+        let isCorrect = false;
+        let correctLabel = '';
+
+        if (q.type === "vf") {
+            const isTrue = (value === 'true');
+            userAnswers[currentIndex] = isTrue;
+            isCorrect = (isTrue === q.correct);
+            correctLabel = q.correct ? "Certo" : "Errado";
+        } else {
+            const idx = parseInt(value);
+            userAnswers[currentIndex] = idx;
+            isCorrect = (idx === q.correct);
+            correctLabel = `Alternativa ${String.fromCharCode(65 + q.correct)}`;
+        }
+
+        const explanation = `
+            <strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>
+            <strong>Justificativa:</strong> ${q.justification}<br>
+            <span style="font-size:0.9rem;">Resposta correta: ${correctLabel}.</span>
+        `;
+        userJustification[currentIndex] = explanation;
+
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selectedBtn = Array.from(btns).find(btn => btn.getAttribute('data-value') === value);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) { currentIndex--;
+            renderQuestion(); }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total - 1) { currentIndex++;
+            renderQuestion(); } else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null) {
+                const q = questions[i];
+                const isCorrect = (q.type === "vf") ?
+                    (userAnswers[i] === q.correct) :
+                    (userAnswers[i] === q.correct);
+                if (isCorrect) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let classificacao = '';
+        if (nota > 8.5) classificacao = '⭐ Excelente! Você domina o conteúdo!';
+        else if (nota >= 7.6) classificacao = '👍 Muito Bom!';
+        else if (nota >= 6.6) classificacao = '📘 Bom!';
+        else if (nota >= 5.0) classificacao = '📚 Regular';
+        else classificacao = '📖 Que tal revisar o conteúdo? Leia com calma e depois refaça o quiz.';
+
+        const resultadoHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+            </div>
+        `;
+        resultContent.innerHTML = resultadoHTML;
+        congratsMsg.innerText = `🏆 ${classificacao}`;
+
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    // Refazer o quiz
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    setFontSize(16);
+</script>
+</body>
+</html>

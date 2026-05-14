@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Método Funcionalista (Durkheim) - Fundamentos da Sociologia</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #e8e2d4;
+            color: #2c3e2f;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: #fffaf2;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+            padding: 20px 30px;
+            border: 1px solid #d4c9b5;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #c2b59b;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4a6b3c;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a6b3c;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #ddd0bc;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #4a6b3c;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+            color: #2c3e2f;
+        }
+        .text-content p { margin-bottom: 0.8em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 0.8em 0 0.3em;
+            color: #4a6b3c;
+            font-weight: 600;
+        }
+        .text-content h2 { font-size: 1.6em; }
+        .text-content h3 { font-size: 1.3em; }
+        .text-content h4 { font-size: 1.1em; }
+        .text-content ul, .text-content ol {
+            margin: 0.3em 0 0.5em 1.5em;
+        }
+        .text-content li {
+            margin-bottom: 0.2em;
+            line-height: 1.5;
+        }
+        .text-content strong { color: #b36b3c; }
+
+        .slide-container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .slide-left {
+            flex: 1;
+            min-width: 250px;
+        }
+        .slide-right {
+            flex: 0 0 42%;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide-right img {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .slide-right iframe {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: none;
+            min-height: 300px;
+        }
+        .slide-caption {
+            font-size: 0.85rem;
+            color: #6b5e4a;
+            margin-top: 8px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .tabela-slide {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            text-align: left;
+            border: 1px solid #c2b59b;
+        }
+        .tabela-slide th {
+            background-color: #b3a07e;
+            color: #fffaf2;
+            padding: 10px 12px;
+            font-weight: 700;
+            border: 1px solid #c2b59b;
+        }
+        .tabela-slide td {
+            padding: 10px 12px;
+            border: 1px solid #c2b59b;
+            vertical-align: top;
+            color: #2c3e2f;
+        }
+        .tabela-slide tbody tr:nth-child(odd) {
+            background-color: #f5efe5;
+        }
+        .tabela-slide tbody tr:nth-child(even) {
+            background-color: #fffaf2;
+        }
+
+        .highlight-box {
+            background: rgba(74, 107, 60, 0.08);
+            border-left: 4px solid #4a6b3c;
+            padding: 12px 16px;
+            border-radius: 0 12px 12px 0;
+            margin: 15px 0;
+            font-size: 1em;
+            color: #2c3e2f;
+        }
+        .highlight-box strong {
+            color: #b36b3c;
+        }
+
+        .speech-word {
+            transition: background-color 0.15s ease, color 0.15s ease;
+            border-radius: 3px;
+            padding: 1px 2px;
+            margin: 0 1px;
+        }
+        .speech-word.active {
+            background-color: #f0c674;
+            color: #1a2e1a;
+            font-weight: 600;
+        }
+        .speech-word.upcoming {
+            background-color: #e0d6c6;
+        }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 8px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #ddd0bc;
+        }
+        .tool-btn {
+            background: #e8e2d4;
+            border: 1px solid #c2b59b;
+            color: #2c3e2f;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 8px 12px;
+            border-radius: 48px;
+            min-width: 44px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d4c9b5; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.3; pointer-events: none; }
+        .tool-btn.hidden { display: none; }
+
+        .capa-slide {
+            text-align: center;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 45vh;
+        }
+        .capa-slide h1 { font-size: 40px; color: #4a6b3c; margin-bottom: 15px; }
+        .capa-slide h2 { font-size: 28px; color: #b36b3c; margin-bottom: 25px; }
+        .capa-slide p { font-size: 22px; color: #6b5e4a; }
+
+        .final-slide {
+            text-align: center;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 40vh;
+        }
+        .final-slide h2 { color: #4a6b3c; font-size: 2rem; margin-bottom: 20px; }
+        .circle-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #e8e2d4;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .circle-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            position: relative;
+            top: 15px;
+        }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 6px 10px; min-width: 40px; font-size: 0.85rem; }
+            .slide-container { flex-direction: column !important; }
+            .slide-right { flex: 1 1 100% !important; }
+            .capa-slide h1 { font-size: 26px; }
+            .capa-slide h2 { font-size: 20px; }
+            .circle-image { width: 140px; height: 140px; }
+            .circle-image img { top: 10px; }
+            .slide-right iframe { min-height: 220px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>📖 Fundamentos da Sociologia</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Slide 1 de 16</span>
+                <span id="progressPercent">6%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Slide anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próximo slide">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir slide">🔊</button>
+            <button class="tool-btn hidden" id="pauseBtn" title="Pausar">⏸️</button>
+            <button class="tool-btn hidden" id="resumeBtn" title="Retomar">▶️</button>
+            <button class="tool-btn hidden" id="stopBtn" title="Parar">⏹️</button>
+            <button class="tool-btn" id="voiceToggleBtn" title="Alternar voz">♀️</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto; background: #e8e2d4; border: 1px solid #c2b59b; padding: 8px 12px; color:#2c3e2f;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // 16 slides conforme cabeçalho
+        const pageContents = [
+            // Slide 1 - Capa
+            `<div class="capa-slide">
+                <h1>FUNDAMENTOS DA SOCIOLOGIA</h1>
+                <h2>Método Funcionalista (Durkheim)</h2>
+                <p>Angela Siqueira</p>
+            </div>`,
+
+            // Slide 2 - A sociedade como um organismo vivo
+            `<h3>A sociedade como um organismo vivo</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>Para compreender como as instituições, as leis, os costumes e até mesmo os conflitos se organizam, é necessário partir de um princípio fundamental: a sociedade funciona como um grande corpo. Assim como um organismo humano possui órgãos com funções específicas (coração para bombear sangue, pulmões para respirar), a vida coletiva é composta por partes que desempenham papéis determinados para manter o todo em equilíbrio.</p>
+                    <p>Esse modo de pensar é chamado de <strong>funcionalismo</strong>. Seu principal formulador, Émile Durkheim, defendia que cada fenômeno social – desde a educação até o sistema de justiça, passando por práticas religiosas e divisão do trabalho – existe porque cumpre alguma função necessária à coesão e à sobrevivência da sociedade.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/Ga2JmsS.png" alt="Durkheim">
+                    <div class="slide-caption">Émile Durkheim (1858-1917)</div>
+                </div>
+            </div>`,
+
+            // Slide 3 - O que é uma função social?
+            `<h3>1. O que é uma “função social”?</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>Uma função social é a contribuição que uma instituição ou prática oferece para a manutenção da ordem e da solidariedade entre os indivíduos. Para Durkheim, não se deve perguntar apenas “por que algo surgiu?”, mas principalmente “<strong>para que serve</strong> esse elemento na vida coletiva?”.</p>
+                    <p>Perceba: uma mesma atividade pode ter funções <strong>manifestas</strong> (as intencionais e declaradas, como formar cidadãos) e <strong>latentes</strong> (as não intencionais, como afastar jovens do desemprego). O olhar funcionalista valoriza tanto umas quanto outras.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/7gyPtrL.png" alt="Corpo social">
+                    <div class="slide-caption">A sociedade como um sistema de órgãos interdependentes</div>
+                </div>
+            </div>`,
+
+            // Slide 4 - Tabela funções
+            `<h3>Funções sociais das instituições</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <table class="tabela-slide">
+                        <thead><tr><th>Elemento social</th><th>Exemplo de função</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Escola</strong></td><td>Transmitir valores, normas e conhecimentos comuns, integrando as novas gerações.</td></tr>
+                            <tr><td><strong>Polícia</strong></td><td>Reforçar as regras e punir desvios, reafirmando o que é aceito coletivamente.</td></tr>
+                            <tr><td><strong>Religião</strong></td><td>Oferecer rituais que fortalecem o sentimento de pertencimento e a disciplina moral.</td></tr>
+                            <tr><td><strong>Indústria</strong></td><td>Produzir bens, gerar empregos e estabelecer redes de interdependência entre trabalhadores e consumidores.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/MyIhNDW.png" alt="Papéis sociais">
+                    <div class="slide-caption">Cada parte desempenha um papel no todo social</div>
+                </div>
+            </div>`,
+
+            // Slide 5 - Interdependência das partes
+            `<h3>2. A interdependência das partes: nenhuma ação é isolada</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>Se a sociedade é um sistema de partes interdependentes, qualquer alteração em uma instituição provoca reações nas demais. Uma greve no transporte público, por exemplo, não afeta apenas quem viaja: ela impacta o acesso a hospitais, o abastecimento de supermercados, a frequência escolar e até a produtividade de escritórios. Sob a ótica funcionalista, esses efeitos são <strong>disfunções</strong> – perturbações que ameaçam o equilíbrio do sistema.</p>
+                    <p>Essa ideia é poderosa para analisar questões contemporâneas, como os <strong>impactos socioambientais de cadeias produtivas</strong>. Quando uma fábrica despeja resíduos tóxicos em um rio, não está apenas poluindo a água. Está comprometendo a função de saneamento das comunidades ribeirinhas, a saúde dos trabalhadores (afetando a produção de outras empresas), a pesca (impactando o sustento de famílias) e até o turismo local. O sistema social, econômico e ambiental entra em desarmonia.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://cdn6.campograndenews.com.br/uploads/noticias/2025/12/19/69454a4c4ca7f.gif" alt="Greve de ônibus">
+                    <div class="slide-caption">Uma greve no transporte público afeta toda a cadeia social</div>
+                </div>
+            </div>`,
+
+            // Slide 6 - Solidariedade mecânica
+            `<h3>3. Dois tipos de solidariedade: como as sociedades se mantêm unidas (I)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <div class="highlight-box"><strong>Solidariedade mecânica</strong><br>
+                    Predominante em sociedades tradicionais, de pequeno porte.<br>
+                    Os indivíduos são muito semelhantes entre si (mesmos valores, crenças, ofícios).<br>
+                    A coesão vem da consciência coletiva forte – todos sabem o que é certo ou errado.<br>
+                    O direito é repressivo: quem desvia sofre punições severas.
+                    </div>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/RHPbUCF.png" alt="Solidariedade mecânica">
+                    <div class="slide-caption">Sociedades tradicionais: forte consciência coletiva</div>
+                </div>
+            </div>`,
+
+            // Slide 7 - Solidariedade orgânica (imagem substituída)
+            `<h3>3. Dois tipos de solidariedade: como as sociedades se mantêm unidas (II)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <div class="highlight-box"><strong>Solidariedade orgânica</strong><br>
+                    Característica de sociedades modernas, industrializadas e urbanas.<br>
+                    Os indivíduos são diferentes e especializados (um é médico, outro é engenheiro, outro é motorista).<br>
+                    A coesão surge da interdependência – cada um precisa do que o outro produz.<br>
+                    O direito é restitutivo: busca reparar danos e restaurar relações, em vez de apenas punir.
+                    </div>
+                    <p>A passagem de uma forma à outra não é automática nem sempre harmoniosa. Crises econômicas, desemprego e desigualdades extremas podem gerar o que Durkheim chamou de <strong>anomia</strong> – um estado de ausência de regras claras, no qual os indivíduos se sentem perdidos e desintegrados.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://s3.static.brasilescola.uol.com.br/be/2025/09/design-sem-nome.jpg" alt="Solidariedade orgânica">
+                    <div class="slide-caption">Sociedades modernas: interdependência e especialização</div>
+                </div>
+            </div>`,
+
+            // Slide 8 - Agronegócio (imagem restaurada)
+            `<h3>4. Aplicando o método funcionalista a problemas atuais (I)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <div class="highlight-box"><strong>Exemplo 1 – Agronegócio de larga escala</strong><br>
+                    <strong>Função manifesta:</strong> produzir alimentos, gerar divisas e empregos.<br>
+                    <strong>Função latente:</strong> concentrar terras e tecnologias, estimular a migração campo-cidade.<br>
+                    <strong>Disfunções socioambientais:</strong> desmatamento, conflito por terras indígenas, contaminação de aquíferos por agrotóxicos, redução da biodiversidade, emissão de gases de efeito estufa.
+                    </div>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/gnMvoHz.png" alt="Agronegócio">
+                    <div class="slide-caption">Agronegócio: impactos socioambientais</div>
+                </div>
+            </div>`,
+
+            // Slide 9 - Mineração (imagem restaurada)
+            `<h3>4. Aplicando o método funcionalista a problemas atuais (II)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <div class="highlight-box"><strong>Exemplo 2 – Mineração em região amazônica</strong><br>
+                    <strong>Função manifesta:</strong> extrair minérios para indústria eletrônica e de construção.<br>
+                    <strong>Função latente:</strong> criar infraestrutura (estradas, energia) que beneficia outras atividades.<br>
+                    <strong>Disfunções socioambientais:</strong> assoreamento de rios, mercúrio na cadeia alimentar, deslocamento forçado de comunidades, doenças respiratórias.
+                    </div>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/lOfKZQj.png" alt="Mineração na Amazônia">
+                    <div class="slide-caption">Mineração: riscos ambientais e sociais</div>
+                </div>
+            </div>`,
+
+            // Slide 10 - Conclusão da aplicação
+            `<h3>4. Aplicando o método funcionalista a problemas atuais (III)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>Sob a perspectiva funcionalista, não basta apontar os danos. É necessário perguntar: <strong>que funções sociais estão sendo prejudicadas?</strong> A resposta mostra que os problemas ambientais rapidamente se transformam em problemas econômicos (queda na produtividade) e sociais (conflitos, adoecimento, migração). O sistema, ao perder o equilíbrio, exige novas regulações – o que remete ao papel do Estado, das leis e da própria ciência.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3xMWGpRzKbzCJsFviDqGpfZj7NP92727amuYOdPC00gO1n6mfqXVVWTViN6b3tH5ZCB7zFoa-TS8jsbqavsyBylgDcaEkweg8IHbrJXq-41hX6eQBLYI2H7WUq4gv24Zt7QQr-js8JJqk/s1600/Gritos-tristes.jpg" alt="Consequências sociais">
+                    <div class="slide-caption">Os impactos ambientais atingem diretamente a vida das populações</div>
+                </div>
+            </div>`,
+
+            // Slide 11 - Críticas parte 1
+            `<h3>5. Críticas e limites da abordagem funcionalista (I)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>Embora útil, o método de Durkheim recebe questionamentos importantes:</p>
+                    <ul>
+                        <li><strong>Justificação do existente:</strong> ao enfatizar a função de cada instituição, pode-se cair na armadilha de aceitar desigualdades ou violências como “necessárias” para a ordem. Nem tudo que existe tem uma função positiva.</li>
+                    </ul>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/m3dez8n.png" alt="Conflitos sociais">
+                    <div class="slide-caption">Desigualdades e conflitos: pontos cegos do funcionalismo</div>
+                </div>
+            </div>`,
+
+            // Slide 12 - Críticas parte 2 (com iframe)
+            `<h3>5. Críticas e limites da abordagem funcionalista (II)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <ul>
+                        <li><strong>Dificuldade para explicar mudanças bruscas:</strong> o modelo é mais adequado para descrever equilíbrios e adaptações lentas do que para compreender revoluções, rupturas ou transformações radicais.</li>
+                    </ul>
+                </div>
+                <div class="slide-right">
+                    <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ0L6mbiPEZVny6kZwqmFHT704svt2qERtsWRKTJoRpbdEcEUKbXIueRfl7PneDSVBNqCr87VOkhoFD/pubembed?start=true&loop=false&delayms=3000" 
+                            allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                    <div class="slide-caption">Fundamentos da Sociologia - Durkheim</div>
+                </div>
+            </div>`,
+
+            // Slide 13 - Críticas parte 3 (imagem GIF restaurada)
+            `<h3>5. Críticas e limites da abordagem funcionalista (III)</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <ul>
+                        <li><strong>Visão consensual da sociedade:</strong> tende a subestimar os conflitos de classe, raça e gênero, tratando divergências como “desvios” a serem corrigidos, em vez de motores da história.</li>
+                    </ul>
+                    <p>Mesmo com essas críticas, o funcionalismo continua sendo uma ferramenta analítica valiosa – especialmente para avaliar como uma alteração em um ponto da cadeia produtiva ou ambiental produz efeitos em cadeia sobre os demais elos da vida social.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://arteref.com/wp-content/uploads/2016/04/borede.gif" alt="Conflitos de classe">
+                    <div class="slide-caption">Lutas sociais e movimentos populares: perspectivas além do funcionalismo</div>
+                </div>
+            </div>`,
+
+            // Slide 14 - Síntese - Quadro conceitual (tabela)
+            `<h3>Síntese - Quadro conceitual</h3>
+            <table class="tabela-slide">
+                <thead>
+                    <tr><th>Conceito central</th><th>Pergunta-chave</th><th>Aplicação a impactos socioambientais</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Função social</strong></td><td>Para que serve essa instituição ou prática?</th><th>Identificar benefícios coletivos de uma atividade econômica.</th></tr>
+                    <tr><td><strong>Disfunção</strong></td><td>Que desequilíbrios ela gera?</th><th>Reconhecer danos que prejudicam a interdependência social.</th></tr>
+                    <tr><td><strong>Solidariedade orgânica</strong></td><td>Como a especialização e a divisão do trabalho unem as pessoas?</th><th>Entender que poluição ou exploração em uma região afeta o consumo, a saúde e a segurança em todo o sistema.</th></tr>
+                    <tr><td><strong>Anomia</strong></td><td>O que ocorre quando as regras se enfraquecem?</th><th>Perceber que crises ambientais profundas podem levar à desorganização social e à perda de referências coletivas.</th></tr>
+                </tbody>
+            92<table>`,
+
+            // Slide 15 - Síntese - Reflexão final
+            `<h3>Síntese - Reflexão final</h3>
+            <div class="slide-container">
+                <div class="slide-left">
+                    <p>O estudo da obra de Durkheim, portanto, não é um exercício apenas histórico. É um convite a enxergar o mundo como uma complexa teia de dependências, na qual qualquer ruptura – seja ela um vazamento químico, uma nova lei trabalhista ou a automação de uma linha de produção – ressoa muito além de seu ponto de origem. Cabe a quem analisa a realidade identificar essas conexões e avaliar até que ponto as transformações em curso estão fortalecendo ou corroendo a vida em sociedade.</p>
+                </div>
+                <div class="slide-right">
+                    <img src="https://i.imgur.com/C7ecmey.png" alt="Pilares da sociologia durkheimiana">
+                    <div class="slide-caption">Os pilares do pensamento de Durkheim</div>
+                </div>
+            </div>`,
+
+            // Slide 16 - Encerramento
+            `<div class="final-slide">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo do Método Funcionalista de Durkheim.</p>
+                <div class="circle-image">
+                    <img src="https://media.tenor.com/jbpOBNzBN08AAAAM/dog-viralhog.gif" alt="Cachorro comemorando">
+                </div>
+                <p style="color:#6b5e4a; margin-top: 20px;">Consulte o material complementar para aprofundamento.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContent = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const rateSelect = document.getElementById('rateSelect');
+        const voiceToggleBtn = document.getElementById('voiceToggleBtn');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+        let isPaused = false;
+        let speechToken = null;
+        let previousActiveSpan = null;
+        let selectedVoice = null;
+        let femaleVoice = null;
+        let maleVoice = null;
+        let isFemaleVoice = true;
+        let wordSpans = [];
+        let charIndexToSpanMap = [];
+        let currentCharIndex = 0;
+
+        function populateVoices() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            femaleVoice = ptVoices.find(v =>
+                v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') ||
+                v.name.includes('Samantha') || v.name.includes('Maria') || v.name.includes('Fernanda') || v.name.includes('Heloisa')
+            );
+            maleVoice = ptVoices.find(v =>
+                v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('homem') ||
+                v.name.includes('Daniel') || v.name.includes('Felipe') || v.name.includes('Ricardo') || v.name.includes('Gustavo')
+            );
+            if (!femaleVoice) femaleVoice = ptVoices[0];
+            if (!maleVoice) maleVoice = ptVoices[1] || ptVoices[0];
+            selectedVoice = femaleVoice || maleVoice || ptVoices[0];
+            updateVoiceButton();
+        }
+
+        function updateVoiceButton() {
+            voiceToggleBtn.textContent = isFemaleVoice ? '♀️' : '♂️';
+            voiceToggleBtn.title = isFemaleVoice ? 'Voz feminina' : 'Voz masculina';
+        }
+
+        function toggleVoice() {
+            isFemaleVoice = !isFemaleVoice;
+            selectedVoice = isFemaleVoice ? (femaleVoice || maleVoice) : (maleVoice || femaleVoice);
+            updateVoiceButton();
+            if (currentUtterance && isSpeaking && !isPaused) currentUtterance.voice = selectedVoice;
+        }
+
+        function tokenizeTextNodes(root) {
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+            const textNodes = [];
+            while (walker.nextNode()) textNodes.push(walker.currentNode);
+            textNodes.forEach(node => {
+                const text = node.textContent;
+                if (!text.trim()) return;
+                const fragment = document.createDocumentFragment();
+                const parts = text.split(/(\s+)/);
+                parts.forEach(part => {
+                    if (part.trim()) {
+                        const span = document.createElement('span');
+                        span.className = 'speech-word';
+                        span.textContent = part;
+                        fragment.appendChild(span);
+                    } else {
+                        fragment.appendChild(document.createTextNode(part));
+                    }
+                });
+                node.parentNode.replaceChild(fragment, node);
+            });
+        }
+
+        function buildCharMap() {
+            wordSpans = Array.from(pageContent.querySelectorAll('.speech-word'));
+            charIndexToSpanMap = [];
+            wordSpans.forEach((span, idx) => {
+                const len = span.textContent.length;
+                for (let i = 0; i < len; i++) charIndexToSpanMap.push(idx);
+                if (idx < wordSpans.length - 1) charIndexToSpanMap.push(idx);
+            });
+        }
+
+        function highlightWordSpan(spanIndex) {
+            if (previousActiveSpan !== null && previousActiveSpan !== undefined) {
+                const prevSpan = wordSpans[previousActiveSpan];
+                if (prevSpan) { prevSpan.classList.remove('active'); prevSpan.classList.remove('upcoming'); }
+            }
+            if (spanIndex >= 0 && spanIndex < wordSpans.length) {
+                const currentSpan = wordSpans[spanIndex];
+                currentSpan.classList.add('active');
+                currentSpan.classList.remove('upcoming');
+                previousActiveSpan = spanIndex;
+                currentSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function markUpcoming(spanIndex) {
+            wordSpans.forEach(s => s.classList.remove('upcoming'));
+            for (let i = 1; i <= 3; i++) {
+                const nextIdx = spanIndex + i;
+                if (nextIdx < wordSpans.length) wordSpans[nextIdx].classList.add('upcoming');
+            }
+        }
+
+        function clearAllWordHighlights() {
+            wordSpans.forEach(s => { s.classList.remove('active'); s.classList.remove('upcoming'); });
+            previousActiveSpan = null;
+        }
+
+        function syncHighlightFromCharIndex() {
+            if (currentCharIndex >= charIndexToSpanMap.length) return;
+            const spanIdx = charIndexToSpanMap[currentCharIndex];
+            if (spanIdx !== undefined && spanIdx !== previousActiveSpan) { highlightWordSpan(spanIdx); markUpcoming(spanIdx); }
+        }
+
+        function showPlayingUI() { speakBtn.classList.add('hidden'); pauseBtn.classList.remove('hidden'); stopBtn.classList.remove('hidden'); resumeBtn.classList.add('hidden'); }
+        function showPausedUI() { pauseBtn.classList.add('hidden'); stopBtn.classList.add('hidden'); resumeBtn.classList.remove('hidden'); speakBtn.classList.add('hidden'); }
+        function showStoppedUI() { speakBtn.classList.remove('hidden'); pauseBtn.classList.add('hidden'); resumeBtn.classList.add('hidden'); stopBtn.classList.add('hidden'); }
+
+        function startReading() {
+            if (!synth) { alert('Navegador não suporta síntese de voz.'); return; }
+            if (isPaused) { synth.resume(); isPaused = false; isSpeaking = true; showPlayingUI(); return; }
+            if (isSpeaking) { stopReading(); return; }
+            if (pageContent.querySelectorAll('.speech-word').length === 0) tokenizeTextNodes(pageContent);
+            buildCharMap();
+            if (wordSpans.length === 0) return;
+            const text = wordSpans.map(s => s.textContent).join(' ');
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) currentUtterance.voice = selectedVoice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            const token = Date.now();
+            speechToken = token; currentCharIndex = 0; clearAllWordHighlights();
+            currentUtterance.onboundary = function(e) { if (speechToken !== token) return; if (e.name === 'word') { currentCharIndex = e.charIndex; syncHighlightFromCharIndex(); } };
+            currentUtterance.onstart = function() { if (speechToken !== token) return; isSpeaking = true; isPaused = false; showPlayingUI(); };
+            currentUtterance.onend = function() { if (speechToken !== token) return; resetSpeechState(); };
+            currentUtterance.onerror = function(e) { if (speechToken !== token) return; if (e.error !== 'canceled' && e.error !== 'interrupted') console.warn('Speech error:', e.error); resetSpeechState(); };
+            synth.speak(currentUtterance);
+        }
+
+        function pauseReading() { if (synth && isSpeaking && !isPaused) { synth.pause(); isPaused = true; showPausedUI(); } }
+        function resumeReading() { if (synth && isPaused) { synth.resume(); isPaused = false; isSpeaking = true; showPlayingUI(); } }
+        function stopReading() { if (synth) synth.cancel(); resetSpeechState(); }
+
+        function resetSpeechState() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) { currentUtterance.onboundary = null; currentUtterance.onstart = null; currentUtterance.onend = null; currentUtterance.onerror = null; currentUtterance = null; }
+            isSpeaking = false; isPaused = false; speechToken = null; currentCharIndex = 0; clearAllWordHighlights(); showStoppedUI();
+        }
+
+        function updateUI() {
+            resetSpeechState();
+            pageContent.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Slide ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            if (pageContent.scrollTop) pageContent.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            pageContent.style.fontSize = fontSizes[fontSizeIndex] + 'px';
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length - 1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) { currentPage = newPage; updateUI(); }
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length - 1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        pauseBtn.addEventListener('click', pauseReading);
+        resumeBtn.addEventListener('click', resumeReading);
+        stopBtn.addEventListener('click', stopReading);
+        voiceToggleBtn.addEventListener('click', toggleVoice);
+        rateSelect.addEventListener('change', () => { if (currentUtterance && isSpeaking && !isPaused) currentUtterance.rate = parseFloat(rateSelect.value); });
+
+        applyFontSize();
+        updateUI();
+        if (synth) { populateVoices(); if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices; }
+    })();
+</script>
+</body>
+</html>

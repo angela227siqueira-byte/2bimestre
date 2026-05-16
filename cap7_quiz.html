@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Territórios e Fronteiras dos Estados Nacionais · Capítulo 7</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .question-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .question-image img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 12px;
+            border: 1px solid #dde5e0;
+        }
+        .question-image .img-caption {
+            font-size: 0.85rem;
+            color: #5a7a6a;
+            margin-top: 6px;
+            font-style: italic;
+        }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+
+        /* Estilo da capa */
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #0f3d2e;
+        }
+        .capa h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #1a5e44;
+        }
+        .capa .subtitulo {
+            font-size: 20px;
+            color: #2a5e4a;
+            margin-bottom: 10px;
+        }
+        .capa .autora {
+            font-size: 18px;
+            color: #5a7a6a;
+            margin-top: 30px;
+            font-style: italic;
+        }
+        .capa .info-quiz {
+            font-size: 16px;
+            color: #7a9a8a;
+            margin-top: 40px;
+            border-top: 1px solid #dde5e0;
+            padding-top: 25px;
+        }
+        .start-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+        .start-btn:hover {
+            background: #154e3a;
+        }
+
+        @media (max-width: 640px) {
+            .quiz-wrapper { max-width: 100%; padding: 15px; }
+            .opt-btn { padding: 8px 16px; font-size: 1rem; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- TELA DE CAPA -->
+    <div id="capaScreen" class="screen active">
+        <div class="capa">
+            <h1>📝 Quiz de Revisão</h1>
+            <h2>Territórios e Fronteiras<br>dos Estados Nacionais</h2>
+            <p class="subtitulo">Capítulo 7 — Geografia Política, Formação Territorial e Cartografia</p>
+            <p class="autora">Angela Siqueira</p>
+            <p class="info-quiz">20 afirmações para julgar VERDADEIRO ou FALSO<br>Inclui mapas e figuras para análise</p>
+            <button class="start-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+        </div>
+    </div>
+
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌍 Territórios e Fronteiras dos Estados Nacionais</div>
+        <div class="sub">Capítulo 7 – 20 afirmações para julgar VERDADEIRO ou FALSO</div>
+        <div class="progress" id="progressText">Questão 1 de 20</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="question-image" id="questionImage" style="display: none;"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 20 QUESTÕES (Capítulo 7 - Territórios e Fronteiras) ===================
+    const questions = [
+        {
+            text: "A obra <em>Geografia política</em>, publicada em 1897 pelo alemão Friedrich Ratzel, marcou o início da investigação científica das relações entre Estado, poder e território, sendo o primeiro a tratar esse tema como objeto de estudo da geografia.",
+            correct: true,
+            justification: "Ratzel foi o primeiro a tratar as relações entre Estado, poder e território como objeto de estudo da geografia, inaugurando a Geografia Política como campo científico. Sua teoria está diretamente relacionada à situação política, econômica e social da Europa na virada do século XIX para o XX."
+        },
+        {
+            text: "Segundo a teoria de Ratzel, os Estados se formam quando as sociedades se organizam para defender seu território, progridem ao conquistar novas áreas e decaem quando perdem territórios em guerras ou invasões, não havendo lugar para conflitos no interior das fronteiras, como rebeliões civis e revoluções.",
+            correct: true,
+            justification: "Ratzel defendia que a existência de um Estado é subordinada à demarcação de um território. Em sua teoria, o Estado seria a única fonte de poder, e as guerras só seriam travadas entre Estados, envolvendo disputas territoriais. Não havia espaço para conflitos internos."
+        },
+        {
+            text: "A noção política de fronteira é um fato natural, determinado exclusivamente por acidentes geográficos como rios, serras e montanhas, e sempre existiu desde as primeiras civilizações humanas.",
+            correct: false,
+            justification: "A fronteira política não é um fato natural, mas uma construção humana, política e histórica. Embora elementos naturais possam ser usados como referência, a noção política de fronteira foi desenvolvida durante o Império Romano (com o <em>limes romanus</em>) e consolidou-se como conceito contemporâneo apenas no final da Idade Média."
+        },
+        {
+            text: "A fragmentação da Iugoslávia, iniciada no final da década de 1980, está relacionada ao fim dos regimes comunistas do Leste Europeu, à morte do marechal Tito e ao fortalecimento de movimentos nacionalistas no interior da federação, resultando na formação de países como Eslovênia, Croácia, Bósnia-Herzegovina e Sérvia.",
+            correct: true,
+            justification: "A desagregação dos regimes comunistas na Europa Oriental e a morte de Tito culminaram em movimentos separatistas. O fundamento da unidade iugoslava residia no poder do Partido Comunista, que reprimia os nacionalismos. Eslovênia e Croácia foram as primeiras a declarar independência.",
+            image: "https://www.educabras.com/media/emtudo_img/upload/_img/20141119_120938.gif",
+            imageCaption: "Mapa da fragmentação da Iugoslávia após 1991"
+        },
+        {
+            text: "A Constituição é a norma jurídica fundamental que ordena as relações entre as instituições do Estado (Executivo, Legislativo e Judiciário) e define os direitos e deveres dos cidadãos, sendo a capital a localidade que abriga os órgãos centrais do Estado.",
+            correct: true,
+            justification: "Conforme o capítulo, a Constituição ordena as relações entre as instituições do Estado e define direitos e deveres. A sede do poder político é a capital, local que abriga os órgãos centrais do Estado."
+        },
+        {
+            text: "Na organização confederativa do Estado, as entidades políticas preservam sua soberania e o contrato político que as une pode ser legalmente desfeito, permitindo a separação das partes constitutivas. Cada república confederada pode ter sua própria constituição, emitir moeda e manter forças armadas próprias.",
+            correct: true,
+            justification: "A confederação baseia-se na reunião de entidades políticas soberanas. O Estado consiste em um contrato político que pode ser legalmente desfeito. Cada república confederada possui sua constituição e pode emitir moeda e manter forças armadas próprias."
+        },
+        {
+            text: "O território correspondente ao atual estado do Acre foi cedido pela Bolívia ao Brasil por meio do Tratado de Petrópolis, negociado pelo barão do Rio Branco, que ocupou o Ministério das Relações Exteriores entre 1902 e 1912.",
+            correct: true,
+            justification: "O barão do Rio Branco firmou o Tratado de Petrópolis com a Bolívia, por meio do qual o Brasil adquiriu o território correspondente ao atual Acre. Aproximadamente um terço da seção terrestre das fronteiras brasileiras foi delimitado nessa fase.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Map_Bolivia_territorial_loss-en.svg/1280px-Map_Bolivia_territorial_loss-en.svg.png",
+            imageCaption: "Bolívia: perdas territoriais (1867-1935)"
+        },
+        {
+            text: "O Tratado de Tordesilhas, assinado em 1494 entre Portugal e Espanha, definiu as fronteiras atuais do Brasil, estabelecendo os limites territoriais que permanecem até os dias de hoje.",
+            correct: false,
+            justification: "O Tratado de Tordesilhas (1494) dividiu terras entre Portugal e Espanha antes mesmo do descobrimento do Brasil, mas não definiu as fronteiras atuais. Foi o Tratado de Madri (1750) que delineou os contornos aproximados do território brasileiro atual."
+        },
+        {
+            text: "Durante o período imperial, o Brasil era um Estado unitário, ou seja, as províncias não dispunham de autonomia política e seus administradores eram nomeados pelo poder central. Somente com a Constituição republicana de 1891 o país foi organizado como um Estado federal.",
+            correct: true,
+            justification: "Conforme o capítulo, durante o Império o Brasil era um Estado unitário. Com a Proclamação da República em 1889 e a Constituição de 1891, as províncias foram transformadas em estados e o país foi organizado em um Estado federal, conferindo autonomia às unidades da federação."
+        },
+        {
+            text: "Os complexos regionais propostos pelo geógrafo Pedro Pinchas Geiger em 1967 respeitam rigorosamente os limites estaduais, não ultrapassando as fronteiras político-administrativas dos estados brasileiros.",
+            correct: false,
+            justification: "As regiões geoeconômicas de Geiger frequentemente ultrapassam os limites dos estados, pois as características geoeconômicas nem sempre coincidem com as fronteiras políticas. Por isso, alguns territórios estaduais são 'cortados' pelo limite entre duas regiões geoeconômicas diferentes.",
+            image: "https://media.brainly.com.br/image/rs:fill/w:2048/q:75/plain/https://pt-static.z-dn.net/files/de5/ac1e23cc44af45266071e8f57cc01c74.jpg",
+            imageCaption: "Regionalizações do Brasil: IBGE, Geiger e Santos/Silveira"
+        },
+        {
+            text: "O rótulo 'América Latina' tem origem em uma ideologia francesa do século XIX, o panlatinismo, que defendia a unidade das nações de língua latina contrapondo-as aos germânicos, anglo-saxões e eslavos, sendo uma identificação bastante artificial.",
+            correct: true,
+            justification: "As primeiras ideias de uma identidade latina na América foram difundidas pelos franceses com o objetivo de ampliar sua influência no continente. Era uma identificação artificial, pois classificava como 'latinos' grandes contingentes de povos descendentes de ameríndios e africanos escravizados."
+        },
+        {
+            text: "A Conferência de Berlim (1884-1885), que definiu princípios para a partilha da África entre as potências europeias, contou com a participação ativa de líderes africanos na definição das fronteiras coloniais.",
+            correct: false,
+            justification: "A Conferência de Berlim reuniu representantes de treze países europeus, além do Império Turco-Otomano e dos Estados Unidos, mas não contou com representação africana. As fronteiras traçadas desconsideraram as realidades étnicas e culturais locais."
+        },
+        {
+            text: "A independência da Índia, concedida pelo Parlamento britânico em 1947, resultou na bipartição do território, formando a União Indiana (de maioria hindu) e o Paquistão (de maioria muçulmana), contrariando o desejo de Mahatma Gandhi, que defendia a manutenção da unidade indiana.",
+            correct: true,
+            justification: "O Parlamento britânico bipartiu a Índia em 1947 de acordo com os interesses da Liga Muçulmana. Gandhi era partidário da manutenção da unidade indiana, mas foi assassinado em 1948. O Paquistão Oriental conquistou independência em 1972, formando Bangladesh."
+        },
+        {
+            text: "Após a independência das colônias africanas, a maioria dos dirigentes optou por modificar completamente os limites territoriais impostos pelos colonizadores europeus, redesenhando as fronteiras de acordo com as realidades étnicas locais.",
+            correct: false,
+            justification: "Pelo contrário: após a independência, a maior parte dos dirigentes africanos optou por manter os limites territoriais impostos pelos colonizadores. A Organização da Unidade Africana, fundada em 1963, adotou o princípio da intangibilidade das fronteiras.",
+            image: "https://globalchallenges.ch/wp-content/uploads/2024/04/payscolonisateurs_Afrique-large.jpg",
+            imageCaption: "A descolonização da África"
+        },
+        {
+            text: "A projeção de Peters, publicada em 1973, é uma projeção cilíndrica equivalente que conserva a proporção entre as áreas dos continentes, mas deforma suas formas alongando-os verticalmente, refletindo preocupações do período pós-Segunda Guerra Mundial com a crítica ao colonialismo.",
+            correct: true,
+            justification: "A projeção de Peters é equivalente (conserva áreas), mas deforma as formas. Nenhuma projeção consegue representar com absoluta precisão todos os aspectos de uma superfície esférica em um plano. Ela espelha preocupações com a crítica ao colonialismo e as questões sobre pobreza e desigualdade entre as nações."
+        },
+        {
+            text: "A cartografia social ou etnocartografia consiste em um processo participativo onde as próprias comunidades confeccionam os mapas com orientação técnica, podendo utilizar desde desenhos no chão (cartografia efêmera) até Sistemas de Informação Geográfica (SIG), sendo fundamental para o reconhecimento de territórios tradicionais.",
+            correct: true,
+            justification: "A cartografia social é feita pelas comunidades com orientação técnica. Pode usar cartografia efêmera (desenho no chão com gravetos e folhas), croquis, maquetes, foto-mapas e SIG. Foi fundamental para a criação de reservas extrativistas na Amazônia e para a luta dos povos inuítes no Canadá e Alasca."
+        },
+        {
+            text: "A União das Repúblicas Socialistas Soviéticas, formada após a Revolução de 1917, era um Estado unitário onde as repúblicas não possuíam qualquer autonomia política ou administrativa, sendo governadas diretamente por Moscou.",
+            correct: false,
+            justification: "A União Soviética foi organizada formalmente com as bases de uma estrutura federativa, ou seja, as repúblicas tinham relativa autonomia. Na prática, porém, o poder totalitário do Partido Comunista impunha aos povos não russos um regime de subordinação, com políticas de 'russificação' durante o governo de Stálin."
+        },
+        {
+            text: "A península da Crimeia, onde está localizado o estratégico porto de Sebastopol, foi conquistada pelo Império Russo no século XVIII, cedida à Ucrânia em 1954 durante o período soviético, e anexada novamente pela Rússia em 2014, em um processo que não é reconhecido pela maior parte da comunidade internacional.",
+            correct: true,
+            justification: "A Crimeia foi anexada pela Rússia no século XVIII (Catarina II). Em 1954, foi cedida à Ucrânia (então república soviética). A anexação russa de 2014 não é reconhecida internacionalmente pela maioria dos países, e em 2022 a Rússia invadiu a Ucrânia."
+        },
+        {
+            text: "Após a Primeira Guerra Mundial (1914-1918), o Império Austro-Húngaro foi completamente desagregado, dando origem a países independentes como Áustria, Hungria, Tchecoslováquia e Iugoslávia.",
+            correct: true,
+            justification: "O Império Austro-Húngaro foi formado em 1867 e controlava vastas áreas da Europa. Com o fim da Primeira Guerra Mundial, sua fragmentação territorial originou países independentes como Áustria, Hungria, Tchecoslováquia, Iugoslávia e Albânia."
+        },
+        {
+            text: "'Geocomunicar' significa produzir e divulgar informações geográficas acessíveis à população, e 'geoalfabetizar' significa capacitar as pessoas para interpretar mapas e dados espaciais, conceitos que se mostraram fundamentais durante as enchentes no Rio Grande do Sul em 2024.",
+            correct: true,
+            justification: "O caso das enchentes no Rio Grande do Sul demonstrou a importância de geocomunicar (produzir mapas de risco acessíveis) e geoalfabetizar (preparar a população para interpretá-los). A Defesa Civil utilizou o Google Maps para que a população verificasse se sua região estava dentro da área de risco."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const capaScreen = document.getElementById('capaScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const questionImage = document.getElementById('questionImage');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .start-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `<strong>Afirmação ${currentIndex+1}:</strong> ${q.text}`;
+
+        // Imagem da questão (se houver)
+        if (q.image) {
+            questionImage.style.display = 'block';
+            questionImage.innerHTML = `
+                <img src="${q.image}" alt="${q.imageCaption || 'Imagem da questão'}">
+                ${q.imageCaption ? `<p class="img-caption">${q.imageCaption}</p>` : ''}
+            `;
+        } else {
+            questionImage.style.display = 'none';
+            questionImage.innerHTML = '';
+        }
+
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                if ((btn.getAttribute('data-value') === 'true' && selected === true) ||
+                    (btn.getAttribute('data-value') === 'false' && selected === false)) {
+                    btn.classList.add('selected');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === questions[currentIndex].correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br><strong>Justificativa:</strong> ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selectedBtn = Array.from(btns).find(btn => btn.getAttribute('data-value') === value);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você domina o conteúdo do Capítulo 7. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Estude os tópicos que errou e tente novamente.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas dá para melhorar. Releia as seções sobre os temas que teve mais dificuldade.";
+        else mensagem = "📚 Que tal revisar o capítulo? Leia com calma e depois refaça o quiz.";
+
+        const resultadoHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        resultContent.innerHTML = resultadoHTML;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    // Iniciar quiz (da capa)
+    startQuizBtn.addEventListener('click', () => {
+        capaScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    // Refazer o quiz
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    setFontSize(16);
+</script>
+</body>
+</html>

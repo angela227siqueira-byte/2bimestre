@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Método Funcionalista (Durkheim) · Fundamentos da Sociologia</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #e8e2d4;
+            color: #2c3e2f;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: #fffaf2;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+            padding: 20px 30px;
+            border: 1px solid #d4c9b5;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #4a6b3c;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #6b5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; color: #2c3e2f; }
+        .question-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .question-image img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 12px;
+            border: 1px solid #d4c9b5;
+        }
+        .question-image .img-caption {
+            font-size: 0.85rem;
+            color: #6b5e4a;
+            margin-top: 6px;
+            font-style: italic;
+        }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #e8e2d4;
+            border: 1px solid #c2b59b;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #2c3e2f;
+        }
+        .opt-btn.selected { background: #4a6b3c; color: #fffaf2; border-color: #4a6b3c; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #e8e2d4; border: 1px solid #c2b59b; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer; color: #2c3e2f;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #4a6b3c; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #ddd0bc; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold; color: #2c3e2f;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f5efe5; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #4a6b3c; color: #fffaf2; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px; font-weight: bold;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #4a6b3c;
+        }
+        .capa h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #b36b3c;
+        }
+        .capa .subtitulo {
+            font-size: 20px;
+            color: #6b5e4a;
+            margin-bottom: 10px;
+        }
+        .capa .autora {
+            font-size: 18px;
+            color: #8b7a5e;
+            margin-top: 30px;
+            font-style: italic;
+        }
+        .capa .info-quiz {
+            font-size: 16px;
+            color: #9b8a6e;
+            margin-top: 40px;
+            border-top: 1px solid #d4c9b5;
+            padding-top: 25px;
+        }
+        .start-btn {
+            background: #4a6b3c;
+            color: #fffaf2;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+        .start-btn:hover {
+            background: #3d5a32;
+        }
+
+        @media (max-width: 640px) {
+            .quiz-wrapper { max-width: 100%; padding: 15px; }
+            .opt-btn { padding: 8px 16px; font-size: 1rem; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- TELA DE CAPA -->
+    <div id="capaScreen" class="screen active">
+        <div class="capa">
+            <h1>📝 Quiz de Revisão</h1>
+            <h2>Método Funcionalista (Durkheim)</h2>
+            <p class="subtitulo">Fundamentos da Sociologia</p>
+            <p class="autora">Angela Siqueira</p>
+            <p class="info-quiz">15 afirmações para julgar VERDADEIRO ou FALSO</p>
+            <button class="start-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+        </div>
+    </div>
+
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📖 Método Funcionalista (Durkheim)</div>
+        <div class="sub">15 afirmações para julgar VERDADEIRO ou FALSO</div>
+        <div class="progress" id="progressText">Questão 1 de 15</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="question-image" id="questionImage" style="display: none;"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            text: "Émile Durkheim, principal formulador do funcionalismo, comparava a sociedade a um organismo vivo, onde cada instituição funciona como um órgão com papel específico para manter o equilíbrio do todo social.",
+            correct: true,
+            justification: "Durkheim defendia que a sociedade funciona como um grande corpo. Assim como um organismo possui órgãos com funções específicas, a vida coletiva é composta por partes que desempenham papéis determinados para manter o todo em equilíbrio. Escola, justiça, religião e divisão do trabalho são exemplos dessas partes."
+        },
+        {
+            text: "Para o funcionalismo, uma função social é a contribuição que uma instituição ou prática oferece para a manutenção da ordem e da solidariedade entre os indivíduos. A pergunta central é 'para que serve esse elemento na vida coletiva?'.",
+            correct: true,
+            justification: "Durkheim defendia que não se deve perguntar apenas 'por que algo surgiu?', mas principalmente 'para que serve?'. Uma função social é justamente a contribuição que uma instituição oferece para a coesão e a sobrevivência da sociedade."
+        },
+        {
+            text: "Segundo a perspectiva funcionalista, uma greve no transporte público afeta apenas os passageiros que utilizam esse serviço, sem impacto sobre outras esferas da vida social.",
+            correct: false,
+            justification: "Sob a ótica funcionalista, nenhuma ação é isolada. Uma greve no transporte público afeta hospitais, abastecimento de supermercados, frequência escolar e produtividade de escritórios. Esses efeitos em cadeia são chamados de disfunções."
+        },
+        {
+            text: "Funções manifestas são aquelas não intencionais e não declaradas de uma instituição social, como afastar jovens do desemprego por meio da escola.",
+            correct: false,
+            justification: "Funções manifestas são as intencionais e declaradas (ex.: a escola forma cidadãos). As funções latentes são as não intencionais (ex.: a escola afasta jovens do desemprego). A afirmativa inverteu os conceitos."
+        },
+        {
+            text: "A solidariedade mecânica é característica de sociedades modernas, industrializadas e urbanas, onde os indivíduos são especializados e interdependentes.",
+            correct: false,
+            justification: "A solidariedade mecânica é predominante em sociedades tradicionais, de pequeno porte, onde os indivíduos são muito semelhantes entre si (mesmos valores, crenças, ofícios). A coesão vem da consciência coletiva forte. Já a solidariedade orgânica é característica das sociedades modernas."
+        },
+        {
+            text: "Na solidariedade orgânica, o direito é restitutivo, ou seja, busca reparar danos e restaurar relações, em vez de apenas punir severamente quem desvia das normas.",
+            correct: true,
+            justification: "Nas sociedades de solidariedade orgânica (modernas), o direito é restitutivo: busca reparar danos e restaurar relações. Já nas sociedades de solidariedade mecânica (tradicionais), o direito é repressivo, com punições severas para quem desvia."
+        },
+        {
+            text: "Durkheim chamou de 'anomia' o estado de ausência de regras claras, no qual os indivíduos se sentem perdidos e desintegrados, podendo ocorrer durante crises econômicas ou transformações sociais profundas.",
+            correct: true,
+            justification: "A anomia é justamente esse estado de enfraquecimento ou ausência de normas sociais claras. Crises econômicas, desemprego e desigualdades extremas podem gerar anomia, situação na qual os indivíduos perdem referências coletivas e se sentem desorientados."
+        },
+        {
+            text: "O funcionalismo é uma abordagem que valoriza exclusivamente as funções manifestas das instituições, desconsiderando as funções latentes por serem irrelevantes para a análise social.",
+            correct: false,
+            justification: "Pelo contrário: o olhar funcionalista valoriza tanto as funções manifestas quanto as latentes. Ambas são importantes para compreender o papel que uma instituição desempenha na vida coletiva."
+        },
+        {
+            text: "Sob a perspectiva funcionalista, o despejo de resíduos tóxicos em um rio por uma fábrica é um exemplo de disfunção, pois compromete o saneamento, a saúde, a pesca e o turismo, desequilibrando o sistema social.",
+            correct: true,
+            justification: "Disfunções são perturbações que ameaçam o equilíbrio do sistema. A poluição de um rio compromete múltiplas funções sociais (saneamento, saúde pública, sustento de famílias, lazer), gerando um efeito em cadeia que desarmoniza o sistema social, econômico e ambiental."
+        },
+        {
+            text: "Segundo Durkheim, nas sociedades de solidariedade orgânica, a coesão social surge da interdependência entre indivíduos especializados: cada um precisa do que o outro produz.",
+            correct: true,
+            justification: "Nas sociedades modernas (solidariedade orgânica), os indivíduos são diferentes e especializados (médico, engenheiro, motorista). A coesão não vem da semelhança, mas da interdependência: cada um depende do trabalho e dos serviços dos outros para sobreviver."
+        },
+        {
+            text: "Uma das críticas ao funcionalismo é que ele tende a justificar o existente, podendo levar à aceitação de desigualdades ou violências como 'necessárias' para a manutenção da ordem social.",
+            correct: true,
+            justification: "Ao enfatizar a função positiva de cada instituição para a ordem social, o funcionalismo pode cair na armadilha de justificar desigualdades, exploração ou violências como elementos 'funcionais'. Nem tudo que existe tem uma função positiva ou desejável."
+        },
+        {
+            text: "O modelo funcionalista é igualmente eficaz para explicar tanto mudanças sociais graduais quanto revoluções, rupturas ou transformações radicais na sociedade.",
+            correct: false,
+            justification: "Esta é uma das principais críticas ao funcionalismo: o modelo é mais adequado para descrever equilíbrios e adaptações lentas do que para compreender revoluções, rupturas ou transformações radicais. Ele tende a ter dificuldade em explicar mudanças bruscas."
+        },
+        {
+            text: "No exemplo do agronegócio de larga escala, a produção de alimentos e a geração de empregos são funções manifestas, enquanto o desmatamento e a contaminação de aquíferos por agrotóxicos são disfunções socioambientais.",
+            correct: true,
+            justification: "A função manifesta do agronegócio é produzir alimentos, gerar divisas e empregos (intencional e declarada). As disfunções socioambientais incluem desmatamento, conflitos por terras, contaminação de aquíferos e redução da biodiversidade — impactos que ameaçam o equilíbrio do sistema."
+        },
+        {
+            text: "A abordagem funcionalista valoriza os conflitos de classe, raça e gênero como motores da história, tratando as divergências como elementos centrais para a transformação social.",
+            correct: false,
+            justification: "Esta é outra crítica ao funcionalismo: ele tende a ter uma visão consensual da sociedade, subestimando os conflitos de classe, raça e gênero. A abordagem trata divergências como 'desvios' a serem corrigidos, em vez de motores da história."
+        },
+        {
+            text: "Apesar de suas limitações, o funcionalismo continua sendo uma ferramenta analítica valiosa para avaliar como uma alteração em um ponto da cadeia produtiva ou ambiental produz efeitos em cadeia sobre os demais elos da vida social.",
+            correct: true,
+            justification: "Mesmo com as críticas (justificação do existente, dificuldade com mudanças bruscas, visão consensual), o funcionalismo permanece útil. Sua ênfase na interdependência permite analisar como problemas ambientais se transformam em problemas econômicos e sociais, exigindo novas regulações."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const capaScreen = document.getElementById('capaScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const questionImage = document.getElementById('questionImage');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .start-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `<strong>Afirmação ${currentIndex+1}:</strong> ${q.text}`;
+        questionImage.style.display = 'none';
+        questionImage.innerHTML = '';
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                if ((btn.getAttribute('data-value') === 'true' && selected === true) ||
+                    (btn.getAttribute('data-value') === 'false' && selected === false)) {
+                    btn.classList.add('selected');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === questions[currentIndex].correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br><strong>Justificativa:</strong> ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selectedBtn = Array.from(btns).find(btn => btn.getAttribute('data-value') === value);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você domina o pensamento de Durkheim. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Revise os conceitos que errou e tente novamente.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas dá para melhorar. Releia os slides sobre funcionalismo.";
+        else mensagem = "📚 Que tal revisar o conteúdo? Leia com calma e depois refaça o quiz.";
+
+        const resultadoHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        resultContent.innerHTML = resultadoHTML;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    startQuizBtn.addEventListener('click', () => {
+        capaScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    setFontSize(16);
+</script>
+</body>
+</html>

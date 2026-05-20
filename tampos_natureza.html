@@ -597,11 +597,20 @@
             nextBtn.disabled = (currentPage === totalPages - 1);
             stopReading();
             if (pageContent.scrollTop) pageContent.scrollTop = 0;
+            // Aplica o tamanho de fonte atual às tabelas após carregar nova página
+            applyFontSize();
         }
 
         function applyFontSize() {
             const size = fontSizes[fontSizeIndex] + 'px';
             pageContent.style.fontSize = size;
+            
+            // ***** MODIFICAÇÃO: Aplica tamanho de fonte também às tabelas *****
+            const tables = pageContent.querySelectorAll('.table-slide table, .table-slide th, .table-slide td');
+            tables.forEach(table => {
+                table.style.fontSize = size;
+            });
+            
             fontMinus.disabled = (fontSizeIndex === 0);
             fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
         }

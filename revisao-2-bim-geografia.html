@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Sustentabilidade e Agenda Ambiental · 30 questões (V/F)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f0f4f1;
+            color: #1a3b2f;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #cde0d6;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0a3b2c;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2d6a4f;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #e9f0ec;
+            border: 1px solid #bdd9cd;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn:hover { background: #d4e4dc; }
+        .opt-btn.selected { background: #1b6b4c; color: white; border-color: #1b6b4c; }
+        .opt-btn.correct-show { background: #2b7d4e; color: white; border-color: #2b7d4e; }
+        .opt-btn.wrong-show { background: #c73e3e; color: white; border-color: #c73e3e; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d9f0e3; border-left: 6px solid #2b7d4e; }
+        .feedback.wrong { background: #fce4e4; border-left: 6px solid #c73e3e; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #e9f0ec; border: 1px solid #bdd9cd; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1b6b4c; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e0ede6; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #ecf6f1; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1b6b4c; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        .hidden { display: none; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌍 Os desafios da sustentabilidade e a agenda ambiental</div>
+        <div class="sub">Capítulo 2 – 30 afirmações para julgar VERDADEIRO ou FALSO</div>
+        <div class="progress" id="progressText">Questão 1 de 30</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback hidden" id="feedbackArea"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 30 QUESTÕES (Verdadeiro/Falso) ===================
+    // Baseadas no Capítulo 2: "Os desafios da sustentabilidade e a agenda ambiental" (páginas 48 a 72)
+    const questions = [
+        // --- Bloco 1: Matriz energética e impactos (págs. 48-53) ---
+        {
+            text: "A queima de carvão mineral em termelétricas libera gases de efeito estufa e exige desmatamento para a extração do minério.",
+            correct: true,
+            justification: "O carvão mineral é um combustível fóssil. Sua queima libera CO₂ e outros poluentes, e sua extração em minas a céu aberto geralmente exige desmatamento."
+        },
+        {
+            text: "As usinas hidrelétricas são consideradas fontes de energia isentas de qualquer impacto ambiental ou social, pois utilizam água, um recurso renovável.",
+            correct: false,
+            justification: "Embora renováveis, as hidrelétricas exigem inundação de grandes áreas, deslocamento de populações e alteração de ecossistemas fluviais."
+        },
+        {
+            text: "No Brasil, o setor de transportes e o setor industrial são os maiores consumidores de energia, com participação de 33% e 32%, respectivamente, em 2022.",
+            correct: true,
+            justification: "Segundo o Balanço Energético Nacional de 2022, transportes e indústria lideram o consumo de energia no país."
+        },
+        {
+            text: "As fontes renováveis (como etanol e carvão vegetal) representaram 47,4% da oferta de energia no Brasil em 2022.",
+            correct: true,
+            justification: "Dados oficiais indicam que as fontes renováveis responderam por 47,4% da oferta interna de energia no Brasil naquele ano."
+        },
+        // --- Bloco 2: Petróleo, gás natural e pré-sal (págs. 50-56) ---
+        {
+            text: "Em 2021, os três maiores produtores mundiais de petróleo eram Estados Unidos, Arábia Saudita e Rússia.",
+            correct: true,
+            justification: "Dados da British Petroleum (BP Statistical Review) confirmam esses três países como os maiores produtores de petróleo em 2021."
+        },
+        {
+            text: "A camada de sal do pré-sal brasileiro formou-se durante o processo de separação dos continentes americano e africano há milhões de anos.",
+            correct: true,
+            justification: "A formação da camada de sal está diretamente associada à abertura do Oceano Atlântico e à separação dos dois continentes."
+        },
+        {
+            text: "Em 2022, menos de 30% do petróleo produzido no Brasil foi extraído da camada pré-sal.",
+            correct: false,
+            justification: "Na verdade, mais de 70% do petróleo brasileiro em 2022 veio da camada pré-sal, principalmente da Bacia de Santos."
+        },
+        {
+            text: "O gasoduto Bolívia-Brasil, em operação desde 1999, permitiu a ampliação do uso do gás natural no parque gerador elétrico brasileiro.",
+            correct: true,
+            justification: "O gasoduto viabilizou a importação de gás natural da Bolívia, expandindo as termelétricas a gás no Brasil."
+        },
+        // --- Bloco 3: Energia nuclear e fontes renováveis (págs. 51, 57) ---
+        {
+            text: "Os rejeitos radioativos das usinas nucleares permanecem perigosos por milhares de anos e são armazenados em contêineres, muitos lançados no fundo do mar.",
+            correct: true,
+            justification: "O lixo atômico de usinas nucleares mantém radioatividade por milhares de anos. Grande parte é acondicionada em contêineres e descartada no fundo do mar."
+        },
+        {
+            text: "A energia nuclear é a principal fonte de geração de eletricidade no Brasil, respondendo por mais de 60% da matriz elétrica.",
+            correct: false,
+            justification: "A energia nuclear responde por apenas cerca de 1% da eletricidade brasileira. A hidrelétrica lidera com mais de 60%."
+        },
+        {
+            text: "A instalação de parques eólicos e solares no Nordeste brasileiro tem gerado conflitos com comunidades tradicionais devido à ocupação de grandes extensões de terra.",
+            correct: true,
+            justification: "Pescadores, quilombolas e indígenas têm sido afetados pela instalação de usinas eólicas e solares que ocupam áreas tradicionalmente usadas por essas comunidades."
+        },
+        // --- Bloco 4: Efeito estufa e aquecimento global (págs. 58-59) ---
+        {
+            text: "O efeito estufa é um fenômeno natural indispensável para manter a temperatura da Terra em níveis adequados à vida.",
+            correct: true,
+            justification: "Sem o efeito estufa natural, a temperatura média do planeta seria cerca de 30°C mais baixa, inviabilizando a vida como a conhecemos."
+        },
+        {
+            text: "A intensificação artificial do efeito estufa, causada pela queima de combustíveis fósseis e pelo desmatamento, provoca o aquecimento global.",
+            correct: true,
+            justification: "O aumento da concentração de gases como CO₂ e metano na atmosfera retém mais calor, elevando a temperatura média do planeta."
+        },
+        {
+            text: "O metano (CH₄) não é considerado um gás de efeito estufa, pois não retém calor na atmosfera.",
+            correct: false,
+            justification: "O metano é um potente gás de efeito estufa, com capacidade de retenção de calor muito superior à do CO₂."
+        },
+        // --- Bloco 5: Camada de ozônio e Protocolo de Montreal (pág. 59) ---
+        {
+            text: "A rarefação da camada de ozônio (buraco na camada de ozônio) é causada por gases chamados clorofluorcarbonetos (CFCs), usados em aerossóis e refrigeração.",
+            correct: true,
+            justification: "Os CFCs liberam cloro na estratosfera, que destrói moléculas de ozônio, reduzindo a proteção contra raios ultravioleta."
+        },
+        {
+            text: "O Protocolo de Montreal (1987) proibiu a emissão de CFCs, sendo considerado um dos acordos ambientais mais bem-sucedidos da história.",
+            correct: true,
+            justification: "O tratado conseguiu reduzir drasticamente a produção e o consumo de CFCs, e a camada de ozônio vem se recuperando gradualmente."
+        },
+        // --- Bloco 6: Transgênicos e agroecologia (págs. 60-61) ---
+        {
+            text: "Os organismos geneticamente modificados (transgênicos) podem trazer benefícios como maior valor nutricional, mas também riscos como perda de biodiversidade.",
+            correct: true,
+            justification: "Há vantagens (resistência a pragas, maior teor de nutrientes) e desvantagens (contaminação genética, dependência de grandes empresas)."
+        },
+        {
+            text: "A agricultura orgânica, alinhada aos princípios da agroecologia, utiliza fertilizantes sintéticos e agrotóxicos para aumentar a produtividade.",
+            correct: false,
+            justification: "A agricultura orgânica exclui o uso de fertilizantes sintéticos e agrotóxicos, buscando o equilíbrio com processos naturais do solo."
+        },
+        // --- Bloco 7: Clube de Roma e desenvolvimento sustentável (págs. 62-63) ---
+        {
+            text: "O relatório 'Os limites do crescimento', divulgado pelo Clube de Roma em 1971, alertava para o risco de colapso ambiental devido ao crescimento exponencial em um planeta de recursos finitos.",
+            correct: true,
+            justification: "O documento foi um marco ao mostrar que os recursos naturais são finitos e que o crescimento ilimitado poderia levar ao colapso do sistema Terra."
+        },
+        {
+            text: "Os Objetivos de Desenvolvimento Sustentável (ODS) são um plano de ação global com 17 objetivos e 169 metas a serem atingidas até 2030.",
+            correct: true,
+            justification: "Os ODS foram adotados por 193 países-membros da ONU em 2015 e abrangem dimensões sociais, econômicas e ambientais."
+        },
+        // --- Bloco 8: Protocolo de Kyoto e Acordo de Paris (pág. 68) ---
+        {
+            text: "O Protocolo de Kyoto (1997) fixou metas de redução de emissões de gases de efeito estufa apenas para países desenvolvidos.",
+            correct: true,
+            justification: "O acordo estabelecia redução de 5% em relação aos níveis de 1990 para países industrializados, sem metas obrigatórias para os em desenvolvimento."
+        },
+        {
+            text: "O Acordo de Paris (2015) estabeleceu como meta conter o aumento da temperatura média global abaixo de 2°C em relação aos níveis pré-industriais.",
+            correct: true,
+            justification: "O tratado climático global tem como objetivo central limitar o aquecimento a bem abaixo de 2°C, preferencialmente a 1,5°C."
+        },
+        // --- Bloco 9: Políticas ambientais no Brasil (págs. 70-72) ---
+        {
+            text: "O Estudo de Impacto Ambiental (EIA) e o Relatório de Impacto no Meio Ambiente (RIMA) são obrigatórios no Brasil desde 1986 para grandes projetos.",
+            correct: true,
+            justification: "A Resolução CONAMA 001/1986 tornou obrigatório o EIA/RIMA para atividades modificadoras do meio ambiente."
+        },
+        {
+            text: "O Novo Código Florestal (2012) não protege margens de rios nem topos de morros, permitindo o desmatamento nessas áreas.",
+            correct: false,
+            justification: "O Código define Áreas de Preservação Permanente (APPs) que incluem margens de rios e topos de morros, proibindo o desmatamento."
+        },
+        {
+            text: "A Política Nacional de Resíduos Sólidos (Lei 12.305/2010) estabelece a responsabilidade exclusiva do governo federal pela gestão do lixo.",
+            correct: false,
+            justification: "A lei prevê responsabilidade compartilhada entre governo (fiscalização e infraestrutura), população (separação e descarte) e setor privado (coleta de produtos fabricados)."
+        },
+        // --- Bloco 10: Desmatamento e biodiversidade (págs. 70, 22-23) ---
+        {
+            text: "Entre 1970 e 2020, o desmatamento da Floresta Amazônica foi oito vezes maior do que todo o desflorestamento ocorrido nos períodos colonial e imperial.",
+            correct: true,
+            justification: "Dados do INPE indicam que a devastação acelerada na segunda metade do século XX superou em oito vezes o desmatamento acumulado até 1900."
+        },
+        {
+            text: "A Convenção sobre Diversidade Biológica (Eco-92) reconhece o direito soberano dos Estados sobre seus recursos biológicos.",
+            correct: true,
+            justification: "O tratado estabelece que cada país tem soberania sobre sua biodiversidade, mas deve facilitar o acesso em troca de transferência de tecnologia e recursos financeiros."
+        },
+        // --- Bloco 11: Recursos renováveis e não renováveis (págs. 49-50) ---
+        {
+            text: "O carvão mineral é considerado um recurso natural renovável porque pode ser reposto em curto prazo pela natureza.",
+            correct: false,
+            justification: "O carvão mineral é não renovável, pois sua formação leva milhões de anos e as reservas atuais são finitas."
+        },
+        {
+            text: "O lítio, utilizado em baterias de carros elétricos, tem sua extração concentrada em áreas desérticas do Chile, Argentina e Austrália, gerando impactos ambientais significativos.",
+            correct: true,
+            justification: "A mineração de lítio consome grandes volumes de água em regiões áridas, afetando ecossistemas e comunidades locais."
+        },
+        // --- Bloco 12: Poluição dos oceanos e correntes (págs. 57-58) ---
+        {
+            text: "Os movimentos verticais de águas profundas, chamados de ressurgência ou afloramento, trazem nutrientes que favorecem a proliferação da vida marinha.",
+            correct: true,
+            justification: "As correntes de ressurgência levam nutrientes do fundo à superfície, criando áreas de alta produtividade pesqueira."
+        },
+        {
+            text: "A maior parte dos resíduos plásticos nos oceanos se concentra exclusivamente nas praias e zonas costeiras rasas, não afetando o alto-mar.",
+            correct: false,
+            justification: "Os plásticos convergem para os centros dos giros oceânicos (vórtices), formando enormes ilhas de lixo em alto-mar."
+        },
+        // --- Bloco 13: Energia solar e eólica no Brasil (págs. 57, 10) ---
+        {
+            text: "Entre 2021 e 2022, a energia solar foi a fonte renovável que mais cresceu no Brasil, com aumento de capacidade instalada de 79,8%.",
+            correct: true,
+            justification: "Dados do Balanço Energético Nacional mostram que a energia solar liderou o crescimento entre as renováveis no período."
+        },
+        {
+            text: "Os parques eólicos e solares no Brasil são instalados exclusivamente em áreas urbanas, evitando conflitos com comunidades tradicionais.",
+            correct: false,
+            justification: "A instalação ocorre majoritariamente em áreas rurais e litorâneas, gerando conflitos com pescadores, quilombolas, indígenas e agricultores familiares."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize - 2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize + 2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else if (document.exitFullscreen) document.exitFullscreen();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerText = `${currentIndex + 1}. ${q.text}`;
+        feedbackArea.classList.add('hidden');
+        feedbackArea.className = 'feedback hidden';
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+        });
+
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                const btnVal = btn.getAttribute('data-value') === 'true';
+                if (btnVal === selected) {
+                    btn.classList.add('selected');
+                }
+                if (btnVal === q.correct) {
+                    btn.classList.add('correct-show');
+                } else if (btnVal === selected && selected !== q.correct) {
+                    btn.classList.add('wrong-show');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.classList.remove('hidden');
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex + 1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        if (userAnswers[currentIndex] !== null) return;
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('hidden', 'correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.innerHTML = explanation;
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+            const btnVal = btn.getAttribute('data-value') === 'true';
+            if (btnVal === isTrue) btn.classList.add('selected');
+            if (btnVal === q.correct) btn.classList.add('correct-show');
+            else if (btnVal === isTrue && !isCorrect) btn.classList.add('wrong-show');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total - 1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você domina os conceitos de sustentabilidade, matriz energética e políticas ambientais. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Revise os tópicos que errou e tente novamente.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas dá para melhorar. Releia o capítulo 2 do livro didático.";
+        else mensagem = "📚 Que tal revisar o capítulo? Leia com calma e depois refaça o quiz.";
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} de ${total} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros} de ${total}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>

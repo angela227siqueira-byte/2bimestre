@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Filosofia 1º Ano · 30 questões (V/F)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* TELA DE INTRODUÇÃO */
+        .intro-screen { text-align: center; }
+        .intro-icon { font-size: 4rem; margin-bottom: 15px; }
+        .intro-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 8px;
+        }
+        .intro-subtitle {
+            font-size: 1.2rem;
+            color: #2a5e4a;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .intro-discipline {
+            font-size: 1rem;
+            color: #3a6e5a;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .intro-teacher {
+            font-size: 1rem;
+            color: #1a5e44;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .intro-info {
+            background: #f0f7f3;
+            border-radius: 20px;
+            padding: 18px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #1a3a2a;
+        }
+        .intro-info p { margin-bottom: 8px; }
+        .intro-info strong { color: #0f3d2e; }
+        .start-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 60px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+            width: 100%;
+            max-width: 350px;
+        }
+        .start-btn:hover { background: #144b36; transform: scale(1.02); }
+
+        /* TELA DO QUIZ */
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn:hover { background: #dce8e0; }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .opt-btn.correct-show { background: #28a745; color: white; border-color: #28a745; }
+        .opt-btn.wrong-show { background: #dc3545; color: white; border-color: #dc3545; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+
+        /* TELA DE RESULTADO */
+        .result-screen { text-align: center; }
+        .result-screen h2 { color: #0f3d2e; margin-bottom: 15px; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px; font-weight: bold;
+        }
+        .home-btn {
+            background: #ecf3ef; color: #1a5e44; border: 1px solid #b3cdbf; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 8px; font-weight: bold;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        .hidden { display: none; }
+
+        @media (max-width: 640px) {
+            .quiz-wrapper { max-width: 100%; padding: 15px; }
+            .opt-btn { padding: 8px 16px; }
+            .intro-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- ==================== TELA DE INTRODUÇÃO ==================== -->
+    <div id="introScreen" class="screen active intro-screen">
+        <div class="intro-icon">📜</div>
+        <div class="intro-title">Filosofia · 1º Ano</div>
+        <div class="intro-subtitle">Quiz de Verdadeiro ou Falso</div>
+        <div class="intro-discipline">Pré-socráticos · Filosofia Clássica · Medieval · Moderna · Contemporânea</div>
+        <div class="intro-teacher">Professora Angela Siqueira</div>
+        <div class="intro-info">
+            <p><strong>📋 Instruções:</strong></p>
+            <p>• São <strong>30 afirmações</strong> para você julgar como <strong>Verdadeiro</strong> ou <strong>Falso</strong>.</p>
+            <p>• Após responder, uma justificativa será exibida explicando o gabarito.</p>
+            <p>• Você pode navegar entre as questões usando os botões <strong>Anterior</strong> e <strong>Próxima</strong>.</p>
+            <p>• Ao final, veja sua pontuação, nota e estatísticas de desempenho.</p>
+            <p>• Use os botões <strong>A−</strong> e <strong>A+</strong> para ajustar o tamanho da fonte.</p>
+            <p><strong>🎯 Bons estudos!</strong></p>
+        </div>
+        <button class="start-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+    </div>
+
+    <!-- ==================== TELA DO QUIZ ==================== -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📜 Filosofia · 1º Ano</div>
+        <div class="sub">30 afirmações sobre pré-socráticos, filosofia clássica, medieval, moderna e contemporânea</div>
+        <div class="progress" id="progressText">Questão 1 de 30</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback hidden" id="feedbackArea"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- ==================== TELA DE RESULTADO ==================== -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+        <button class="home-btn" id="homeBtn">🏠 Voltar ao início</button>
+    </div>
+</div>
+
+<script>
+    // =================== 30 QUESTÕES (Verdadeiro/Falso) - FILOSOFIA 1º ANO ===================
+    const questions = [
+        // --- BLOCO 1: Pré-socráticos e origem da filosofia ---
+        {
+            text: "Os primeiros filósofos, conhecidos como pré-socráticos, buscavam explicações sobrenaturais e míticas para a origem do universo.",
+            correct: false,
+            justification: "Eles romperam com as explicações míticas e buscavam um princípio racional (arché) para todas as coisas, investigando a natureza de forma fundamentada."
+        },
+        {
+            text: "A principal investigação dos filósofos pré-socráticos era descobrir o princípio original (arché) que constitui e fundamenta toda a realidade.",
+            correct: true,
+            justification: "A busca pela arché — o elemento primordial que permanece constante por trás das mudanças — era a questão central desses pensadores."
+        },
+        {
+            text: "Tales de Mileto, considerado o primeiro filósofo, identificou a água como o princípio fundamental de todas as coisas.",
+            correct: true,
+            justification: "Para Tales, a água era a origem de tudo, pois está ligada à vida, à germinação e também à decomposição, sendo o elemento primordial."
+        },
+        {
+            text: "O surgimento da filosofia representou uma ruptura com o pensamento mítico, pois passou a exigir argumentação racional e definição rigorosa de conceitos em vez de explicações baseadas no sobrenatural.",
+            correct: true,
+            justification: "A filosofia abandonou a lógica do mito e fundou o conhecimento na razão, na coerência interna e na abstração conceitual."
+        },
+        {
+            text: "Heráclito defendia que o ser é imóvel e único, e que toda percepção de mudança e transformação no mundo não passa de uma ilusão dos sentidos.",
+            correct: false,
+            justification: "Heráclito é exatamente o filósofo do devir: para ele, tudo está em constante movimento e transformação, e a realidade é constituída pela luta de forças opostas."
+        },
+        // --- BLOCO 2: Filosofia clássica (Aristóteles) ---
+        {
+            text: "Aristóteles explicava o movimento e a mudança na natureza por meio da 'causa final', afirmando que todos os seres possuem um fim ou propósito para o qual tendem.",
+            correct: true,
+            justification: "Para Aristóteles, a natureza é teleológica: cada ser tem um telos (fim) que orienta seu desenvolvimento, e é esse fim que explica os meios."
+        },
+        // --- BLOCO 3: Filosofia medieval ---
+        {
+            text: "O filósofo islâmico Averróis formulou a 'doutrina da dupla verdade', segundo a qual a verdade alcançada pela razão filosófica pode não coincidir com a verdade da fé teológica.",
+            correct: true,
+            justification: "Averróis defendia que razão e fé são âmbitos distintos, e que o filósofo não deve subordinar seu trabalho científico aos dogmas religiosos."
+        },
+        {
+            text: "Guilherme de Ockham propôs o princípio da economia, conhecido como 'Navalha de Ockham', que recomenda multiplicar os pressupostos teóricos para garantir a certeza do conhecimento.",
+            correct: false,
+            justification: "O princípio da economia afirma exatamente o oposto: devem-se eliminar pressupostos inúteis e desnecessários, simplificando a explicação sempre que possível."
+        },
+        // --- BLOCO 4: Revolução científica ---
+        {
+            text: "A teoria heliocêntrica defendida por Copérnico e Galileu afirmava que a Terra é o centro imóvel do universo, ao redor do qual giram o Sol e os demais astros.",
+            correct: false,
+            justification: "A teoria heliocêntrica deslocou a Terra do centro, afirmando que o Sol ocupa essa posição central e que a Terra gira ao seu redor, o que representou uma revolução na cosmologia."
+        },
+        {
+            text: "Galileu Galilei foi um dos pioneiros do método experimental, introduzindo a descrição quantitativa e a aplicação da matemática para comprovar leis da física.",
+            correct: true,
+            justification: "Galileu rompeu com a física especulativa ao valorizar a experimentação e a linguagem matemática como instrumentos para descrever rigorosamente os fenômenos naturais."
+        },
+        // --- BLOCO 5: Racionalismo e Descartes ---
+        {
+            text: "Descartes, com a famosa proposição 'Penso, logo existo', encontrou na própria atividade de pensar a primeira verdade indubitável para reconstruir o conhecimento.",
+            correct: true,
+            justification: "O cogito cartesiano é a intuição imediata de que, enquanto pensa, o sujeito não pode duvidar de sua própria existência como ser pensante (res cogitans)."
+        },
+        // --- BLOCO 6: Espinosa ---
+        {
+            text: "Espinosa concebia Deus como uma entidade transcendente, completamente separada da natureza, que criou o universo como um ato livre de sua vontade.",
+            correct: false,
+            justification: "Para Espinosa, Deus é causa imanente, e a expressão 'Deus sive natura' significa que Deus e a natureza são a mesma substância, não havendo separação entre eles."
+        },
+        // --- BLOCO 7: Bacon ---
+        {
+            text: "Francis Bacon chamou de 'ídolos da tribo' os preconceitos que circulam na comunidade como verdades estabelecidas e que raramente são questionados.",
+            correct: true,
+            justification: "Os ídolos da tribo são ilusões coletivas, herdadas da própria comunidade, que distorcem a percepção da realidade e dificultam o conhecimento objetivo."
+        },
+        // --- BLOCO 8: Empirismo britânico ---
+        {
+            text: "John Locke comparava a mente humana ao nascer a uma 'tabula rasa', um papel em branco, defendendo que todo conhecimento começa a partir da experiência sensível.",
+            correct: true,
+            justification: "Locke rejeitava a existência de ideias inatas e afirmava que a consciência é inicialmente vazia, sendo preenchida exclusivamente pela sensação e pela reflexão sobre os dados dos sentidos."
+        },
+        {
+            text: "David Hume afirmou que a relação de causa e efeito é uma conexão logicamente necessária e demonstrável pela razão, independentemente da experiência.",
+            correct: false,
+            justification: "Hume foi cético quanto à causalidade: para ele, a ideia de causa é fruto do hábito e da probabilidade, não havendo uma demonstração racional absoluta dessa conexão."
+        },
+        {
+            text: "Para Hume, a 'crença' é um tipo de conhecimento que não pode ser comprovado racionalmente de forma absoluta, mas que é aceito com base no hábito e na repetição de experiências semelhantes.",
+            correct: true,
+            justification: "Hume explica que a crença surge do costume: ao vermos eventos sucessivos repetidamente, criamos uma expectativa que, embora não logicamente necessária, fundamenta nossa conduta."
+        },
+        // --- BLOCO 9: Kant ---
+        {
+            text: "Segundo Kant, a 'coisa em si' (noumeno) é a realidade tal como a percebemos através das formas da sensibilidade e das categorias do entendimento humano.",
+            correct: false,
+            justification: "O noumeno é exatamente o que está além da nossa percepção; é a realidade independente do sujeito que, para Kant, podemos pensar, mas jamais conhecer efetivamente."
+        },
+        // --- BLOCO 10: Escola de Frankfurt ---
+        {
+            text: "O conceito de 'razão instrumental', desenvolvido pela Escola de Frankfurt, refere-se a uma racionalidade voltada para a eficácia, a produtividade e o controle técnico sobre a natureza.",
+            correct: true,
+            justification: "A razão instrumental age para dominar e transformar a natureza, priorizando a utilidade e o desempenho, em contraposição a uma razão voltada para fins humanos e solidários."
+        },
+        {
+            text: "Jürgen Habermas propôs o 'agir comunicativo', uma forma de interação orientada para o entendimento mútuo e o consenso, livre de dominação e coerção.",
+            correct: true,
+            justification: "Habermas contrapõe o agir instrumental ao agir comunicativo, que se baseia no diálogo e na busca cooperativa de acordos que visem ao bem-estar coletivo."
+        },
+        // --- BLOCO 11: Ética ambiental ---
+        {
+            text: "O princípio da precaução estabelece que medidas protetivas ao meio ambiente só podem ser tomadas quando houver certeza científica absoluta sobre os riscos envolvidos.",
+            correct: false,
+            justification: "O princípio da precaução permite agir preventivamente mesmo diante de incertezas científicas, justamente para evitar danos graves ou irreversíveis antes que seja tarde demais."
+        },
+        {
+            text: "Para Hans Jonas, o princípio da responsabilidade restringe-se exclusivamente às relações entre seres humanos, não se estendendo à preservação da natureza ou das futuras gerações.",
+            correct: false,
+            justification: "Jonas amplia a responsabilidade ética para incluir a preocupação com o futuro da humanidade e também com o futuro da natureza, sendo um marco da ética ambiental."
+        },
+        {
+            text: "Isabelle Stengers, ao usar o termo 'Gaia', descreve a Terra como um sistema vivo que reage às agressões humanas de forma possivelmente imprevisível e indiferente a quem as provocou.",
+            correct: true,
+            justification: "Gaia é apresentada como um ser dotado de historicidade própria, cujas respostas às ofensas ambientais não se pautam por justiça ou culpa, podendo ser desproporcionais."
+        },
+        {
+            text: "Bruno Latour propôs a 'cosmopolítica' como uma forma de fazer política que inclua também os atores não humanos, formando um coletivo que integre humanos e extra-humanos.",
+            correct: true,
+            justification: "Latour busca superar a divisão entre sociedade e natureza, defendendo uma política que reconheça a agência de todos os seres no que chama de 'coletivo'."
+        },
+        // --- BLOCO 12: Revisão geral e inter-relações ---
+        {
+            text: "A filosofia nascente na Grécia Antiga manteve a mesma estrutura narrativa das epopeias, apenas substituindo os deuses por conceitos abstratos, sem alterar a forma de argumentação.",
+            correct: false,
+            justification: "A ruptura com o mito foi também formal: a filosofia abandonou a poesia épica e adotou a prosa, a argumentação lógica e a definição conceitual como métodos próprios."
+        },
+        {
+            text: "A doutrina da dupla verdade de Averróis significava que a filosofia é um conhecimento inferior e deve se submeter integralmente aos dogmas da fé religiosa.",
+            correct: false,
+            justification: "Ao contrário, Averróis defendia a autonomia da razão filosófica, afirmando que ela não precisa se submeter à teologia, pois são esferas distintas e igualmente válidas."
+        },
+        {
+            text: "O método experimental de Galileu representou uma ruptura com a física aristotélica ao exigir que as hipóteses fossem testadas por meio de experimentos e expressas em linguagem matemática.",
+            correct: true,
+            justification: "A grande inovação de Galileu foi unir matemática e experimentação, criando um método que fundamenta a ciência moderna e se afasta da especulação puramente conceitual."
+        },
+        {
+            text: "Espinosa e Descartes concordavam que Deus e a natureza são substâncias completamente distintas e separadas, sendo a natureza uma criação externa de Deus.",
+            correct: false,
+            justification: "Espinosa se opõe a Descartes nesse ponto: para ele, Deus é a substância única que se confunde com a natureza (Deus sive natura), não havendo dualidade substancial."
+        },
+        {
+            text: "Tanto Locke quanto Hume pertencem à tradição empirista, que sustenta que a origem do conhecimento está na experiência sensível, e não em ideias inatas.",
+            correct: true,
+            justification: "O empirismo britânico, de Locke a Hume, tem como tese central que a mente é inicialmente vazia e que todo conteúdo mental deriva, direta ou indiretamente, dos sentidos."
+        },
+        {
+            text: "Kant concorda com os empiristas que todo conhecimento vem exclusivamente da experiência, negando qualquer papel a estruturas inatas da mente na organização do saber.",
+            correct: false,
+            justification: "Kant supera a dicotomia racionalismo-empirismo ao afirmar que, embora o conhecimento comece com a experiência, ele só é possível graças a formas a priori da sensibilidade e do entendimento."
+        },
+        {
+            text: "A razão instrumental, criticada pela Escola de Frankfurt, é aquela que se preocupa prioritariamente com os fins humanos, como a sabedoria, a justiça e o bem viver coletivo.",
+            correct: false,
+            justification: "A crítica frankfurtiana recai exatamente sobre a razão que abandona os fins humanos em favor da mera eficácia técnica, da produtividade e do controle, reduzindo tudo à lógica do desempenho."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const introScreen = document.getElementById('introScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const homeBtn = document.getElementById('homeBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Função para mostrar uma tela específica
+    function showScreen(screen) {
+        [introScreen, quizScreen, resultScreen].forEach(s => s.classList.remove('active'));
+        screen.classList.add('active');
+    }
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .home-btn, .start-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize - 2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize + 2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else if (document.exitFullscreen) document.exitFullscreen();
+    });
+
+    // Iniciar quiz
+    startQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(quizScreen);
+        renderQuestion();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerText = `${currentIndex + 1}. ${q.text}`;
+        feedbackArea.classList.add('hidden');
+        feedbackArea.className = 'feedback hidden';
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+        });
+
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                const btnVal = btn.getAttribute('data-value') === 'true';
+                if (btnVal === selected) {
+                    btn.classList.add('selected');
+                }
+                if (btnVal === q.correct) {
+                    btn.classList.add('correct-show');
+                } else if (btnVal === selected && selected !== q.correct) {
+                    btn.classList.add('wrong-show');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.classList.remove('hidden');
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex + 1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        if (userAnswers[currentIndex] !== null) return;
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('hidden', 'correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.innerHTML = explanation;
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+            const btnVal = btn.getAttribute('data-value') === 'true';
+            if (btnVal === isTrue) btn.classList.add('selected');
+            if (btnVal === q.correct) btn.classList.add('correct-show');
+            else if (btnVal === isTrue && !isCorrect) btn.classList.add('wrong-show');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total - 1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você demonstra grande domínio dos conceitos filosóficos. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Revise os tópicos que geraram dúvida e aprofunde os estudos.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas ainda há espaço para melhorar. Releia os conteúdos sobre os filósofos e correntes estudados.";
+        else mensagem = "📚 É uma boa hora para retomar a leitura. A filosofia exige paciência e reflexão; refaça o quiz com calma.";
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} de ${total} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros} de ${total}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        showScreen(resultScreen);
+    }
+
+    // Refazer quiz
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(quizScreen);
+        renderQuestion();
+    });
+
+    // Voltar ao início
+    homeBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(introScreen);
+    });
+
+    // Inicialização
+    showScreen(introScreen);
+    setFontSize(16);
+</script>
+</body>
+</html>

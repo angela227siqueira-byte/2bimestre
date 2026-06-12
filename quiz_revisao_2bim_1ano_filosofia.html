@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Sociologia 1º Ano · 30 questões (V/F)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* TELA DE INTRODUÇÃO */
+        .intro-screen { text-align: center; }
+        .intro-icon { font-size: 4rem; margin-bottom: 15px; }
+        .intro-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 8px;
+        }
+        .intro-subtitle {
+            font-size: 1.2rem;
+            color: #2a5e4a;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .intro-discipline {
+            font-size: 1rem;
+            color: #3a6e5a;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+        .intro-teacher {
+            font-size: 1rem;
+            color: #1a5e44;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .intro-info {
+            background: #f0f7f3;
+            border-radius: 20px;
+            padding: 18px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #1a3a2a;
+        }
+        .intro-info p { margin-bottom: 8px; }
+        .intro-info strong { color: #0f3d2e; }
+        .start-btn {
+            background: #1a5e44;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 60px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+            width: 100%;
+            max-width: 350px;
+        }
+        .start-btn:hover { background: #144b36; transform: scale(1.02); }
+
+        /* TELA DO QUIZ */
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn:hover { background: #dce8e0; }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .opt-btn.correct-show { background: #28a745; color: white; border-color: #28a745; }
+        .opt-btn.wrong-show { background: #dc3545; color: white; border-color: #dc3545; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+
+        /* TELA DE RESULTADO */
+        .result-screen { text-align: center; }
+        .result-screen h2 { color: #0f3d2e; margin-bottom: 15px; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px; font-weight: bold;
+        }
+        .home-btn {
+            background: #ecf3ef; color: #1a5e44; border: 1px solid #b3cdbf; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 8px; font-weight: bold;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        .hidden { display: none; }
+
+        @media (max-width: 640px) {
+            .quiz-wrapper { max-width: 100%; padding: 15px; }
+            .opt-btn { padding: 8px 16px; }
+            .intro-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- ==================== TELA DE INTRODUÇÃO ==================== -->
+    <div id="introScreen" class="screen active intro-screen">
+        <div class="intro-icon">🏭</div>
+        <div class="intro-title">Sociologia · 1º Ano</div>
+        <div class="intro-subtitle">Quiz de Verdadeiro ou Falso</div>
+        <div class="intro-discipline">Trabalho · Capitalismo · Divisão Social · Desigualdades · Mundo Contemporâneo</div>
+        <div class="intro-teacher">Professora Angela Siqueira</div>
+        <div class="intro-info">
+            <p><strong>📋 Instruções:</strong></p>
+            <p>• São <strong>30 afirmações</strong> para você julgar como <strong>Verdadeiro</strong> ou <strong>Falso</strong>.</p>
+            <p>• Após responder, uma justificativa será exibida explicando o gabarito.</p>
+            <p>• Você pode navegar entre as questões usando os botões <strong>Anterior</strong> e <strong>Próxima</strong>.</p>
+            <p>• Ao final, veja sua pontuação, nota e estatísticas de desempenho.</p>
+            <p>• Use os botões <strong>A−</strong> e <strong>A+</strong> para ajustar o tamanho da fonte.</p>
+            <p><strong>🎯 Bons estudos!</strong></p>
+        </div>
+        <button class="start-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+    </div>
+
+    <!-- ==================== TELA DO QUIZ ==================== -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🏭 Sociologia · 1º Ano</div>
+        <div class="sub">30 afirmações sobre trabalho, capitalismo, divisão social e desigualdades no mundo contemporâneo</div>
+        <div class="progress" id="progressText">Questão 1 de 30</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea">
+                <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+                <button class="opt-btn" data-value="false">❌ Falso</button>
+            </div>
+            <div class="feedback hidden" id="feedbackArea"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- ==================== TELA DE RESULTADO ==================== -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+        <button class="home-btn" id="homeBtn">🏠 Voltar ao início</button>
+    </div>
+</div>
+
+<script>
+    // =================== 30 QUESTÕES (Verdadeiro/Falso) - SOCIOLOGIA 1º ANO ===================
+    const questions = [
+        // --- BLOCO 1: Transformação do trabalho na modernidade ---
+        {
+            text: "Com o surgimento do capitalismo, o trabalho deixou de ser visto como uma atividade negativa e passou a ser considerado algo capaz de dignificar o ser humano.",
+            correct: true,
+            justification: "Na modernidade capitalista, o trabalho adquiriu um novo significado, sendo valorizado como fonte de dignidade, embora a exploração contradissesse esse ideal."
+        },
+        {
+            text: "A palavra 'trabalho' tem origem no termo latino tripalium, que designava um antigo instrumento de tortura, revelando o valor negativo atribuído às atividades laborais na Antiguidade.",
+            correct: true,
+            justification: "A etimologia da palavra remete a um instrumento de tortura, indicando que, historicamente, o trabalho braçal era socialmente desvalorizado."
+        },
+        {
+            text: "A Reforma Trabalhista de 2017 e a ampliação da terceirização no Brasil fortaleceram os vínculos duradouros entre trabalhadores e empresas, garantindo mais estabilidade e direitos.",
+            correct: false,
+            justification: "Ao contrário, essas medidas geraram fragilização dos vínculos trabalhistas, incerteza e reduziram a resistência a projetos de precarização do trabalho."
+        },
+        {
+            text: "O conceito de 'exército industrial de reserva' refere-se a uma grande quantidade de pessoas desempregadas que, por necessidade, ficam mais propensas a aceitar postos precários de trabalho.",
+            correct: true,
+            justification: "A existência desse contingente de desempregados pressiona os salários para baixo e torna os trabalhadores mais vulneráveis à aceitação de condições precárias."
+        },
+        // --- BLOCO 2: Karl Marx e a mais-valia ---
+        {
+            text: "Para Karl Marx, a mais-valia é a diferença entre o valor que o trabalhador gera com seu trabalho e o salário que efetivamente recebe, sendo apropriada pelo burguês.",
+            correct: true,
+            justification: "A mais-valia é o excedente de valor produzido pelo trabalhador que não é remunerado, constituindo o mecanismo central de exploração no capitalismo segundo Marx."
+        },
+        {
+            text: "A mais-valia relativa ocorre quando o burguês simplesmente aumenta a jornada de trabalho do operário para além do limite legal, sem alterar a tecnologia ou a organização do trabalho.",
+            correct: false,
+            justification: "Essa é a definição de mais-valia absoluta. A mais-valia relativa deriva da incorporação de tecnologia ou de melhor organização que aumenta a produtividade no mesmo período."
+        },
+        {
+            text: "Marx afirmava que o aumento da produtividade no capitalismo melhora automaticamente a vida dos trabalhadores, reduzindo a desigualdade social.",
+            correct: false,
+            justification: "Marx argumentava o oposto: o aumento da produtividade não melhora a vida dos trabalhadores, mas produz um processo de pauperização e aprofunda a desigualdade social."
+        },
+        {
+            text: "A pauperização da sociedade, para Marx, é uma das consequências do modo de produção capitalista e está diretamente ligada à geração de desigualdade social.",
+            correct: true,
+            justification: "Marx observava que, sob o capitalismo, a riqueza se concentra nas mãos da burguesia enquanto a classe trabalhadora empobrece, gerando desigualdade."
+        },
+        // --- BLOCO 3: Max Weber e a ética protestante ---
+        {
+            text: "Max Weber destacou a influência da ética protestante na formação do espírito do capitalismo moderno, argumentando que certos valores religiosos favoreceram o desenvolvimento capitalista.",
+            correct: true,
+            justification: "Weber mostrou como a ética protestante, especialmente calvinista, valorizava o trabalho metódico e a ascese, criando condições culturais para o capitalismo."
+        },
+        {
+            text: "Para os protestantes analisados por Weber, a ociosidade e a preguiça eram consideradas os principais pecados, enquanto o trabalho metódico era visto como uma vocação e um dever religioso.",
+            correct: true,
+            justification: "A ética protestante condenava o ócio e exaltava o trabalho disciplinado como forma de glorificar a Deus e como possível sinal de salvação."
+        },
+        {
+            text: "O conceito de 'ascese' em Weber refere-se à busca pelo prazer e pelo consumo de luxo como demonstração de riqueza e bênção divina.",
+            correct: false,
+            justification: "A ascese é exatamente o oposto: a negação do prazer e a imposição de uma conduta metódica e rigorosa como sinal de predestinação à salvação."
+        },
+        {
+            text: "Weber defendia que o sucesso profissional no capitalismo não tinha qualquer relação com a fé religiosa ou com a ideia de salvação da alma.",
+            correct: false,
+            justification: "Weber mostrou que, para os protestantes, o sucesso profissional era interpretado como um sinal de predestinação à salvação, ligando fé e trabalho."
+        },
+        // --- BLOCO 4: Émile Durkheim e a divisão do trabalho ---
+        {
+            text: "Durkheim chamou de 'solidariedade orgânica' o tipo de coesão social baseada na interdependência entre os indivíduos, característica das sociedades com intensa divisão do trabalho.",
+            correct: true,
+            justification: "Na solidariedade orgânica, a diversidade de funções torna os indivíduos mutuamente dependentes, gerando coesão pela complementaridade, e não por uma consciência coletiva rígida."
+        },
+        {
+            text: "Durkheim definiu 'anomia' como a ausência ou redução da capacidade do tecido social de estabelecer regras e regular a conduta dos indivíduos.",
+            correct: true,
+            justification: "A anomia é um estado de desregramento social que ocorre quando as normas se enfraquecem, deixando os indivíduos sem orientação coletiva adequada."
+        },
+        {
+            text: "Para Durkheim, a divisão do trabalho sempre produz anomia, pois quanto mais complexa a sociedade, mais os laços sociais se dissolvem.",
+            correct: false,
+            justification: "Durkheim não via a anomia como inevitável. A divisão do trabalho pode gerar solidariedade orgânica; a anomia ocorre apenas quando as relações não são adequadamente reguladas."
+        },
+        {
+            text: "A solidariedade orgânica é típica de sociedades pré-capitalistas, onde a consciência coletiva rígida garante a coesão social.",
+            correct: false,
+            justification: "Essa descrição corresponde à solidariedade mecânica. A solidariedade orgânica é característica das sociedades modernas com alta divisão do trabalho."
+        },
+        // --- BLOCO 5: Fordismo, toyotismo e desemprego ---
+        {
+            text: "O sistema taylorista-fordista de produção caracterizava-se pela produção em massa, padronização, linha de montagem e controle rigoroso do tempo e dos movimentos do trabalhador.",
+            correct: true,
+            justification: "O fordismo combinou os princípios de Taylor com a linha de montagem em série, fixando os trabalhadores em postos específicos para maximizar a produção em massa."
+        },
+        {
+            text: "O toyotismo é um sistema flexível de produção, baseado no just in time e na produção sob demanda, que exige um trabalhador polivalente e multifuncional.",
+            correct: true,
+            justification: "Diferentemente do fordismo rígido, o toyotismo introduziu flexibilidade, estoques mínimos e um trabalhador capaz de desempenhar múltiplas funções."
+        },
+        {
+            text: "O desemprego conjuntural é resultado de profundas transformações na estrutura do mercado de trabalho que impedem a absorção da mão de obra por longos períodos.",
+            correct: false,
+            justification: "Essa é a definição de desemprego estrutural. O desemprego conjuntural está relacionado a fases pontuais de recessão econômica e é temporário."
+        },
+        {
+            text: "O desemprego estrutural está ligado a mudanças profundas e duradouras na economia, como a automação e a reestruturação produtiva, que eliminam postos de trabalho permanentemente.",
+            correct: true,
+            justification: "Diferente do desemprego conjuntural (cíclico), o estrutural decorre de transformações que alteram a própria configuração do mercado de trabalho."
+        },
+        // --- BLOCO 6: Sindicalismo, precariado e economia solidária ---
+        {
+            text: "No Brasil, a taxa de sindicalização vem aumentando ano a ano, e o poder de representação dos sindicatos se fortaleceu com as novas formas de trabalho.",
+            correct: false,
+            justification: "A tendência é oposta: a taxa de sindicalização vem caindo, e o poder de representação dos sindicatos tem diminuído diante da precarização e das novas formas de trabalho."
+        },
+        {
+            text: "O sociólogo Guy Standing cunhou o termo 'precariado' para designar uma nova classe social de trabalhadores em empregos altamente instáveis e com salários muito baixos.",
+            correct: true,
+            justification: "O precariado emerge no capitalismo contemporâneo como uma camada de trabalhadores desprovidos das proteções trabalhistas tradicionais, vivendo em condições de extrema insegurança."
+        },
+        {
+            text: "A Economia Solidária é um modo de produção baseado na autogestão, na cooperação e na propriedade coletiva dos meios de produção, contrapondo-se à lógica capitalista tradicional.",
+            correct: true,
+            justification: "Nesse modelo, todos os integrantes são simultaneamente trabalhadores e donos, com foco em relações justas e bem-estar coletivo, e não na maximização do lucro."
+        },
+        // --- BLOCO 7: Divisão sexual e racial do trabalho ---
+        {
+            text: "Segundo Kergoat e Hirata, a divisão sexual do trabalho se rege por dois princípios: o da separação (existem trabalhos de homens e de mulheres) e o da hierarquia (o trabalho masculino 'vale' mais).",
+            correct: true,
+            justification: "As sociólogas demonstram que esses dois princípios estruturam a divisão sexual do trabalho, mantendo desigualdades persistentes entre homens e mulheres no mercado."
+        },
+        {
+            text: "De acordo com dados do DIEESE, as mulheres brasileiras recebiam, em média, salário igual ao dos homens, graças à rigorosa aplicação da legislação trabalhista.",
+            correct: false,
+            justification: "Os dados mostram que as mulheres recebiam, em média, 21% menos que os homens, e as mulheres negras eram as mais afetadas pela desigualdade salarial."
+        },
+        {
+            text: "No mercado de trabalho brasileiro, a população negra ganhava, em média, 39,2% a menos do que a população não negra, evidenciando a reprodução das desigualdades raciais.",
+            correct: true,
+            justification: "Esse dado comprova que as desigualdades raciais persistem no mercado de trabalho, com as mulheres negras acumulando as piores condições por sofrerem discriminação de raça e gênero."
+        },
+        {
+            text: "As mulheres negras são as menos afetadas pelas desigualdades no mercado de trabalho, pois as políticas de inclusão eliminaram completamente as diferenças salariais e de oportunidades.",
+            correct: false,
+            justification: "Ao contrário, as mulheres negras acumulam desigualdades de raça e de gênero, sendo o grupo mais afetado pelas piores condições de trabalho e remuneração."
+        },
+        // --- BLOCO 8: Revisão geral e inter-relações ---
+        {
+            text: "A ética protestante analisada por Weber valorizava o consumo de luxo e a ostentação da riqueza como prova da bênção divina sobre o fiel.",
+            correct: false,
+            justification: "Weber mostrou que a ética protestante condenava o luxo e a ostentação, valorizando o trabalho metódico, a poupança e a conduta ascética como sinais de predestinação."
+        },
+        {
+            text: "Tanto Marx quanto Weber buscaram compreender as origens e o funcionamento do capitalismo, mas enquanto Marx enfatizou os fatores econômicos e a exploração, Weber destacou os fatores culturais e religiosos.",
+            correct: true,
+            justification: "Marx focou na luta de classes e na exploração econômica, enquanto Weber investigou como valores religiosos (a ética protestante) influenciaram o surgimento do espírito capitalista."
+        },
+        {
+            text: "Durkheim, Marx e Weber concordavam que o capitalismo moderno eliminou completamente todas as formas de solidariedade e coesão social, tornando a anomia um estado permanente.",
+            correct: false,
+            justification: "Esses autores tinham visões diferentes. Durkheim via a possibilidade de solidariedade orgânica; Marx enxergava o conflito de classes; e Weber analisava a racionalização. Nenhum afirmava que a anomia era permanente."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const introScreen = document.getElementById('introScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const homeBtn = document.getElementById('homeBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Função para mostrar uma tela específica
+    function showScreen(screen) {
+        [introScreen, quizScreen, resultScreen].forEach(s => s.classList.remove('active'));
+        screen.classList.add('active');
+    }
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .home-btn, .start-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize - 2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize + 2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else if (document.exitFullscreen) document.exitFullscreen();
+    });
+
+    // Iniciar quiz
+    startQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(quizScreen);
+        renderQuestion();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerText = `${currentIndex + 1}. ${q.text}`;
+        feedbackArea.classList.add('hidden');
+        feedbackArea.className = 'feedback hidden';
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+        });
+
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                const btnVal = btn.getAttribute('data-value') === 'true';
+                if (btnVal === selected) {
+                    btn.classList.add('selected');
+                }
+                if (btnVal === q.correct) {
+                    btn.classList.add('correct-show');
+                } else if (btnVal === selected && selected !== q.correct) {
+                    btn.classList.add('wrong-show');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.classList.remove('hidden');
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex + 1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        if (userAnswers[currentIndex] !== null) return;
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('hidden', 'correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.innerHTML = explanation;
+
+        const btns = optionsArea.querySelectorAll('.opt-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('selected', 'correct-show', 'wrong-show');
+            const btnVal = btn.getAttribute('data-value') === 'true';
+            if (btnVal === isTrue) btn.classList.add('selected');
+            if (btnVal === q.correct) btn.classList.add('correct-show');
+            else if (btnVal === isTrue && !isCorrect) btn.classList.add('wrong-show');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total - 1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você demonstra grande domínio dos conceitos sociológicos sobre trabalho e capitalismo. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Revise os tópicos que geraram dúvida e aprofunde os estudos.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas ainda há espaço para melhorar. Releia os conteúdos sobre Marx, Weber, Durkheim e as transformações do mundo do trabalho.";
+        else mensagem = "📚 É uma boa hora para retomar a leitura. A sociologia exige atenção aos conceitos; refaça o quiz com calma.";
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} de ${total} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros} de ${total}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        showScreen(resultScreen);
+    }
+
+    // Refazer quiz
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(quizScreen);
+        renderQuestion();
+    });
+
+    // Voltar ao início
+    homeBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        showScreen(introScreen);
+    });
+
+    // Inicialização
+    showScreen(introScreen);
+    setFontSize(16);
+</script>
+</body>
+</html>

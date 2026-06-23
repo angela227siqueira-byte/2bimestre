@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Geografia · 40 Questões (V ou F)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 0; line-height: 1.4; }
+        
+        /* Layout Flex para Mídia e Texto */
+        .question-container { display: flex; flex-direction: row; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+        .question-container .text-part { flex: 1; min-width: 55%; }
+        .question-container .media-part { width: 35%; min-width: 150px; text-align: center; }
+        
+        /* Imagens e SVGs */
+        .question-container .media-part img { max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #dde5e0; }
+        .question-container .media-part svg { max-width: 100%; height: auto; border-radius: 8px; background: #f8faf9; padding: 10px; border: 1px solid #dde5e0; }
+        .question-container .media-part .img-caption { font-size: 0.85rem; color: #5a7a6a; margin-top: 6px; font-style: italic; }
+        
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+
+        /* Capa */
+        .capa { text-align: center; padding: 40px 20px; }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 15px; color: #1a5e44; }
+        .capa .subtitulo { font-size: 20px; color: #2a5e4a; margin-bottom: 10px; }
+        .capa .autora { font-size: 18px; color: #5a7a6a; margin-top: 30px; font-style: italic; }
+        .capa .info-quiz { font-size: 16px; color: #7a9a8a; margin-top: 40px; border-top: 1px solid #dde5e0; padding-top: 25px; }
+        .start-btn { background: #1a5e44; color: white; border: none; padding: 16px 40px; border-radius: 60px; font-size: 1.3rem; cursor: pointer; margin-top: 25px; font-weight: bold; }
+        .start-btn:hover { background: #154e3a; }
+
+        /* Responsividade para celular */
+        @media (max-width: 640px) {
+            .quiz-wrapper { max-width: 100%; padding: 15px; }
+            .opt-btn { padding: 8px 16px; font-size: 1rem; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 22px; }
+            .question-container { flex-direction: column !important; }
+            .question-container .media-part { width: 100%; order: -1; }
+            .question-container .text-part { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <!-- TELA DE CAPA -->
+    <div id="capaScreen" class="screen active">
+        <div class="capa">
+            <h1>📝 Quiz de Revisão</h1>
+            <h2>Matriz Energética, Geologia, Meio Ambiente<br>e Geopolítica</h2>
+            <p class="subtitulo">Capítulos 1, 2 e 7 — 40 Afirmações</p>
+            <p class="autora">Adaptado de Angela Siqueira</p>
+            <p class="info-quiz">40 afirmações para julgar VERDADEIRO ou FALSO<br>Inclui mapas, imagens e gráficos para análise</p>
+            <button class="start-btn" id="startQuizBtn">▶ Iniciar Quiz</button>
+        </div>
+    </div>
+
+    <!-- TELA DO QUIZ -->
+    <div id="quizScreen" class="screen">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌍 Geografia Geral e do Brasil</div>
+        <div class="sub">40 afirmações para julgar VERDADEIRO ou FALSO</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea" class="question-container">
+            <div class="text-part" id="questionText"></div>
+            <div class="media-part" id="questionImage" style="display: none;"></div>
+        </div>
+        <div class="options" id="optionsArea">
+            <button class="opt-btn" data-value="true">✅ Verdadeiro</button>
+            <button class="opt-btn" data-value="false">❌ Falso</button>
+        </div>
+        <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADO -->
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (V ou F) ===================
+    const questions = [
+        // Questão 1 (GRÁFICO - Esquerda)
+        {
+            text: "Em 2022, a participação das fontes renováveis na oferta interna de energia no Brasil foi inferior a 40%.",
+            correct: false,
+            justification: "O gráfico indica que as fontes renováveis representaram 47,4% da oferta interna de energia em 2022, valor superior a 40%.",
+            graphic: `<svg viewBox="0 0 100 100" width="100%" height="auto" style="max-width:200px;"><circle cx="50" cy="50" r="40" stroke="#e0e0e0" stroke-width="15" fill="none"/><circle cx="50" cy="50" r="40" stroke="#1a5e44" stroke-width="15" fill="none" stroke-dasharray="251.3" stroke-dashoffset="132.2" transform="rotate(-90 50 50)"/><text x="50" y="55" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a5e44">47,4%</text><text x="50" y="75" text-anchor="middle" font-size="10" fill="#333">Fontes Renováveis</text></svg>`,
+            graphicCaption: "Participação das renováveis (2022)"
+        },
+        // Questão 2 (GRÁFICO - Esquerda)
+        {
+            text: "A energia hidráulica é a principal fonte de geração de eletricidade no Brasil, respondendo por aproximadamente 61,9% da oferta.",
+            correct: true,
+            justification: "Segundo o Balanço Energético Nacional de 2023, a energia hidráulica representou 61,9% da oferta de energia elétrica no Brasil.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><rect x="20" y="50" width="155" height="30" fill="#1a5e44"/><text x="25" y="40" font-size="14">Hidráulica</text><text x="180" y="72" font-weight="bold" font-size="16">61,9%</text></svg>`,
+            graphicCaption: "Participação da hidráulica na matriz elétrica"
+        },
+        // Questão 3 (IMAGEM - Direita)
+        {
+            text: "As 'águas de ressurgência' são movimentos verticais ascendentes de águas profundas, ricas em nutrientes, que favorecem a vida marinha.",
+            correct: true,
+            justification: "As águas de ressurgência (ou afloramento) trazem à superfície águas profundas ricas em nutrientes, fundamentais para a produtividade biológica dos oceanos.",
+            image: "https://cdn.shortpixel.ai/spai/w_810+q_glossy+ret_img+to_webp/https://www.gislounge.com/wp-content/uploads/2021/12/great-ocean-conveyor-belt-nasa.png",
+            imageCaption: "Circulação oceânica e ressurgência"
+        },
+        // Questão 4 (IMAGEM - Direita)
+        {
+            text: "Até 2020, o desmatamento da Floresta Amazônica foi oito vezes maior do que o ocorrido nos períodos colonial e imperial.",
+            correct: true,
+            justification: "O desmatamento de 730 mil km² até 2020 na Amazônia é oito vezes maior que o desmatamento acumulado nos períodos colonial e imperial.",
+            image: "https://infograficos.estadao.com.br/politica/terra-bruta/img/extras/evolucao-do-desmatamento/desmatamento.gif",
+            imageCaption: "Evolução do desmatamento na Amazônia"
+        },
+        // Questão 5
+        {
+            text: "A Política Nacional de Resíduos Sólidos (Lei 12.305/2010) prevê uma gestão de lixo baseada na responsabilidade compartilhada entre governo, população e setor privado.",
+            correct: true,
+            justification: "A PNRS estabelece o princípio da responsabilidade compartilhada pelo ciclo de vida dos produtos, envolvendo todos os atores da sociedade."
+        },
+        // Questão 6
+        {
+            text: "A expressão 'Antropoceno' é uma nova época geológica oficialmente reconhecida pela União Internacional das Ciências Geológicas (UICG) para substituir o Holoceno.",
+            correct: false,
+            justification: "Embora o termo Antropoceno seja amplamente utilizado por especialistas, ele ainda não foi oficialmente ratificado pela UICG como uma época geológica formal."
+        },
+        // Questão 7
+        {
+            text: "Os dobramentos modernos, como os Andes, são formações geológicas recentes da Era Cenozoica, o que explica suas elevadas altitudes devido ao pouco desgaste erosivo.",
+            correct: true,
+            justification: "Os dobramentos modernos, como a Cordilheira dos Andes e o Himalaia, formaram-se na Era Cenozoica e, por serem recentes, ainda sofreram pouca erosão."
+        },
+        // Questão 8 (IMAGEM - Direita)
+        {
+            text: "A Cordilheira dos Andes, localizada na América do Sul, é um exemplo de dobramento moderno formado durante a Era Cenozoica pela movimentação das placas tectônicas.",
+            correct: true,
+            justification: "Os Andes são um dobramento moderno resultante da colisão da placa de Nazca com a placa Sul-Americana ao longo da Era Cenozoica.",
+            image: "https://files.passeidireto.com/9424a566-3b76-4a6a-94b9-bcd16af603ca/bg1.png",
+            imageCaption: "Cordilheira dos Andes"
+        },
+        // Questão 9
+        {
+            text: "Os crátons são estruturas geológicas que apresentam intensa atividade tectônica e são formados por rochas jovens e recentes.",
+            correct: false,
+            justification: "Os crátons são compostos por rochas antigas e apresentam atividade tectônica estável, sendo divididos em escudos cristalinos e plataformas."
+        },
+        // Questão 10
+        {
+            text: "O Éon Fanerozoico é o mais recente da escala do tempo geológico, correspondendo aos últimos 542 milhões de anos.",
+            correct: true,
+            justification: "O Fanerozoico é o éon mais recente, compreendendo os períodos em que a vida se diversificou, enquanto o mais antigo é o Hadeano."
+        },
+        // Questão 11 (GRÁFICO - Esquerda)
+        {
+            text: "A construção de hidrelétricas na Amazônia, como Balbina e Belo Monte, contribui para a emissão de metano (CH4) devido à decomposição da vegetação alagada.",
+            correct: true,
+            justification: "O alagamento de grandes áreas florestadas para a formação dos reservatórios leva à decomposição da matéria orgânica, gerando metano, um potente gás de efeito estufa.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><rect x="20" y="70" width="40" height="30" fill="#dc3545"/><text x="25" y="65" font-size="12">Balbina</text><rect x="80" y="40" width="40" height="60" fill="#dc3545"/><text x="85" y="35" font-size="12">B. Monte</text><text x="20" y="115" font-size="12">Emissões de CH4 (t/ano)</text></svg>`,
+            graphicCaption: "Emissões de metano em hidrelétricas"
+        },
+        // Questão 12
+        {
+            text: "A Usina de Belo Monte, localizada no Rio Xingu, é um exemplo de aproveitamento sustentável pois não afetou a biodiversidade local.",
+            correct: false,
+            justification: "Belo Monte deslocou mais de 20 mil pessoas, inundou 518 km² e causou danos extensos à biodiversidade do Rio Xingu."
+        },
+        // Questão 13 (GRÁFICO - Esquerda)
+        {
+            text: "O Brasil é totalmente autossuficiente em energia, não dependendo da importação de nenhum combustível fóssil como petróleo ou gás natural.",
+            correct: false,
+            justification: "Em 2021, cerca de 18% da energia consumida no Brasil foi importada, principalmente gás natural, carvão mineral e óleo diesel.",
+            graphic: `<svg viewBox="0 0 120 120" width="100%" height="auto" style="max-width:120px;"><circle cx="60" cy="60" r="50" fill="#e0e0e0"/><path d="M 60 60 L 60 10 A 50 50 0 0 1 110 60 Z" fill="#1a5e44"/><text x="60" y="25" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">18%</text><text x="60" y="115" text-anchor="middle" font-size="12">Energia Importada</text></svg>`,
+            graphicCaption: "Importação de energia (2021)"
+        },
+        // Questão 14
+        {
+            text: "O setor de transportes é um dos maiores consumidores de energia no Brasil, sendo abastecido majoritariamente por derivados de petróleo e, em menor escala, por biocombustíveis.",
+            correct: true,
+            justification: "Historicamente, o setor de transportes é o maior consumidor de energia no país, com forte uso de derivados de petróleo e etanol."
+        },
+        // Questão 15
+        {
+            text: "O potencial hidrelétrico brasileiro é limitado à Região Hidrográfica do Paraná, onde estão as principais usinas do país, como Itaipu e Belo Monte.",
+            correct: false,
+            justification: "Belo Monte fica na Bacia Hidrográfica Amazônica (Rio Xingu), enquanto Itaipu está na Bacia do Paraná. O potencial é amplo e se estende por várias regiões."
+        },
+        // Questão 16 (GRÁFICO - Esquerda)
+        {
+            text: "A participação conjunta das fontes eólica e solar na matriz elétrica brasileira é superior a 20% da oferta total.",
+            correct: false,
+            justification: "Segundo o Balanço Energético, a energia eólica representa 2,3% e a solar 1,2% da matriz, totalizando menos de 5%.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><rect x="20" y="70" width="30" height="30" fill="#ffc107"/><text x="25" y="65" font-size="12">Eólica</text><rect x="70" y="90" width="30" height="10" fill="#17a2b8"/><text x="75" y="85" font-size="12">Solar</text><text x="20" y="115" font-size="12">Participação: 2,3% e 1,2%</text></svg>`,
+            graphicCaption: "Participação de Eólica e Solar"
+        },
+        // Questão 17
+        {
+            text: "A obra 'Geografia Política', publicada em 1897 pelo alemão Friedrich Ratzel, marcou o início da investigação científica das relações entre Estado, poder e território.",
+            correct: true,
+            justification: "Ratzel foi o primeiro a tratar o Estado e o território como objetos de estudo da Geografia, inaugurando a Geografia Política."
+        },
+        // Questão 18 (IMAGEM - Direita)
+        {
+            text: "O Tratado de Tordesilhas (1494) definiu as fronteiras atuais do Brasil, estabelecendo os limites territoriais que permanecem até hoje.",
+            correct: false,
+            justification: "O Tratado de Tordesilhas dividiu as terras entre Portugal e Espanha, mas foi o Tratado de Madri (1750) que delineou os contornos aproximados do território brasileiro atual.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Brazil_states.gif",
+            imageCaption: "Evolução dos limites do Brasil"
+        },
+        // Questão 19
+        {
+            text: "Na organização confederativa do Estado, as entidades políticas preservam sua soberania e podem se separar legalmente.",
+            correct: true,
+            justification: "Na confederação, o contrato político pode ser legalmente desfeito, permitindo a separação das partes constitutivas."
+        },
+        // Questão 20 (IMAGEM - Direita)
+        {
+            text: "A fragmentação da Iugoslávia, no final da década de 1980, está relacionada ao fim dos regimes comunistas do Leste Europeu e ao fortalecimento de movimentos nacionalistas.",
+            correct: true,
+            justification: "A desagregação dos regimes comunistas na Europa e a morte de Tito culminaram em movimentos separatistas, formando países como Eslovênia, Croácia e Sérvia.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Breakup_of_Yugoslavia-TRY2.gif/330px-Breakup_of_Yugoslavia-TRY2.gif",
+            imageCaption: "Fragmentação da Iugoslávia (1991-1992)"
+        },
+        // Questão 21
+        {
+            text: "A Conferência de Berlim (1884-1885), que definiu princípios para a partilha da África, contou com a participação ativa de líderes africanos na definição das fronteiras.",
+            correct: false,
+            justification: "A Conferência de Berlim reuniu apenas representantes europeus e dos EUA. Nenhum líder africano foi convidado, e as fronteiras foram traçadas desconsiderando as realidades étnicas e culturais locais."
+        },
+        // Questão 22
+        {
+            text: "A independência da Índia, concedida pelo Parlamento britânico em 1947, resultou na bipartição do território, formando a União Indiana e o Paquistão.",
+            correct: true,
+            justification: "A Índia foi dividida em 1947 de acordo com os interesses da Liga Muçulmana, formando a União Indiana (maioria hindu) e o Paquistão (maioria muçulmana)."
+        },
+        // Questão 23 (IMAGEM - Direita)
+        {
+            text: "A partilha da África durante a Conferência de Berlim foi feita exclusivamente por potências europeias, sem considerar as divisões étnicas e culturais do continente.",
+            correct: true,
+            justification: "As potências europeias dividiram a África na Conferência de Berlim sem representação africana, o que gerou conflitos internos após a descolonização.",
+            image: "https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2Ftiwiy44bmrn61.png",
+            imageCaption: "Partilha da África (Conferência de Berlim)"
+        },
+        // Questão 24 (IMAGEM - Direita)
+        {
+            text: "A partilha da Índia em 1947, que dividiu o território entre a União Indiana e o Paquistão, contrariou o desejo de Mahatma Gandhi, que defendia a unidade do país.",
+            correct: true,
+            justification: "O Parlamento britânico realizou a bipartição. Gandhi era partidário da manutenção da unidade indiana, mas foi assassinado em 1948, um ano após a partilha.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Partition_of_India_1947_en.svg/960px-Partition_of_India_1947_en.svg.png",
+            imageCaption: "Bipartição da Índia (1947)"
+        },
+        // Questão 25
+        {
+            text: "A projeção cartográfica de Peters, publicada em 1973, é uma projeção cilíndrica equivalente que conserva a proporção entre as áreas dos continentes, refletindo uma crítica ao colonialismo.",
+            correct: true,
+            justification: "A projeção de Peters é equivalente (conserva áreas) e espelha preocupações com a crítica ao colonialismo e às desigualdades entre as nações."
+        },
+        // Questão 26
+        {
+            text: "A península da Crimeia, onde está localizado o porto de Sebastopol, foi anexada pela Rússia em 2014, um processo não reconhecido pela maior parte da comunidade internacional.",
+            correct: true,
+            justification: "A Crimeia foi cedida à Ucrânia em 1954. A anexação russa de 2014 não é reconhecida internacionalmente pela maioria dos países."
+        },
+        // Questão 27
+        {
+            text: "Após a Primeira Guerra Mundial (1914-1918), o Império Austro-Húngaro foi completamente desagregado, dando origem a países como Áustria, Hungria e Tchecoslováquia.",
+            correct: true,
+            justification: "Com o fim da Primeira Guerra Mundial, a fragmentação do Império Austro-Húngaro originou diversos países independentes na Europa."
+        },
+        // Questão 28 (GRÁFICO - Esquerda)
+        {
+            text: "O setor de transportes é o maior consumidor de energia no Brasil, superando os setores industrial e residencial.",
+            correct: true,
+            justification: "O setor de transportes lidera o consumo de energia no país, com forte dependência de derivados de petróleo e biocombustíveis.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><rect x="20" y="50" width="120" height="50" fill="#1a5e44"/><text x="25" y="45" font-size="14" font-weight="bold">Transportes</text><text x="25" y="115" font-size="12">Maior consumidor de energia</text></svg>`,
+            graphicCaption: "Consumo de energia por setor"
+        },
+        // Questão 29
+        {
+            text: "Durante o período imperial, o Brasil era um Estado federal, ou seja, as províncias dispunham de ampla autonomia política e administrativa.",
+            correct: false,
+            justification: "No Império, o Brasil era um Estado unitário. As províncias não tinham autonomia e seus administradores eram nomeados pelo poder central. O federalismo foi instituído com a Constituição de 1891."
+        },
+        // Questão 30 (GRÁFICO - Esquerda)
+        {
+            text: "O Protocolo de Kyoto (1997) fixou a meta de redução de emissões de gases de efeito estufa em 5% em relação aos níveis de 1990 para os países desenvolvidos.",
+            correct: true,
+            justification: "O Protocolo de Kyoto estabeleceu que os países desenvolvidos deveriam reduzir suas emissões de gases de efeito estufa em 5% em média, tendo como base os níveis de 1990.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><polyline points="20,20 230,80" stroke="#dc3545" stroke-width="3" fill="none"/><text x="20" y="15" font-size="12">1990 (Base)</text><text x="185" y="90" font-size="12" fill="#dc3545">-5% em 2012</text></svg>`,
+            graphicCaption: "Meta de redução do Protocolo de Kyoto"
+        },
+        // Questão 31 (GRÁFICO - Esquerda)
+        {
+            text: "A energia hidrelétrica, por ser uma fonte renovável, é isenta de impactos climáticos, pois não emite gases de efeito estufa.",
+            correct: false,
+            justification: "Embora seja renovável, a construção de hidrelétricas em áreas florestadas pode levar à emissão de metano (CH4), um gás de efeito estufa, devido à decomposição da vegetação alagada.",
+            graphic: `<svg viewBox="0 0 250 120" width="100%" height="auto" style="max-width:250px;"><rect x="20" y="30" width="160" height="40" fill="#6c757d"/><text x="25" y="25" font-size="12">Comb. Fósseis (80%)</text><rect x="20" y="85" width="60" height="20" fill="#28a745"/><text x="25" y="80" font-size="12">Renováveis</text></svg>`,
+            graphicCaption: "Emissões de GEE por fonte"
+        },
+        // Questão 32
+        {
+            text: "'Geocomunicar' e 'geoalfabetizar' são conceitos fundamentais para capacitar a população a interpretar mapas de risco, sendo essenciais para a prevenção de desastres como as enchentes no RS em 2024.",
+            correct: true,
+            justification: "Durante as enchentes no Rio Grande do Sul, a Defesa Civil utilizou geocomunicação para alertar a população sobre áreas de risco, demonstrando a importância desses conceitos."
+        },
+        // Questão 33 (IMAGEM - Direita)
+        {
+            text: "O território correspondente ao atual estado do Acre foi adquirido pelo Brasil por meio do Tratado de Petrópolis, negociado pelo barão do Rio Branco.",
+            correct: true,
+            justification: "O barão do Rio Branco firmou o Tratado de Petrópolis com a Bolívia, por meio do qual o Brasil adquiriu o território do Acre.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Map_Bolivia_territorial_loss-en.svg/1280px-Map_Bolivia_territorial_loss-en.svg.png",
+            imageCaption: "Perdas territoriais da Bolívia"
+        },
+        // Questão 34
+        {
+            text: "A cartografia social (ou etnocartografia) é um processo participativo onde as próprias comunidades confeccionam mapas, com orientação técnica, para o reconhecimento de territórios tradicionais.",
+            correct: true,
+            justification: "A cartografia social é fundamental para a criação de reservas extrativistas na Amazônia e para a luta dos povos indígenas e tradicionais."
+        },
+        // Questão 35
+        {
+            text: "A União das Repúblicas Socialistas Soviéticas (URSS) era um Estado unitário onde as repúblicas não possuíam qualquer autonomia política ou administrativa.",
+            correct: false,
+            justification: "A URSS foi organizada formalmente como uma federação (as repúblicas tinham relativa autonomia), embora na prática o poder fosse centralizado em Moscou."
+        },
+        // Questão 36
+        {
+            text: "O rótulo 'América Latina' tem origem na ideologia francesa do panlatinismo do século XIX, que visava unir as nações de língua latina contra os anglo-saxões e germânicos.",
+            correct: true,
+            justification: "A ideia de 'América Latina' foi difundida pelos franceses para ampliar sua influência no continente, sendo uma classificação artificial que ignorava os povos ameríndios e africanos."
+        },
+        // Questão 37
+        {
+            text: "Os complexos regionais propostos pelo geógrafo Pedro Pinchas Geiger respeitam rigorosamente os limites político-administrativos dos estados brasileiros.",
+            correct: false,
+            justification: "As regiões geoeconômicas de Geiger frequentemente ultrapassam os limites dos estados, pois as características econômicas não coincidem com as fronteiras políticas."
+        },
+        // Questão 38
+        {
+            text: "Com a Proclamação da República em 1889 e a Constituição de 1891, as províncias foram transformadas em estados e o Brasil foi organizado como um Estado federal.",
+            correct: true,
+            justification: "A Constituição de 1891 estabeleceu o federalismo no Brasil, conferindo autonomia às unidades da federação, que antes eram províncias do Império unitário."
+        },
+        // Questão 39
+        {
+            text: "O Barão do Rio Branco, que ocupou o Ministério das Relações Exteriores entre 1902 e 1912, foi o responsável por definir aproximadamente um terço das fronteiras terrestres brasileiras.",
+            correct: true,
+            justification: "O Barão do Rio Branco foi o principal artífice da política externa brasileira, negociando tratados de limites com os países vizinhos, como o Tratado de Petrópolis com a Bolívia."
+        },
+        // Questão 40
+        {
+            text: "A noção política de fronteira não é um fato natural, mas uma construção humana, política e histórica, consolidada como conceito contemporâneo ao final da Idade Média.",
+            correct: true,
+            justification: "Embora elementos naturais possam ser usados como referência, a fronteira política é uma construção humana. O conceito de fronteira delimitada surgiu com os Estados modernos."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const capaScreen = document.getElementById('capaScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionArea = document.getElementById('questionArea');
+    const questionText = document.getElementById('questionText');
+    const questionImage = document.getElementById('questionImage');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Ajuste de fonte
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn, .start-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        let textHtml = `<strong>Afirmação ${currentIndex+1}:</strong> ${q.text}`;
+        let mediaHtml = '';
+
+        // Construir conteúdo de mídia (Gráfico ou Imagem)
+        if (q.graphic) {
+            mediaHtml = `${q.graphic}${q.graphicCaption ? `<p class="img-caption">${q.graphicCaption}</p>` : ''}`;
+            questionImage.innerHTML = mediaHtml;
+            questionImage.style.display = 'block';
+            // Gráfico à esquerda: Flexbox renderiza na ordem visual (Text + Media), mas quero Media (Gráfico) na esquerda.
+            // Para isso, uso flex-direction: row-reverse no container, e no HTML a ordem é Text depois Media.
+            // No estilo: .question-container tem flex-direction: row (padrão).
+            // Se for gráfico, invierto a ordem com row-reverse (Media fica esquerda, Text fica direita).
+            questionArea.style.flexDirection = 'row-reverse';
+        } else if (q.image) {
+            mediaHtml = `<img src="${q.image}" alt="${q.imageCaption || 'Imagem da questão'}">${q.imageCaption ? `<p class="img-caption">${q.imageCaption}</p>` : ''}`;
+            questionImage.innerHTML = mediaHtml;
+            questionImage.style.display = 'block';
+            // Imagem à direita: Flexbox padrão row (Text na esquerda, Media na direita).
+            questionArea.style.flexDirection = 'row';
+        } else {
+            questionImage.style.display = 'none';
+            questionImage.innerHTML = '';
+            questionArea.style.flexDirection = 'row';
+        }
+
+        questionText.innerHTML = textHtml;
+
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selected = userAnswers[currentIndex];
+        if (selected !== null) {
+            btns.forEach(btn => {
+                if ((btn.getAttribute('data-value') === 'true' && selected === true) ||
+                    (btn.getAttribute('data-value') === 'false' && selected === false)) {
+                    btn.classList.add('selected');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (selected === questions[currentIndex].correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(value) {
+        const isTrue = (value === 'true');
+        userAnswers[currentIndex] = isTrue;
+        const q = questions[currentIndex];
+        const isCorrect = (isTrue === q.correct);
+        const correctText = q.correct ? "Verdadeiro" : "Falso";
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br><strong>Justificativa:</strong> ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        const selectedBtn = Array.from(btns).find(btn => btn.getAttribute('data-value') === value);
+        if (selectedBtn) selectedBtn.classList.add('selected');
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.getAttribute('data-value'));
+    });
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) acertos++;
+            else if (userAnswers[i] !== null) erros++;
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+
+        let mensagem = "";
+        if (percentual >= 85) mensagem = "⭐ Excelente! Você domina o conteúdo. Parabéns!";
+        else if (percentual >= 70) mensagem = "👍 Muito bom! Estude os tópicos que errou e tente novamente.";
+        else if (percentual >= 50) mensagem = "📘 Bom, mas dá para melhorar. Releia as seções com mais dificuldade.";
+        else mensagem = "📚 Que tal revisar o material? Leia com calma e depois refaça o quiz.";
+
+        const resultadoHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        resultContent.innerHTML = resultadoHTML;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    // Iniciar quiz (da capa)
+    startQuizBtn.addEventListener('click', () => {
+        capaScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    // Refazer o quiz
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    setFontSize(16);
+</script>
+</body>
+</html>

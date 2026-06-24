@@ -6,116 +6,64 @@
     <title>Mapa do Brasil Interativo</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        /* (coloque o CSS que eu já te dei antes aqui - vou resumir para não alongar) */
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { margin: 0; padding: 20px; background: #e9ecef; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         #container { display: flex; flex-direction: row; background: #fff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); overflow: hidden; max-width: 1200px; width: 100%; }
-        
         #mapa-container { flex: 1; padding: 20px; background: #f8f9fa; min-height: 650px; display: flex; justify-content: center; align-items: center; position: relative; }
-        #mapa-container svg { background: #d4e9ff; border-radius: 8px; border: 1px solid #ccc; width: 100%; height: auto; display: block; }
-        
-        #painel-direito { width: 350px; padding: 25px; background: #ffffff; border-left: 2px solid #dee2e6; display: flex; flex-direction: column; gap: 15px; }
-        #painel-direito h2 { margin: 0 0 5px 0; color: #2c3e50; font-weight: 600; font-size: 1.4rem; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; }
-        
-        .placeholder { color: #6c757d; font-style: italic; text-align: center; margin-top: 40px; }
-        #mini-mapa-container { background: #f1f3f5; border-radius: 8px; padding: 10px; text-align: center; min-height: 200px; display: flex; justify-content: center; align-items: center; border: 1px dashed #adb5bd; }
-        #mini-mapa-container svg { max-width: 100%; height: auto; }
-        
-        .dados-lista { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; font-size: 0.95rem; margin-top: 5px; }
-        .dados-lista .rotulo { font-weight: 600; color: #495057; }
-        .dados-lista .valor { color: #212529; text-align: right; }
-        
+        #mapa-container svg { background: #d4e9ff; border-radius: 8px; border: 1px solid #ccc; width: 100%; height: auto; }
+        #painel-direito { width: 350px; padding: 25px; background: #fff; border-left: 2px solid #dee2e6; }
+        #painel-direito h2 { margin: 0; color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; }
         .estado-destaque { fill-opacity: 0.85 !important; stroke: #000 !important; stroke-width: 2px !important; }
         .estado-padrao { stroke: #fff; stroke-width: 0.7px; }
-        #loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: bold; color: #2c3e50; font-size: 1.2rem; }
+        #loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: bold; }
+        /* Dados do painel... mantenha o resto do CSS que você já tem */
     </style>
 </head>
 <body>
-
 <div id="container">
     <div id="mapa-container">
         <div id="mapa-brasil" style="position:relative; width:100%;">
-            <div id="loading">⏳ Carregando mapa via jsDelivr...</div>
+            <div id="loading">⏳ Carregando mapa...</div>
         </div>
     </div>
     <div id="painel-direito">
         <h2>📍 Detalhes</h2>
-        <div id="mini-mapa-container">
-            <span class="placeholder">Passe o mouse sobre um estado</span>
-        </div>
-        <div id="dados-estado">
-            <div class="placeholder" style="margin-top:0;">Selecione um estado para ver os dados</div>
-        </div>
+        <div id="mini-mapa-container"><span class="placeholder">Passe o mouse sobre um estado</span></div>
+        <div id="dados-estado"><div class="placeholder">Selecione um estado</div></div>
     </div>
 </div>
-<script>
-    // --- 1. DADOS DOS ESTADOS (base IBGE - ilustrativos) ---
-    const dadosEstados = {
-        "Acre": { capital: "Rio Branco", populacao: 830018, densidade: 5.3, pib: 15.2, pibPerCapita: 18.3, idh: 0.710 },
-        "Alagoas": { capital: "Maceió", populacao: 3127683, densidade: 112.3, pib: 54.8, pibPerCapita: 17.5, idh: 0.684 },
-        "Amapá": { capital: "Macapá", populacao: 877613, densidade: 5.5, pib: 19.3, pibPerCapita: 22.0, idh: 0.738 },
-        "Amazonas": { capital: "Manaus", populacao: 4281209, densidade: 2.7, pib: 120.5, pibPerCapita: 28.1, idh: 0.747 },
-        "Bahia": { capital: "Salvador", populacao: 14141626, densidade: 25.0, pib: 305.2, pibPerCapita: 21.6, idh: 0.714 },
-        "Ceará": { capital: "Fortaleza", populacao: 8794957, densidade: 59.2, pib: 182.0, pibPerCapita: 20.7, idh: 0.734 },
-        "Distrito Federal": { capital: "Brasília", populacao: 2817381, densidade: 485.0, pib: 265.0, pibPerCapita: 94.1, idh: 0.824 },
-        "Espírito Santo": { capital: "Vitória", populacao: 4102998, densidade: 87.1, pib: 151.4, pibPerCapita: 36.9, idh: 0.771 },
-        "Goiás": { capital: "Goiânia", populacao: 7206589, densidade: 21.2, pib: 222.8, pibPerCapita: 30.9, idh: 0.769 },
-        "Maranhão": { capital: "São Luís", populacao: 6776699, densidade: 20.4, pib: 116.0, pibPerCapita: 17.1, idh: 0.676 },
-        "Mato Grosso": { capital: "Cuiabá", populacao: 3658649, densidade: 4.1, pib: 203.0, pibPerCapita: 55.5, idh: 0.774 },
-        "Mato Grosso do Sul": { capital: "Campo Grande", populacao: 2839533, densidade: 8.0, pib: 122.0, pibPerCapita: 43.0, idh: 0.766 },
-        "Minas Gerais": { capital: "Belo Horizonte", populacao: 20732970, densidade: 35.3, pib: 830.0, pibPerCapita: 40.0, idh: 0.774 },
-        "Pará": { capital: "Belém", populacao: 8123025, densidade: 6.6, pib: 198.0, pibPerCapita: 24.4, idh: 0.698 },
-        "Paraíba": { capital: "João Pessoa", populacao: 3974495, densidade: 71.0, pib: 77.0, pibPerCapita: 19.4, idh: 0.728 },
-        "Paraná": { capital: "Curitiba", populacao: 11444380, densidade: 57.4, pib: 550.0, pibPerCapita: 48.0, idh: 0.769 },
-        "Pernambuco": { capital: "Recife", populacao: 9058930, densidade: 94.0, pib: 230.0, pibPerCapita: 25.4, idh: 0.727 },
-        "Piauí": { capital: "Teresina", populacao: 3281480, densidade: 12.8, pib: 60.0, pibPerCapita: 18.3, idh: 0.698 },
-        "Rio de Janeiro": { capital: "Rio de Janeiro", populacao: 16055174, densidade: 365.0, pib: 850.0, pibPerCapita: 52.9, idh: 0.762 },
-        "Rio Grande do Norte": { capital: "Natal", populacao: 3302406, densidade: 62.0, pib: 75.0, pibPerCapita: 22.7, idh: 0.728 },
-        "Rio Grande do Sul": { capital: "Porto Alegre", populacao: 10880322, densidade: 39.0, pib: 600.0, pibPerCapita: 55.2, idh: 0.774 },
-        "Rondônia": { capital: "Porto Velho", populacao: 1581196, densidade: 6.7, pib: 50.0, pibPerCapita: 31.6, idh: 0.731 },
-        "Roraima": { capital: "Boa Vista", populacao: 636303, densidade: 2.8, pib: 12.0, pibPerCapita: 18.9, idh: 0.707 },
-        "Santa Catarina": { capital: "Florianópolis", populacao: 7610361, densidade: 80.0, pib: 480.0, pibPerCapita: 63.0, idh: 0.808 },
-        "São Paulo": { capital: "São Paulo", populacao: 44411326, densidade: 180.0, pib: 2700.0, pibPerCapita: 60.8, idh: 0.806 },
-        "Sergipe": { capital: "Aracaju", populacao: 2210040, densidade: 100.0, pib: 50.0, pibPerCapita: 22.6, idh: 0.720 },
-        "Tocantins": { capital: "Palmas", populacao: 1572866, densidade: 5.7, pib: 35.0, pibPerCapita: 22.3, idh: 0.731 }
-    };
 
-    // --- 2. CONFIGURAÇÃO DO MAPA ---
+<script>
+    // --- Dados dos estados (mantenha o mesmo objeto dadosEstados que eu te passei) ---
+    const dadosEstados = { ... }; // (copie o objeto enorme que já temos)
+
+    // --- Configuração do mapa ---
     const width = 850, height = 700;
     const svgMapa = d3.select("#mapa-brasil")
         .append("svg")
         .attr("viewBox", `0 0 ${width} ${height}`)
-        .style("width", "100%")
-        .style("height", "auto");
-
-    // Remove o texto de carregamento quando começar a desenhar
+        .style("width", "100%").style("height", "auto");
     d3.select("#loading").remove();
 
-    // --- 3. NOVA URL (jsDelivr - resolve CORS e bloqueios) ---
-    const urlGeoJSON = "https://cdn.jsdelivr.net/gh/tbrugz/geojson-brasil@master/geojson/estados/estados.json";
-
-    fetch(urlGeoJSON)
+    // --- AQUI ESTÁ A MUDANÇA MÁGICA ---
+    // Em vez de uma URL externa, use o caminho relativo ao seu arquivo HTML
+    fetch('estados.json')  
         .then(res => {
-            if (!res.ok) throw new Error("Erro HTTP " + res.status);
+            if (!res.ok) throw new Error("Erro ao ler arquivo local");
             return res.json();
         })
         .then(data => {
-            // Projeção automática
-            const projection = d3.geoAlbers()
-                .fitSize([width, height], data); 
-
+            const projection = d3.geoAlbers().fitSize([width, height], data);
             const path = d3.geoPath().projection(projection);
             const colorScale = d3.scaleOrdinal(d3.schemeSet2)
                 .domain(data.features.map(d => d.properties.nome));
 
             const states = svgMapa.selectAll("path")
-                .data(data.features)
-                .enter()
-                .append("path")
-                .attr("d", path)
-                .attr("class", "estado-padrao")
+                .data(data.features).enter().append("path")
+                .attr("d", path).attr("class", "estado-padrao")
                 .style("fill", d => colorScale(d.properties.nome))
-                .style("stroke", "#fff")
-                .style("stroke-width", "0.7px")
+                .style("stroke", "#fff").style("stroke-width", "0.7px")
                 .style("cursor", "pointer");
 
             states.on("mouseover", function(event, d) {
@@ -123,95 +71,22 @@
                 d3.select(this).raise().classed("estado-padrao", false).classed("estado-destaque", true);
                 atualizarPainel(nomeEstado, d);
             });
-
             states.on("mouseout", function() {
                 d3.select(this).classed("estado-destaque", false).classed("estado-padrao", true);
                 d3.select("#mini-mapa-container").html(`<span class="placeholder">Passe o mouse sobre um estado</span>`);
-                d3.select("#dados-estado").html(`<div class="placeholder" style="margin-top:0;">Selecione um estado para ver os dados</div>`);
+                d3.select("#dados-estado").html(`<div class="placeholder">Selecione um estado</div>`);
             });
         })
         .catch(err => {
-            console.error("Erro com jsDelivr:", err);
-            // Se falhar, tenta o fallback com o GitHub raw (caso o jsDelivr esteja fora)
+            console.error(err);
+            // Se falhar, exibe mensagem clara
             d3.select("#mapa-brasil").append("div")
-                .style("color", "orange")
-                .style("padding", "20px")
-                .style("font-weight", "bold")
-                .text("⚠️ Erro no jsDelivr. Tentando GitHub raw... (se falhar, sua rede está bloqueando tudo)");
-            carregarFallback();
+                .style("color", "red").style("padding", "20px").style("font-weight", "bold")
+                .text("❌ Erro: o arquivo 'estados.json' não foi encontrado na mesma pasta do HTML. Verifique se ele foi enviado ao GitHub.");
         });
 
-    // --- 4. FALLBACK (caso jsDelivr falhe) ---
-    function carregarFallback() {
-        const urlFallback = "https://raw.githubusercontent.com/tbrugz/geojson-brasil/master/geojson/estados/estados.json";
-        fetch(urlFallback)
-            .then(res => res.json())
-            .then(data => {
-                // limpa a mensagem de erro
-                d3.select("#mapa-brasil").selectAll("div").remove();
-                // Reaplica a lógica (repetição rápida)
-                const projection = d3.geoAlbers().fitSize([width, height], data);
-                const path = d3.geoPath().projection(projection);
-                const colorScale = d3.scaleOrdinal(d3.schemeSet2).domain(data.features.map(d => d.properties.nome));
-                const states = svgMapa.selectAll("path").data(data.features).enter().append("path")
-                    .attr("d", path).attr("class", "estado-padrao")
-                    .style("fill", d => colorScale(d.properties.nome))
-                    .style("stroke", "#fff").style("stroke-width", "0.7px").style("cursor", "pointer");
-                states.on("mouseover", function(event, d) {
-                    const nomeEstado = d.properties.nome;
-                    d3.select(this).raise().classed("estado-padrao", false).classed("estado-destaque", true);
-                    atualizarPainel(nomeEstado, d);
-                });
-                states.on("mouseout", function() {
-                    d3.select(this).classed("estado-destaque", false).classed("estado-padrao", true);
-                    d3.select("#mini-mapa-container").html(`<span class="placeholder">Passe o mouse sobre um estado</span>`);
-                    d3.select("#dados-estado").html(`<div class="placeholder" style="margin-top:0;">Selecione um estado para ver os dados</div>`);
-                });
-            })
-            .catch(() => {
-                d3.select("#mapa-brasil").append("div")
-                    .style("color", "red")
-                    .style("padding", "20px")
-                    .style("font-weight", "bold")
-                    .text("❌ Bloqueio total. Nenhum servidor externo respondeu. Sua rede está bloqueando tudo.");
-            });
-    }
-
-    // --- 5. FUNÇÃO DE ATUALIZAR O PAINEL ---
-    function atualizarPainel(nome, feature) {
-        const dados = dadosEstados[nome];
-        if (!dados) return;
-
-        const miniContainer = d3.select("#mini-mapa-container");
-        miniContainer.html("");
-        const miniWidth = 240, miniHeight = 200;
-        const miniSvg = miniContainer.append("svg")
-            .attr("viewBox", `0 0 ${miniWidth} ${miniHeight}`)
-            .style("width", "100%").style("height", "auto");
-
-        const miniProj = d3.geoMercator().fitSize([miniWidth - 20, miniHeight - 20], feature);
-        const miniPath = d3.geoPath().projection(miniProj);
-        miniSvg.append("path").attr("d", miniPath(feature))
-            .style("fill", "#2c3e50").style("stroke", "#fff").style("stroke-width", "1.5px");
-
-        const formatNum = (num) => {
-            if (num >= 1e9) return (num / 1e9).toFixed(1) + " tri";
-            if (num >= 1e6) return (num / 1e6).toFixed(1) + " mi";
-            return num.toLocaleString("pt-BR");
-        };
-
-        d3.select("#dados-estado").html(`
-            <div style="font-weight:600; font-size:1.2rem; color:#2c3e50; margin-bottom:8px;">${nome}</div>
-            <div class="dados-lista">
-                <span class="rotulo">Capital</span> <span class="valor">${dados.capital}</span>
-                <span class="rotulo">População</span> <span class="valor">${dados.populacao.toLocaleString("pt-BR")} hab.</span>
-                <span class="rotulo">Densidade</span> <span class="valor">${dados.densidade} hab./km²</span>
-                <span class="rotulo">PIB</span> <span class="valor">R$ ${formatNum(dados.pib)}</span>
-                <span class="rotulo">PIB per capita</span> <span class="valor">R$ ${dados.pibPerCapita.toLocaleString("pt-BR", {minimumFractionDigits: 0})}</span>
-                <span class="rotulo">IDH</span> <span class="valor">${dados.idh.toFixed(3)}</span>
-            </div>
-        `);
-    }
+    // --- Função de atualizar painel (igual a anterior) ---
+    function atualizarPainel(nome, feature) { /* mantenha sua função */ }
 </script>
 </body>
 </html>
